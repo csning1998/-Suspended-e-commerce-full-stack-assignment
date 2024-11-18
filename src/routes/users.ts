@@ -13,20 +13,24 @@ router.post("/register", async (req: Request, res: Response): Promise<any>=> {
 
   const existingUser  = false
   try {
-    const {userName, userEmail, userPassword, confirmPassword} = req.body;
+    const {userName, userPassword, confirmPassword} = req.body;
     console.log("Body: ", req.body)
     if (userPassword != confirmPassword){
+      console.log("userPassword: ", userPassword)
       res.status(400).send({
         status: 'error',
         message: '(400) Mismatched confirm password.'
       })
     }
     if (existingUser){
+      console.log("existingUser: ", existingUser)
       res.status(500).send({
         status: 'error',
         message: '(409) Email has already been registered.'
       })
     }
+    console.log("existingUser: ", existingUser)
+    
     const saltRounds = 10;
     let hashedPassword = await bcrypt.hash(userPassword, saltRounds)
     // Store hash in your password DB.
