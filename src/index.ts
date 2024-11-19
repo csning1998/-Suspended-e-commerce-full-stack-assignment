@@ -34,7 +34,7 @@ app.get("/", (req: Request, res: Response): void => {
 });
 
 // Main function, only run once at the application startup.
-(async () => {
+(async (): Promise<void> => {
 
   try {
     // Add Schemas here. https://stackoverflow.com/questions/42497254/sequelize-schema-for-postgresql-how-to-accurately-define-a-schema-in-a-model
@@ -48,9 +48,9 @@ app.get("/", (req: Request, res: Response): void => {
 
   try {
 
-    await sequelize.sync({ 
-      force: true,
-      alter: true 
+    await sequelize.sync({
+      // force: true,
+      alter: true
     });
 
   } catch (err) {
@@ -60,7 +60,9 @@ app.get("/", (req: Request, res: Response): void => {
 
   // Code here
   app.listen(port, (): void => {
-    console.log(`Example app listening on port ${port}`);
+    console.log(`E-Commerce Application is listening on port ${port}`);
+    console.log("\n========== Console Logging Below ==========\n");
+
   });
 })();
 

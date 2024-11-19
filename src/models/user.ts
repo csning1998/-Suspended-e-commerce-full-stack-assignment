@@ -25,6 +25,11 @@ import {
 import sequelize from "../db";
 
 export default sequelize.define("User", {
+    userEmail:{
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+    },
     userName: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -34,36 +39,10 @@ export default sequelize.define("User", {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    userEmail:{
-      type: DataTypes.STRING,
-      allowNull: false,
-      unique: true,
-    }
   },
   {
     schema: 'user_management',
   }
 );
 
-// var TrackingModel = {
-// }
 
-
-// (function getTrackingData(user_id = 1){
-//   // var user_id = 1
-
-//   const user = User.findAll({id: user_id})
-//   const trackingData = TrackingModel.find({user_id: user.id})
-
-//   return trackingData
-
-// })
-
-
-// (function setTrackingData(user_id = 1, current_url = ''){
-//   // // var user_id = 1
-
-//   // const user = User.findAll({id: user_id})
-//   TrackingModel.create({user_id: user_id, current_url: current_url})
-
-// })
