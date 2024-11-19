@@ -32,7 +32,6 @@ app.use('/users', userRoutes);
 
 
 // Import route handlers here
-import jwt from "jsonwebtoken";
 // import sessionRoutes from "./routes/session"
 
 
