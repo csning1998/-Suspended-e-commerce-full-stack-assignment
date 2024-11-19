@@ -1,20 +1,14 @@
 import express, { Router, Request, Response } from "express";
 import PGModels from "../models";
 import bcrypt from "bcrypt";
-import { Model, Op } from "sequelize";
+import { Model } from "sequelize";
+import jwt from "jsonwebtoken";
+import "dotenv/config";
+import * as process from "node:process";
 
 const router: Router = express.Router();
-
+// For Security
 const saltRounds = 10;
-
-
-// router.get("/register", async (req: Request, res: Response): Promise<void> => {
-//   res.send("This is the GET method of register page.");
-// })
-//
-// router.get("/login", async (req: Request, res: Response): Promise<void> => {
-//   res.send("This is the GET method of login page.");
-// })
 
 router.post("/register", async (req: Request, res: Response): Promise<any>=> {
 
@@ -64,49 +58,68 @@ router.post("/register", async (req: Request, res: Response): Promise<any>=> {
 router.post("/login", async (req: Request, res: Response): Promise<any> => {
 
   const {userName, userPassword} = req.body;
-  const existingUser  = false
+  console.log("Username in req.Body: \n", req.body.userName)
+  console.log("Password in req.Body: \n", req.body.userPassword)
 
-  try{
+  try {
     if (!userName || !userPassword){
       res.status(500).send({
         status: 'error',
         message: '(409) Either username or password cannot be null.'
       })
     }
-  } catch (err){
-    res.status(500).send({
-      status: 'error',
-      message: '(500) Unexpected Error.'
-    });
-  }
 
-
-  try {
-    console.log("Body: \n", req.body)
-
-
-    const hashedPassword: string = await bcrypt.hash(userPassword, saltRounds)
-
-    const users: Model<string, string>[] = await PGModels.User.findAll({
-      where :{
-        [Op.and]: [{userName: userName}, {userPassword: hashedPassword}]
-      }
+    const user: Model | null = await PGModels.User.findOne({
+      where: { userName: userName },
     });
 
-    console.log("Checking user's password: ", users);
+    if (!user) {
+      return res.status(404).send({
+        status: "error",
+        message: "(404) User not found.",
+      });
+    }
 
-    // const password = await PGModels.User.findOne({
-    //   where: {
-    //     userPassword: hashedPassword
-    //   }
-    // })
+    const hashedPassword: string = user.get("userPassword") as string;
+    const isPasswordValid: boolean = await bcrypt.compare(userPassword, hashedPassword);
 
-    // const isValid: boolean = bcrypt.compareSync(userPassword, password);
+    if (!isPasswordValid) {
+      return res.status(401).send({
+        status: "error",
+        message: "(401) Invalid username or password.",
+      });
+    }
+
+    /*
+     * In the jsonwebtoken package, the function definition for jwt.sign looks like this (simplified version):
+        * sign(payload: string | object | Buffer, secretOrPrivateKey: Secret, options?: SignOptions): string;
+        * sign(payload: string | object | Buffer, secretOrPrivateKey: null, options: { algorithm: "none" }): string;
+     * When the value of process.env.JWT_SECRET is undefined:
+        * TypeScript cannot treat undefined as a valid Secret.
+        * It also cannot treat undefined as the null conforming to the second overload. Therefore, neither overload
+           matches, resulting in a "No overload matches this call" error.
+     * Adding an if statement allows the TypeScript compiler to ensure that when you execute jwt.sign,
+        process.env.JWT_SECRET is always a valid string (or other type conforming to Secret).
+     * */
+
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is not defined in the environment variables.");
+      return res.status(500).send({
+        status: "error",
+        message: "(500) Server configuration error.",
+      });
+    }
+
+    let token: string;
+    token = jwt.sign({
+      user: user.dataValues.userName
+    }, process.env.JWT_SECRET, {expiresIn: "12h"});
 
     res.json({
-      users: users,
+      // user: user,
       status: 'success',
-      message: 'Successfully Login.'
+      message: 'Successfully Login.',
+      token: token
     })
   } catch (err) {
     console.error(err);
