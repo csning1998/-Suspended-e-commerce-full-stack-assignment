@@ -1,0 +1,28 @@
+header {
+  background-color: var(--color-background-soft);
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+header .logo {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--vt-c-indigo);
+}
+
+nav {
+  display: flex;
+  gap: 20px;
+}
+
+nav a {
+  text-decoration: none;
+  color: var(--color-text);
+  font-weight: 500;
+}
+
+nav a:hover {
+  color: var(--vt-c-text-dark-2);
+}

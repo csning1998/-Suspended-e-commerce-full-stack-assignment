@@ -1,16 +1,28 @@
 services:
-  node-app:
+  backend:
     image: node:22-alpine
     volumes:
-      - ./:/app
+      - ./backend/:/app
     working_dir: /app
     command: sh -c "npm install && npm run dev2"
     ports:
-      - "3000:3000"
+      - 3000:3000
     # depends_on:
     #   - postgres
     environment:
       PORT: ${NODE_APP_PORT}
+  frontend:
+    image: node:22-alpine
+    volumes:
+      - ./frontend/:/app
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    ports:
+      - 5173:5173
+    # depends_on:
+    #   - postgres
+    # environment:
+    #   PORT: ${NODE_APP_PORT}
 
   postgres:
     image: postgres:17
