@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 interface NavLink {
@@ -17,9 +17,20 @@ const navLinks = ref<NavLink[]>([
 ]);
 
 // To-do: This should be further implemented by other controller or handler instead of hardcoding.
-var is_login = false
+const isLoggedIn = ref(localStorage.getItem("isLoggedIn") === "true"); // Use ref
+
+console.log(isLoggedIn.value);
 
 const router = useRouter();
+
+onMounted(() => {
+  window.addEventListener("userLoggedIn", () => {
+    isLoggedIn.value = true;
+  });
+  window.addEventListener("userLoggedOut", () => {
+    isLoggedIn.value = false;
+  });
+});
 
 function navLinkHandler(link: NavLink) {
   if (link.href === "#") {
@@ -32,7 +43,9 @@ function navLinkHandler(link: NavLink) {
 
 <template>
   <header class="navbar">
-    <div class="logo">E-Commerce WebApp</div>
+    <div class="logo">
+      <a @click.prevent="router.push('/')"> E-Commerce WebApp</a>
+    </div>
     <nav>
       <a
         v-for="(link, index) in navLinks"
@@ -43,11 +56,8 @@ function navLinkHandler(link: NavLink) {
         {{ link.text }}
       </a>
 
-      <a v-if="!is_login" @click.prevent="router.push('/login')">
-        Login / Logout
-      </a>
-
-      <a v-else @click.prevent="router.push('/profile')"> Profile </a>
+      <a v-if="!isLoggedIn" @click.prevent="router.push('/login')">Login</a>
+      <a v-else @click.prevent="router.push('/profile')">Profile</a>
     </nav>
   </header>
 </template>

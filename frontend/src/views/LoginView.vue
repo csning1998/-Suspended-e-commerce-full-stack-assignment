@@ -26,10 +26,16 @@ async function login(): Promise<void> {
       userPassword: loginFormData.value.userPassword,
     });
 
-    // // Save the token of login
-    // localStorage.setItem("token", res.data.token);
-    // // Set the token into default header.
-    // request.defaults.headers.common["CommerceAuthToken"] = res.data.token;
+    // Save the token of login
+    localStorage.setItem("isLoggedIn", "true");
+    localStorage.setItem("token", res.data.token);
+    // Set the token into default header.
+    request.defaults.headers.common["CommerceAuthToken"] = res.data.token;
+
+    window.dispatchEvent(new CustomEvent("userLoggedIn")); // Dispatch the event
+
+    alert("Login successfully");
+    console.log("isLoggedIn", localStorage.getItem("isLoggedIn"));
 
     await router.push("/");
   } catch (error) {
