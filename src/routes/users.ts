@@ -115,12 +115,19 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
       user: user.dataValues.userName
     }, process.env.JWT_SECRET, {expiresIn: "12h"});
 
+    console.log("user.dataValues.userName", user.dataValues.userName);
+
+    // const _user = user.toJSON()
+
+    // delete _user.userPassword;
+
     res.json({
-      // user: user,
+      data: user.toJSON(),
       status: 'success',
       message: 'Successfully Login.',
       token: token
     })
+
   } catch (err) {
     console.error(err);
     res.status(500).send({
