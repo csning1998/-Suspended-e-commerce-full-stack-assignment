@@ -32,8 +32,9 @@ defineProps<{
             required
           />
         </div>
-
-        <button class="form-button" type="submit">Login</button>
+        <div class="form-button-container">
+          <button class="form-button" type="submit">Login</button>
+        </div>
       </form>
       <p class="signup-link">
         Not Registered？

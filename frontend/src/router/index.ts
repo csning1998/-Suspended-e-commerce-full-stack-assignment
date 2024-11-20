@@ -3,6 +3,8 @@ import HomeView from "../views/HomeView.vue";
 import LoginView from "@/views/LoginView.vue";
 import RegistrationView from "@/views/RegistrationView.vue";
 import UserProfileView from "@/views/UserProfileView.vue";
+import PrivacyPolicy from "../views/PrivacyPolicy.vue";
+import TermsofService from "../views/TermsofService.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +29,16 @@ const router = createRouter({
       name: "profile",
       component: UserProfileView,
     },
+    {
+      path: "/privacy-policy",
+      name: "PrivacyPolicy",
+      component: PrivacyPolicy,
+    },
+    {
+      path: "/terms-of-service",
+      name: "TermsofService",
+      component: TermsofService,
+    }
   ],
 });
 
