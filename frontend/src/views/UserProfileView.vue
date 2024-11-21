@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { reactive } from "vue";
+import { onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
 import request from "@/stores/request";
 
 const router = useRouter();
 
-const userId = localStorage.getItem("userId");
-const userName = localStorage.getItem("userName");
+// const userId = localStorage.getItem("userId");
+// const userName = localStorage.getItem("userName");
 
 // const user = reactive({
 //   name: "C.S. Ning",
@@ -17,32 +17,42 @@ const userName = localStorage.getItem("userName");
 //   addresses: ["Somewhere in Taiwan"],
 // });
 
-const newUserInfo = reactive({
+const GENDER_LIST = [
+  'male', 'female', 'apache'
+]
+
+let currentUser = reactive({
+  id: 0,
   userId: "",
-  name: "",
+  userName: "",
   birthday: "",
-  gender: "",
-  email: "",
-  phone: "",
+  userGender: "",
+  userEmail: "",
+  userPhoneNumber: "",
   addresses: [""],
+  createdAt: 0,
 });
 
-const originalUserInfo = reactive({
-  userId: "",
-  name: "",
-  birthday: "",
-  gender: "",
-  email: "",
-  phone: "",
-  addresses: [""],
-});
-
-const saveProfile = () => {
+const saveProfile = async () => {
   // Add your logic to handle profile editing here.  This could involve:
   // 1. Showing editable fields.
   // 2. Making API calls to update the user data.
   // 3. Updating the `user` reactive data object.
-  alert("Save profile functionality not yet implemented");
+
+  try {
+    await request.put("/users/current", {
+        user: currentUser
+      }, {
+      headers: {
+        token: localStorage.getItem("token")
+      }
+    });
+
+    alert("Profile saved!");
+  } catch (error: any) {
+    alert(error.response.data.message);
+  }
+
 };
 
 const logout = () => {
@@ -55,12 +65,22 @@ const logout = () => {
 
 async function fetchUserInfo() {
   try {
-    const res = await request.post("/user", {
-      userId: userId,
-      userName: userName,
-    });
+
+    const res = (await request.get("/users/current", {
+      headers: {
+        token: localStorage.getItem("token")
+      }
+    })).data.payload;
+
+    currentUser = Object.assign(currentUser, res)
+
+    console.log("currentUser.value", currentUser)
   } catch (err) {}
 }
+
+onMounted(() => {
+  fetchUserInfo()
+})
 </script>
 
 <template>
@@ -78,19 +98,33 @@ async function fetchUserInfo() {
       <h2>Basic Info</h2>
       <div class="profile-item">
         <label>User ID:</label>
-        <span>{{ originalUserInfo.userId }}</span>
+        <span>{{ currentUser.userId }}</span>
       </div>
       <div class="profile-item">
         <label>Name:</label>
-        <span>{{ originalUserInfo.name }}</span>
+        <input v-model="currentUser.userName" />
+        <!-- <span>{{ currentUser.name }}</span> -->
       </div>
       <div class="profile-item">
         <label>Birthday:</label>
-        <span>{{ originalUserInfo.birthday }}</span>
+        <span>{{ currentUser.birthday }}</span>
       </div>
       <div class="profile-item">
         <label>Gender:</label>
-        <span>{{ originalUserInfo.gender }}</span>
+
+        <label v-for="(g, key) in GENDER_LIST" :key="key" :for="g">
+          <input
+            :id="g"
+            type="radio"
+            v-model="currentUser.userGender"
+            :value="g"
+          />
+          {{ g }}
+        </label>
+      </div>
+      <div class="profile-item">
+        <label>Registered At:</label>
+        <span>{{ currentUser.createdAt }}</span>
       </div>
     </section>
 
@@ -98,18 +132,19 @@ async function fetchUserInfo() {
       <h2>Contact Info</h2>
       <div class="profile-item">
         <label>Email:</label>
-        <span>{{ originalUserInfo.email }}</span>
+        <span>{{ currentUser.userEmail }}</span>
       </div>
       <div class="profile-item">
         <label>Phone:</label>
-        <span>{{ originalUserInfo.phone }}</span>
+        <input type="text" v-model="currentUser.userPhoneNumber" />
+        <!-- <span>{{ currentUser.userPhoneNumber }}</span> -->
       </div>
     </section>
 
     <section class="profile-section">
       <h2>Addresses</h2>
       <div
-        v-for="(address, index) in originalUserInfo.addresses"
+        v-for="(address, index) in currentUser.addresses"
         :key="index"
         class="profile-item address-item"
       >

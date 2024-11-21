@@ -68,7 +68,7 @@ User.init(
             allowNull: true,
         },
         userGender: {
-            type: DataTypes.BOOLEAN,
+            type: DataTypes.STRING,
             allowNull: true,
         },
         userBirthday: {

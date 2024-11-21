@@ -1,13 +1,19 @@
-import axios from "axios";
+import axios, { type AxiosInstance } from "axios";
 
 axios.defaults.headers.common["CommerceAuthToken"] = localStorage.getItem("token");
 
-const request = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000',
+const baseURL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000'
+
+console.log('baseURL', baseURL)
+
+const request: AxiosInstance = axios.create({
+  baseURL,
   timeout: 0,
 });
 
+// request.interceptors.request.use()
 
-console.log('import.meta.env.VITE_API_BASE_URL', import.meta.env.VITE_API_BASE_URL)
+
+
 
 export default request;
