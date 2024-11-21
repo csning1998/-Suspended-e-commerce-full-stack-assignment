@@ -1,20 +1,21 @@
-import express, { Router, Request, Response } from "express";
+import express, {Router, Request, Response, NextFunction, Express} from "express";
 import PGModels from "../models";
 import bcrypt from "bcrypt";
-import { Model } from "sequelize";
-import jwt from "jsonwebtoken";
+import {Model} from "sequelize";
+import jwt, {JwtPayload} from "jsonwebtoken";
 import "dotenv/config";
 import * as process from "node:process";
 
 const router: Router = express.Router();
 // For Security
 const saltRounds = 10;
+const app: Express = express();
 
 router.post("/register", async (req: Request, res: Response): Promise<any>=> {
 
   const existingUser  = false
   try {
-    const {userName, userPassword, confirmPassword} = req.body;
+    const {userId, userEmail, userName, userPassword, confirmPassword} = req.body;
     console.log("Body: \n", req.body)
 
     if (userPassword != confirmPassword){
@@ -24,7 +25,7 @@ router.post("/register", async (req: Request, res: Response): Promise<any>=> {
       })
     }
     if (existingUser){
-      res.status(500).send({
+      res.status(409).send({
         status: 'error',
         message: '(409) Email has already been registered.'
       })
@@ -33,8 +34,9 @@ router.post("/register", async (req: Request, res: Response): Promise<any>=> {
     const hashedPassword: string = await bcrypt.hash(userPassword, saltRounds)
 
     const newUser = {
+      userId: userId,
       userName: userName,
-      userEmail: req.body.userEmail,
+      userEmail: userEmail,
       userPassword: hashedPassword,
     }
 
@@ -112,7 +114,7 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
 
     let token: string;
     token = jwt.sign({
-      user: user.dataValues.userName
+      user: user.dataValues.userId
     }, process.env.JWT_SECRET, {expiresIn: "12h"});
 
     console.log("user.dataValues.userName", user.dataValues.userName);
@@ -136,4 +138,89 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
     });
   }
 });
+
+const jwtVerify = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { userId, userName } = req.body;
+    const token = req.headers.ecommerceAuthToken as string | undefined;
+
+    if (!process.env.JWT_SECRET) {
+      console.error("JWT_SECRET is not defined in the environment variables.");
+      return res.status(500).send({
+        status: "error",
+        message: "(500) Server configuration error.",
+      });
+    }
+
+    if (!token || !userId|| !userName) {
+      return res.status(401).send({
+        status: 'error',
+        message: '(401) No token provided.'
+      })
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
+
+    if(decoded.user && decoded.user) {
+      req.body.userId = await PGModels.User.findOne({
+        where: {
+          userId: userId,
+          userName: decoded.userName
+        }
+      });
+      next();
+    }
+    else {
+      return res.status(401).send({
+        status: "error",
+        message: "(401) Invalid token.",
+      });
+    }
+  } catch (error) {
+    console.error("JWT verification failed:", error);
+    return res.status(500).send({
+      status: 'error',
+      message: '(500) Failed to process inquiry.',
+    });
+  }
+};
+interface CustomRequest extends Request {
+  body: {
+    userId?: string; // `userId` 和 `userName` 為選填屬性
+    userName?: string;
+  };
+}
+
+
+app.get('/session',jwtVerify, async (req: Request, res: Response) => {
+  try{
+    const { userId, userName } = req.body;
+    if(!userId || ! userName){
+      return res.status(401).send({
+        status: 'error',
+        message: '(401) No user ID or username provided.'
+      });
+    }
+
+    return res.json({
+      userId: userId,
+      userName: userName,
+      status: 'success',
+      message: 'Successfully retrieved session data.'
+    });
+
+  } catch (error) {
+    console.error("Error while processing session route:", error);
+    return res.status(500).send({
+      status: 'error',
+      message: '(500) Failed to process inquiry.',
+    });
+  }
+});
+
+router.get("/edit/:userId", async (req: Request, res: Response) : Promise<any>=> {
+
+
+})
+
 export default router

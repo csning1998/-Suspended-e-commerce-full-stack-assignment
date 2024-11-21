@@ -1,48 +1,24 @@
 <script setup lang="ts">
 import { reactive } from "vue";
 import { useRouter } from "vue-router";
-import request from "@/stores/request";
 
 const router = useRouter();
 
-const userId = localStorage.getItem("userId");
-const userName = localStorage.getItem("userName");
-
-// const user = reactive({
-//   name: "C.S. Ning",
-//   birthday: "January 6, 1998",
-//   gender: "Male",
-//   email: "HelloWorld@noreply.gmail.com",
-//   phone: "(+886) 0987 654 321",
-//   addresses: ["Somewhere in Taiwan"],
-// });
-
-const newUserInfo = reactive({
-  userId: "",
-  name: "",
-  birthday: "",
-  gender: "",
-  email: "",
-  phone: "",
-  addresses: [""],
+const user = reactive({
+  name: "C.S. Ning",
+  birthday: "January 6, 1998",
+  gender: "Male",
+  email: "HelloWorld@noreply.gmail.com",
+  phone: "(+886) 0987 654 321",
+  addresses: ["Somewhere in Taiwan"],
 });
 
-const originalUserInfo = reactive({
-  userId: "",
-  name: "",
-  birthday: "",
-  gender: "",
-  email: "",
-  phone: "",
-  addresses: [""],
-});
-
-const saveProfile = () => {
+const editProfile = () => {
   // Add your logic to handle profile editing here.  This could involve:
   // 1. Showing editable fields.
   // 2. Making API calls to update the user data.
   // 3. Updating the `user` reactive data object.
-  alert("Save profile functionality not yet implemented");
+  alert("Edit Profile functionality not yet implemented");
 };
 
 const logout = () => {
@@ -53,14 +29,9 @@ const logout = () => {
   router.push("/"); // Redirect to home or login after logout
 };
 
-async function fetchUserInfo() {
-  try {
-    const res = await request.post("/user", {
-      userId: userId,
-      userName: userName,
-    });
-  } catch (err) {}
-}
+// Get data from postgres
+
+
 </script>
 
 <template>
@@ -77,20 +48,16 @@ async function fetchUserInfo() {
     <section class="profile-section">
       <h2>Basic Info</h2>
       <div class="profile-item">
-        <label>User ID:</label>
-        <span>{{ originalUserInfo.userId }}</span>
-      </div>
-      <div class="profile-item">
         <label>Name:</label>
-        <span>{{ originalUserInfo.name }}</span>
+        <span>{{ user.name }}</span>
       </div>
       <div class="profile-item">
         <label>Birthday:</label>
-        <span>{{ originalUserInfo.birthday }}</span>
+        <span>{{ user.birthday }}</span>
       </div>
       <div class="profile-item">
         <label>Gender:</label>
-        <span>{{ originalUserInfo.gender }}</span>
+        <span>{{ user.gender }}</span>
       </div>
     </section>
 
@@ -98,18 +65,18 @@ async function fetchUserInfo() {
       <h2>Contact Info</h2>
       <div class="profile-item">
         <label>Email:</label>
-        <span>{{ originalUserInfo.email }}</span>
+        <span>{{ user.email }}</span>
       </div>
       <div class="profile-item">
         <label>Phone:</label>
-        <span>{{ originalUserInfo.phone }}</span>
+        <span>{{ user.phone }}</span>
       </div>
     </section>
 
     <section class="profile-section">
       <h2>Addresses</h2>
       <div
-        v-for="(address, index) in originalUserInfo.addresses"
+        v-for="(address, index) in user.addresses"
         :key="index"
         class="profile-item address-item"
       >
@@ -119,7 +86,7 @@ async function fetchUserInfo() {
     </section>
 
     <div class="form-button-container">
-      <button class="form-button" @click="saveProfile">Save Profile</button>
+      <button class="form-button" @click="editProfile">Edit Profile</button>
       <button class="form-button" @click.prevent="logout">Logout</button>
     </div>
   </div>
