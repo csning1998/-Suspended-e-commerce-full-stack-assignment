@@ -5,10 +5,11 @@ import { useRouter } from "vue-router";
 import RegisterForm from "@/components/auth/RegisterForm.vue";
 
 const registrationFormData = ref<RegistrationFormData>({
+  userId: "root",
   userEmail: "root@gmail.com",
   userName: "root",
   userPassword: "root",
-  confirmPassword: "root"
+  confirmPassword: "root",
 });
 
 const router = useRouter();
@@ -24,6 +25,7 @@ const ajaxErrorHandler = (error: any) => {
 async function register(): Promise<void> {
   try {
     const res = await request.post("/users/register", {
+      userId: registrationFormData.value.userId,
       userEmail: registrationFormData.value.userEmail,
       userName: registrationFormData.value.userName,
       userPassword: registrationFormData.value.userPassword,
@@ -38,7 +40,10 @@ async function register(): Promise<void> {
 </script>
 
 <template>
-  <RegisterForm :registrationFormData="registrationFormData" :onSubmit="register" />
+  <RegisterForm
+    :registrationFormData="registrationFormData"
+    :onSubmit="register"
+  />
 </template>
 
 <style scoped></style>

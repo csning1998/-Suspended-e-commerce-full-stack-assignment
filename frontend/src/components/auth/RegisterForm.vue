@@ -13,6 +13,15 @@ const props = defineProps<{
 
       <form class="form-body" @submit.prevent="onSubmit">
         <div class="form-field">
+          <label for="userEmail">User Id</label>
+          <input
+            id="userId"
+            type="text"
+            v-model="registrationFormData.userEmail"
+            required
+          />
+        </div>
+        <div class="form-field">
           <label for="userEmail">Email</label>
           <input
             id="userEmail"
