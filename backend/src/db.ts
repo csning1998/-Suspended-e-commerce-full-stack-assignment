@@ -5,9 +5,9 @@ import {
 export default new Sequelize({
   dialect: "postgres",
   host: "postgres",
-  username: process.env.POSTGRES_USER,
-  password: process.env.POSTGRES_PASSWORD,
-  database: process.env.POSTGRES_DB,
+  database: process.env.POSTGRES_DB || 'e-commerce',
+  username: process.env.POSTGRES_USER || 'e-commerce-dev',
+  password: process.env.POSTGRES_PASSWORD || 'e-commerce-password'
   // logging: false,
   // models: [Dog],
 })
