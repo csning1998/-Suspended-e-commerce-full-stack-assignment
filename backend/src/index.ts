@@ -28,7 +28,6 @@ app.use(bodyParser.json())
 
 // for routes
 app.use('/users', userRoutes);
-// app.use('/', sessionRoutes);
 
 
 // Import route handlers here

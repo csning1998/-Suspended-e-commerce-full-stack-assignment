@@ -3,8 +3,8 @@ import PGModels from "../models";
 import bcrypt from "bcrypt";
 import {Model} from "sequelize";
 import jwt, {JwtPayload} from "jsonwebtoken";
+import jwtVerify from "../lib/jwt-verify";
 import "dotenv/config";
-import * as process from "node:process";
 
 const router: Router = express.Router();
 // For Security
@@ -114,7 +114,7 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
 
     let token: string;
     token = jwt.sign({
-      user: user.dataValues.userId
+      userId: user.dataValues.userId
     }, process.env.JWT_SECRET, {expiresIn: "12h"});
 
     console.log("user.dataValues.userName", user.dataValues.userName);
@@ -139,51 +139,6 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
   }
 });
 
-const jwtVerify = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { userId, userName } = req.body;
-    const token = req.headers.ecommerceAuthToken as string | undefined;
-
-    if (!process.env.JWT_SECRET) {
-      console.error("JWT_SECRET is not defined in the environment variables.");
-      return res.status(500).send({
-        status: "error",
-        message: "(500) Server configuration error.",
-      });
-    }
-
-    if (!token || !userId|| !userName) {
-      return res.status(401).send({
-        status: 'error',
-        message: '(401) No token provided.'
-      })
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
-
-    if(decoded.user && decoded.user) {
-      req.body.userId = await PGModels.User.findOne({
-        where: {
-          userId: userId,
-          userName: decoded.userName
-        }
-      });
-      next();
-    }
-    else {
-      return res.status(401).send({
-        status: "error",
-        message: "(401) Invalid token.",
-      });
-    }
-  } catch (error) {
-    console.error("JWT verification failed:", error);
-    return res.status(500).send({
-      status: 'error',
-      message: '(500) Failed to process inquiry.',
-    });
-  }
-};
 interface CustomRequest extends Request {
   body: {
     userId?: string; // `userId` 和 `userName` 為選填屬性
@@ -191,20 +146,11 @@ interface CustomRequest extends Request {
   };
 }
 
-
-app.get('/session',jwtVerify, async (req: Request, res: Response) => {
+// Read current logged in user
+router.get('/current', jwtVerify, async (req: Request, res: Response): Promise<any> => {
   try{
-    const { userId, userName } = req.body;
-    if(!userId || ! userName){
-      return res.status(401).send({
-        status: 'error',
-        message: '(401) No user ID or username provided.'
-      });
-    }
-
     return res.json({
-      userId: userId,
-      userName: userName,
+      payload: req.currentUser,
       status: 'success',
       message: 'Successfully retrieved session data.'
     });
@@ -218,8 +164,29 @@ app.get('/session',jwtVerify, async (req: Request, res: Response) => {
   }
 });
 
-router.get("/edit/:userId", async (req: Request, res: Response) : Promise<any>=> {
+// Update current logged in user
+router.put("/current", jwtVerify, async (req: Request, res: Response) : Promise<any>=>{
+  // userName can not be changed
+  delete req.body.user.userName
 
+  req.currentUser.set({
+    ...req.body.user
+  })
+  try {
+    await req.currentUser.save()    
+
+    res.json({
+      status: 'success',
+      message: 'User successfully updated'
+    })
+  } catch (error: any) {
+    res.status(400).json({
+      status: 'error',
+      message: error.message
+    })
+  }
+
+  
 
 })
 
