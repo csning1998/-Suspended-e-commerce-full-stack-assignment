@@ -37,12 +37,12 @@ User.init(
     {
         userId: {
             type: DataTypes.STRING,
-            allowNull: true,
+            allowNull: false,
             unique: true,
         },
         userEmail: {
             type: DataTypes.STRING,
-            allowNull: true,
+            allowNull: false,
             unique: true,
         },
         userFamilyName: {

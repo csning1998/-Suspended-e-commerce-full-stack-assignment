@@ -5,7 +5,7 @@ import { useRouter } from "vue-router";
 import LoginForm from "@/components/auth/LoginForm.vue";
 
 const loginFormData = ref<LoginFormData>({
-  userId: "root",
+  userId: "nephew.UncleRoger@noreply.gmail.com",
   userPassword: "root",
 });
 
@@ -29,6 +29,8 @@ async function login(): Promise<void> {
     // Save the token of login
     localStorage.setItem("isLoggedIn", "true");
     localStorage.setItem("token", res.data.token);
+    localStorage.setItem("UserID", res.data.user.userId);
+
     // Set the token into default header.
     request.defaults.headers.common["CommerceAuthToken"] = res.data.token;
 

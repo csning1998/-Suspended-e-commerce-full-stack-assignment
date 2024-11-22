@@ -1,6 +1,8 @@
 import {Request, Response, NextFunction} from "express";
 import jwt, {JwtPayload} from "jsonwebtoken";
 import PGModels from "../models";
+import {statusCodes} from "../lib/statusCodes";
+import User from "../models/user";
 
 const jwtVerify = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
   try {
@@ -9,23 +11,21 @@ const jwtVerify = async (req: Request, res: Response, next: NextFunction): Promi
 
     if (!process.env.JWT_SECRET) {
       console.error("JWT_SECRET is not defined in the environment variables.");
-      return res.status(500).send({
-        status: "error",
-        message: "(500) Server configuration error.",
+      return res.status(statusCodes.AUTHENTICATION.JWT_SECRET_NOT_DEFINED.code).send({
+        ...statusCodes.AUTHENTICATION.JWT_SECRET_NOT_DEFINED,
       });
     }
 
     if (!token) {
-      return res.status(401).send({
-        status: 'error',
-        message: '(401) No token provided.'
-      })
+      return res.status(statusCodes.AUTHENTICATION.NO_TOKEN_PROVIDED.code).send({
+        ...statusCodes.AUTHENTICATION.NO_TOKEN_PROVIDED,
+      });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET) as JwtPayload;
 
     if(decoded.userId) {
-      const currentUser = await PGModels.User.findOne({
+      const currentUser: User | null = await PGModels.User.findOne({
         where: {
           userId: decoded.userId,
           // userName: decoded.userName
@@ -35,21 +35,21 @@ const jwtVerify = async (req: Request, res: Response, next: NextFunction): Promi
       if(currentUser) {
         req.currentUser = currentUser;
         next();
-      }else {
-        throw new Error('Can not found user');
+      } else {
+        return res.status(statusCodes.AUTHENTICATION.USER_NOT_FOUND.code).send({
+          ...statusCodes.AUTHENTICATION.USER_NOT_FOUND,
+        });
       }
     }
     else {
-      return res.status(401).send({
-        status: "error",
-        message: "(401) Invalid token.",
+      return res.status(statusCodes.AUTHENTICATION.INVALID_TOKEN.code).send({
+        ...statusCodes.AUTHENTICATION.INVALID_TOKEN,
       });
     }
   } catch (error) {
     console.error("JWT verification failed:", error);
-    return res.status(500).send({
-      status: 'error',
-      message: '(500) Failed to process inquiry.',
+    return res.status(statusCodes.AUTHENTICATION.JWT_VERIFICATION_FAILED.code).send({
+      ...statusCodes.AUTHENTICATION.JWT_VERIFICATION_FAILED,
     });
   }
 };

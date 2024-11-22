@@ -24,14 +24,14 @@ const editProfile = () => {
 const logout = () => {
   localStorage.removeItem("isLoggedIn");
   localStorage.removeItem("token");
+  localStorage.removeItem("UserID");
+
   window.dispatchEvent(new CustomEvent("userLoggedOut")); // Dispatch the event
   alert("You have been logged out.");
   router.push("/"); // Redirect to home or login after logout
 };
 
 // Get data from postgres
-
-
 </script>
 
 <template>

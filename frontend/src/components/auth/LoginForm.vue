@@ -14,7 +14,7 @@ defineProps<{
 
       <form class="form-body" @submit.prevent="onSubmit">
         <div class="form-field">
-          <label for="userName">userId</label>
+          <label for="userName">Enter your Email or user ID</label>
           <input
             id="userName"
             type="text"
