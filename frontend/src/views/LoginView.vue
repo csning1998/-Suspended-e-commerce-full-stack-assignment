@@ -5,7 +5,7 @@ import { useRouter } from "vue-router";
 import LoginForm from "@/components/auth/LoginForm.vue";
 
 const loginFormData = ref<LoginFormData>({
-  userName: "root",
+  userId: "root",
   userPassword: "root",
 });
 
@@ -22,7 +22,7 @@ const ajaxErrorHandler = (error: any) => {
 async function login(): Promise<void> {
   try {
     const res = await request.post("/users/login", {
-      userName: loginFormData.value.userName,
+      userId: loginFormData.value.userId,
       userPassword: loginFormData.value.userPassword,
     });
 

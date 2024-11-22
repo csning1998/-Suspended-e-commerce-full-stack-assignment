@@ -34,9 +34,10 @@ router.post("/register", async (req: Request, res: Response): Promise<any>=> {
     const hashedPassword: string = await bcrypt.hash(userPassword, saltRounds)
 
     const newUser = {
-      userId: userId,
-      userName: userName,
-      userEmail: userEmail,
+      ...req.body,
+      // userId: userId,
+      // userName: userName,
+      // userEmail: userEmail,
       userPassword: hashedPassword,
     }
 
@@ -59,12 +60,12 @@ router.post("/register", async (req: Request, res: Response): Promise<any>=> {
 
 router.post("/login", async (req: Request, res: Response): Promise<any> => {
 
-  const {userName, userPassword} = req.body;
-  console.log("Username in req.Body: \n", req.body.userName)
+  const {userId, userPassword} = req.body;
+  console.log("UserId in req.Body: \n", req.body.userId)
   console.log("Password in req.Body: \n", req.body.userPassword)
 
   try {
-    if (!userName || !userPassword){
+    if (!userId || !userPassword){
       res.status(500).send({
         status: 'error',
         message: '(409) Either username or password cannot be null.'
@@ -72,7 +73,7 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
     }
 
     const user: Model | null = await PGModels.User.findOne({
-      where: { userName: userName },
+      where: { userId: userId },
     });
 
     if (!user) {

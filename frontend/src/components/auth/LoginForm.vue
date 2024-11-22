@@ -14,11 +14,11 @@ defineProps<{
 
       <form class="form-body" @submit.prevent="onSubmit">
         <div class="form-field">
-          <label for="userName">Username</label>
+          <label for="userName">userId</label>
           <input
             id="userName"
             type="text"
-            v-model="loginFormData.userName"
+            v-model="loginFormData.userId"
             required
           />
         </div>

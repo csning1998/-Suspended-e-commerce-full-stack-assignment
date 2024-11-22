@@ -1,7 +1,7 @@
 /// <reference types="vite/client" />
 
 interface LoginFormData {
-  userName: string;
+  userId: string;
   userPassword: string;
 }
 
