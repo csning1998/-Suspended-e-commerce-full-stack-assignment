@@ -44,7 +44,7 @@ function navLinkHandler(link: NavLink) {
 <template>
   <header class="navbar">
     <div class="logo">
-      <a @click.prevent="router.push('/')"> E-Commerce WebApp</a>
+      <a href="/" @click.prevent="router.push('/')"> E-Commerce WebApp</a>
     </div>
     <nav>
       <a
@@ -56,8 +56,8 @@ function navLinkHandler(link: NavLink) {
         {{ link.text }}
       </a>
 
-      <a v-if="!isLoggedIn" @click.prevent="router.push('/login')">Login</a>
-      <a v-else @click.prevent="router.push('/profile')">Profile</a>
+      <a v-if="!isLoggedIn" href="/login" @click.prevent="router.push('/login')">Login</a>
+      <a v-else href="/profile" @click.prevent="router.push('/profile')">Profile</a>
     </nav>
   </header>
 </template>
