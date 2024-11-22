@@ -13,11 +13,11 @@ const props = defineProps<{
 
       <form class="form-body" @submit.prevent="onSubmit">
         <div class="form-field">
-          <label for="userEmail">User Id</label>
+          <label for="userId">User ID</label>
           <input
             id="userId"
             type="text"
-            v-model="registrationFormData.userEmail"
+            v-model="registrationFormData.userId"
             required
           />
         </div>
@@ -31,11 +31,18 @@ const props = defineProps<{
           />
         </div>
         <div class="form-field">
-          <label for="userEmail">User Name</label>
+          <label for="userEmail">Family Name</label>
           <input
-            id="userName"
+            id="userFamilyName"
             type="text"
-            v-model="registrationFormData.userName"
+            v-model="registrationFormData.userFamilyName"
+            required
+          />
+          <label for="userEmail">Given Name</label>
+          <input
+            id="userGivenName"
+            type="text"
+            v-model="registrationFormData.userGivenName"
             required
           />
         </div>
@@ -58,8 +65,9 @@ const props = defineProps<{
             required
           />
         </div>
-
-        <button class="form-button" type="submit">Register</button>
+        <div class="form-button-container">
+          <button class="form-button" type="submit">Register</button>
+        </div>
       </form>
       <p class="signup-link">
         Already Registered？

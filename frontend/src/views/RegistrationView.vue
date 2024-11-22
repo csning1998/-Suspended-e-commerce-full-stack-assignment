@@ -6,8 +6,9 @@ import RegisterForm from "@/components/auth/RegisterForm.vue";
 
 const registrationFormData = ref<RegistrationFormData>({
   userId: "root",
-  userEmail: "root@gmail.com",
-  userName: "root",
+  userEmail: "nephew.UncleRoger@noreply.gmail.com",
+  userFamilyName: "Uncle",
+  userGivenName: "Roger",
   userPassword: "root",
   confirmPassword: "root",
 });
@@ -27,14 +28,15 @@ async function register(): Promise<void> {
     const res = await request.post("/users/register", {
       userId: registrationFormData.value.userId,
       userEmail: registrationFormData.value.userEmail,
-      userName: registrationFormData.value.userName,
+      userFamilyName: registrationFormData.value.userFamilyName,
+      userGivenName: registrationFormData.value.userGivenName,
       userPassword: registrationFormData.value.userPassword,
       confirmPassword: registrationFormData.value.confirmPassword,
     });
 
-    // if (!res) {
-    //   throw new Error("User already exists");
-    // }
+    if (res.data.userPassword !== res.data.confirmPassword) {
+      alert("Unmatched password. Please examine your password.");
+    }
 
     await router.push("/login");
   } catch (error) {

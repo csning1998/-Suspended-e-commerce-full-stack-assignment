@@ -1,19 +1,19 @@
-import express, {Router, Request, Response, NextFunction, Express} from "express";
+import express, { Express, Router, Request, Response } from "express";
 import PGModels from "../models";
 import bcrypt from "bcrypt";
 import {Model} from "sequelize";
-import jwt, {JwtPayload} from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 import jwtVerify from "../lib/jwt-verify";
 import "dotenv/config";
 
 const router: Router = express.Router();
 // For Security
-const saltRounds = 10;
+const saltRounds: number = 10;
 const app: Express = express();
 
 router.post("/register", async (req: Request, res: Response): Promise<any>=> {
 
-  const existingUser  = false
+  const existingUser: boolean = false
   try {
     const {userId, userEmail, userName, userPassword, confirmPassword} = req.body;
     console.log("Body: \n", req.body)
@@ -139,14 +139,7 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
   }
 });
 
-interface CustomRequest extends Request {
-  body: {
-    userId?: string; // `userId` 和 `userName` 為選填屬性
-    userName?: string;
-  };
-}
-
-// Read current logged in user
+// Read current logged-in user
 router.get('/current', jwtVerify, async (req: Request, res: Response): Promise<any> => {
   try{
     return res.json({
@@ -164,7 +157,7 @@ router.get('/current', jwtVerify, async (req: Request, res: Response): Promise<a
   }
 });
 
-// Update current logged in user
+// Update current logged-in user
 router.put("/current", jwtVerify, async (req: Request, res: Response) : Promise<any>=>{
   // userName can not be changed
   delete req.body.user.userName
@@ -185,9 +178,6 @@ router.put("/current", jwtVerify, async (req: Request, res: Response) : Promise<
       message: error.message
     })
   }
-
-  
-
 })
 
 export default router

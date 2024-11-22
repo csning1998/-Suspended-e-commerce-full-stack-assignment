@@ -49,10 +49,23 @@ An implementation of the E-Commerce Web Application Template using Vue3 with Com
 4. **Then you can execute the following command to enter the container**
     
    ```sh
-    docker exec -it {target-node-container-id} sh
-    ```
+   docker exec -it {target-node-container-id} sh
+   ```
    
-    If the indicator of the terminal turns to `/app #` or similar, you can install the packages using `npm install {package-name}`.
+   If the indicator of the terminal turns to `/app #` or similar, you can install the packages using `npm install {package-name}`.
+
+   You can use the following command th access Postgres database by modifying the following code:
+   
+   ```angular2html
+   docker exec -it {container-id} psql -U {POSTGRES_USER} {POSTGRES_DB} 
+   ```
+   
+   then you can type password to access the database.
+
+   For the default setting given in `backend/src/models/user.ts` and `.env-sample` files:
+   ```bash
+   docker exec -it 92b4e6d40b9b psql -U e-commerce-dev e-commerce
+   ```
 
 ## Usage
 
