@@ -2,10 +2,9 @@ import express, { Router, Request, Response } from "express";
 import PGModels from "../models";
 import bcrypt from "bcrypt";
 import {Model} from "sequelize";
-import jwtVerify from "../lib/jwt-verify";
+import * as JWTToken from "../lib/jwt-token";
 import "dotenv/config";
 import { statusCodes } from "../lib/statusCodes";
-import jwt from "jsonwebtoken";
 
 const router: Router = express.Router();
 // For Security
@@ -15,10 +14,10 @@ router.post("/register", async (req: Request, res: Response): Promise<any>=> {
 
   // const isExistingUser: boolean = false
   try {
-    const { userId, userEmail, userName, userPassword, confirmPassword } = req.body;
+    const { userId, userEmail, userPassword, confirmPassword } = req.body;
     console.log("Body: \n", req.body)
 
-    if (!userId || !userPassword || !userName || !userPassword) {
+    if (!userId || !userPassword || !userPassword) {
       res.status(statusCodes.LOGIN.USERNAME_OR_PASSWORD_NULL.code).send({
         ...statusCodes.LOGIN.USERNAME_OR_PASSWORD_NULL,
       })
@@ -103,33 +102,9 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
       });
     }
 
-    /*
-     * In the jsonwebtoken package, the function definition for jwt.sign looks like this (simplified version):
-        * sign(payload: string | object | Buffer, secretOrPrivateKey: Secret, options?: SignOptions): string;
-        * sign(payload: string | object | Buffer, secretOrPrivateKey: null, options: { algorithm: "none" }): string;
-     * When the value of process.env.JWT_SECRET is undefined:
-        * TypeScript cannot treat undefined as a valid Secret.
-        * It also cannot treat undefined as the null conforming to the second overload. Therefore, neither overload
-           matches, resulting in a "No overload matches this call" error.
-     * Adding an if statement allows the TypeScript compiler to ensure that when you execute jwt.sign,
-        process.env.JWT_SECRET is always a valid string (or other type conforming to Secret).
-     * */
-
-    // Ensure JWT_SECRET exists
-    if (!process.env.JWT_SECRET) {
-      console.error("JWT_SECRET is not defined in the environment variables.");
-      return res.status(statusCodes.LOGIN.SERVER_CONFIGURATION_ERROR.code).send({
-        ...statusCodes.LOGIN.SERVER_CONFIGURATION_ERROR,
-      });
-    }
-
     const actualUserId: string = isEmail ? (user.get("userId") as string) : userId;
 
-    const token: string = jwt.sign({
-      userId: actualUserId
-    }, process.env.JWT_SECRET, {
-      expiresIn: "12h"
-    })
+    const token = JWTToken.create({userId: actualUserId})
 
     res.status(statusCodes.LOGIN.SUCCESS.code).send({
       ...statusCodes.LOGIN.SUCCESS,
@@ -139,32 +114,39 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
 
   } catch (err) {
     console.error(err);
-    res.status(statusCodes.BACKEND_LOGIC.code).send({
+    res.status(statusCodes.BACKEND_LOGIC.code).json({
       ...statusCodes.BACKEND_LOGIC,
     });
   }
 });
 
-// Read current logged-in user
-router.get('/current', jwtVerify, async (req: Request, res: Response): Promise<any> => {
-  try{
-    return res.send(statusCodes.SESSION.RETRIEVED_SESSION.code).send({
-      payload: req.currentUser,
-      ...statusCodes.SESSION.RETRIEVED_SESSION
+var HTTPJsonResponse = function(res: Response, status: any, payload: any){
+    return res.status(status.code).json({
+      payload,
+      ...status
     });
+}
 
+
+
+router
+.use([
+  JWTToken.verity
+])
+.route('/current')
+.get(async (req: Request, res: Response) : Promise<any> => {
+  try{
+    return HTTPJsonResponse(res, statusCodes.SESSION.RETRIEVED_SESSION, req.currentUser)
   } catch (error) {
     console.error("Error while processing session route:", error);
     return res.status(statusCodes.SESSION.INQUIRY_FAILED.code).send({
       ...statusCodes.SESSION.INQUIRY_FAILED,
     });
   }
-});
-
-// Update current logged-in user
-router.put("/current", jwtVerify, async (req: Request, res: Response) : Promise<any>=>{
-  // userName can not be changed
-  delete req.body.user.userName
+})
+.put(async (req: Request, res: Response) : Promise<any> =>{
+  // userId can not be changed
+  delete req.body.user.userId
 
   req.currentUser.set({
     ...req.body.user

@@ -1,6 +1,4 @@
 import express, {Express, Request, Response} from "express";
-import PGModels from "../models";
-import jwtVerify from "./users";
 
 const router = express.Router();
 const app: Express = express();
