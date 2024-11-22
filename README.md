@@ -52,11 +52,11 @@ An implementation of the E-Commerce Web Application Template using Vue3 with Com
    docker exec -it {target-node-container-id} sh
    ```
    
-   If the indicator of the terminal turns to `/app #` or similar, you can install the packages using `npm install {package-name}`.
+   If the indicator of the terminal turns to `/application #` or similar, you can install the packages using `npm install {package-name}`.
 
    You can use the following command th access Postgres database by modifying the following code:
    
-   ```angular2html
+   ```bash
    docker exec -it {container-id} psql -U {POSTGRES_USER} {POSTGRES_DB} 
    ```
    
@@ -66,22 +66,3 @@ An implementation of the E-Commerce Web Application Template using Vue3 with Com
    ```bash
    docker exec -it 92b4e6d40b9b psql -U e-commerce-dev e-commerce
    ```
-
-## Usage
-
----
-1. **Open the Game**
-
-   Navigate to `http://127.0.0.1:8080/index.html` in your web browser.
-
-2. **Select Difficulty**
-
-   Choose a difficulty level from the home page:
-
-    - **Easy**
-    - **Hard**
-    - **Asian**
-
-3. **Play the Game**
-
-   Use the left and right arrow keys to move the paddle and prevent the ball from falling off the screen. Break all the bricks to win the game.
