@@ -32,7 +32,11 @@ async function register(): Promise<void> {
       confirmPassword: registrationFormData.value.confirmPassword,
     });
 
-    router.push("/login");
+    // if (!res) {
+    //   throw new Error("User already exists");
+    // }
+
+    await router.push("/login");
   } catch (error) {
     ajaxErrorHandler(error);
   }
