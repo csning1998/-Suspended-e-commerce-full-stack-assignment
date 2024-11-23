@@ -25,6 +25,12 @@ request.interceptors.response.use((response: any): any => {
     return response
   }
 
+}, function(error: any){
+  if(error.response.data.payload){
+    alert(error.response.data.payload)
+  }
+
+  return Promise.reject(error)
 })
 
 

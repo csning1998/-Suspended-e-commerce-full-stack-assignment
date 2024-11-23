@@ -171,10 +171,14 @@ router
       //   })
       // })
 
-      await PGModels.Address.create({
-        userId: req.currentUser.userId,
-        address: req.body.address
-      })
+
+      if(req.body.address && req.body.address.length > 0){
+        await PGModels.Address.create({
+          userId: req.currentUser.userId,
+          address: req.body.address
+        })
+      }
+
 
 
       await req.currentUser.save()
@@ -183,11 +187,8 @@ router
         ...statusCodes.USER_UPDATE.SUCCESS
       })
     } catch (error: any) {
-
       console.error(error)
-      res.status(statusCodes.USER_UPDATE.FAILED.code).send({
-        ...statusCodes.USER_UPDATE.FAILED,
-      })
+      return HTTPJsonResponse(res, statusCodes.USER_UPDATE.FAILED, error.message)
     }
   })
 

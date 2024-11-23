@@ -39,7 +39,7 @@ const saveProfile = async () => {
     await request.put("/users/current", { user: currentUser, address: newAddress})
     alert("Profile saved!");
   } catch (error: any) {
-    alert(error.response.data.message);
+    // alert(error.response.data.message);
   }
 };
 
