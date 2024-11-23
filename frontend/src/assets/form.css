@@ -48,7 +48,7 @@
     flex-direction: column;
 }
 
-.form-item {
+.form-field {
     width:100%;
     display: flex;
     align-items: center;
@@ -56,19 +56,19 @@
     margin-bottom: 10px;
 }
 
-.form-item label {
+.form-field label {
     font-weight: bold;
     width: 150px;
 }
 
-.form-item span {
+.form-field span {
     flex: 1;
     text-align: right;
     line-height: 1.5;
     padding: 5px 0;
 }
 
-.form-item input [type="text"] .form-item input [type="date"] {
+.form-field input [type="text"] input [type="date"] {
     flex: 1;
     padding: 5px 10px;
     border: none;
@@ -77,7 +77,7 @@
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
-.form-item input:focus {
+.form-field input:focus {
     border: 1px solid #1e88e5;
 }
 

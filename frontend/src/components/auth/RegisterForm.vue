@@ -14,26 +14,22 @@ const props = defineProps<{
 
         <form class="form-body" @submit.prevent="onSubmit">
           <div class="form-field">
-            <div class="form-item">
-              <label for="userId">User ID</label>
-              <input
-                id="userId"
-                type="text"
-                v-model="registrationFormData.userId"
-                required
-              />
-            </div>
+            <label for="userId">User ID</label>
+            <input
+              id="userId"
+              type="text"
+              v-model="registrationFormData.userId"
+              required
+            />
           </div>
           <div class="form-field">
-            <div class="form-item">
-              <label for="userEmail">Email</label>
-              <input
-                id="userEmail"
-                type="email"
-                v-model="registrationFormData.userEmail"
-                required
-              />
-            </div>
+            <label for="userEmail">Email</label>
+            <input
+              id="userEmail"
+              type="email"
+              v-model="registrationFormData.userEmail"
+              required
+            />
           </div>
           <!-- <div class="form-field">
             <div class="form-item">
@@ -56,30 +52,22 @@ const props = defineProps<{
             </div>
           </div> -->
           <div class="form-field">
-            <div class="form-item">
-              <label for="userPassword"
-                >Password</label
-              >
-              <input
-                id="userPassword"
-                type="password"
-                v-model="registrationFormData.userPassword"
-                required
-              />
-            </div>
+            <label for="userPassword">Password</label>
+            <input
+              id="userPassword"
+              type="password"
+              v-model="registrationFormData.userPassword"
+              required
+            />
           </div>
           <div class="form-field">
-            <div class="form-item">
-              <label class="label" for="confirmPassword"
-                >Confirm Password</label
-              >
-              <input
-                id="confirmPassword"
-                type="password"
-                v-model="registrationFormData.confirmPassword"
-                required
-              />
-            </div>
+            <label class="label" for="confirmPassword">Confirm Password</label>
+            <input
+              id="confirmPassword"
+              type="password"
+              v-model="registrationFormData.confirmPassword"
+              required
+            />
           </div>
 
           <!-- <div class="form-field">
