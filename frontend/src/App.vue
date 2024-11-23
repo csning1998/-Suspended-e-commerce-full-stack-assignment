@@ -5,7 +5,7 @@ import HomeView from "@/views/HomeView.vue";
 </script>
 
 <template>
-  <div id="app">
+  <div>
     <!-- Navbar Component -->
     <Navbar />
 
@@ -17,4 +17,5 @@ import HomeView from "@/views/HomeView.vue";
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

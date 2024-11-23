@@ -19,7 +19,7 @@ const navLinks = ref<NavLink[]>([
 // To-do: This should be further implemented by other controller or handler instead of hardcoding.
 const isLoggedIn = ref(localStorage.getItem("isLoggedIn") === "true"); // Use ref
 
-console.log(isLoggedIn.value);
+console.log("Is the user logged in? ", isLoggedIn.value);
 
 const router = useRouter();
 
@@ -56,8 +56,12 @@ function navLinkHandler(link: NavLink) {
         {{ link.text }}
       </a>
 
-      <a v-if="!isLoggedIn" href="/login" @click.prevent="router.push('/login')">Login</a>
-      <a v-else href="/profile" @click.prevent="router.push('/profile')">Profile</a>
+      <a v-if="!isLoggedIn" href="/login" @click.prevent="router.push('/login')"
+        >Login</a
+      >
+      <a v-else href="/profile" @click.prevent="router.push('/profile')"
+        >Profile</a
+      >
     </nav>
   </header>
 </template>

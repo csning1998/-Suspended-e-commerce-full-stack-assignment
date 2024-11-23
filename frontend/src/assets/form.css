@@ -50,15 +50,16 @@
 
 .form-field {
     width:100%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
+    /* display: flex; */
+    /* align-items: center;
+    justify-content: space-between; */
+    margin-bottom: 12px;
 }
 
 .form-field label {
     font-weight: bold;
-    width: 150px;
+    width: 100%;
+    /* width: 150px; */
 }
 
 .form-field span {
@@ -81,10 +82,7 @@
     border: 1px solid #1e88e5;
 }
 
-.form-field {
-    margin-bottom: 12px;
-    display: flex;
-}
+
 
 .form-field label {
     display: block;
@@ -149,3 +147,14 @@
 .form-button:hover:not(:disabled) {
     background-color: #1565c0;
 }
+
+
+
+/* .vertical .form-field {
+    display: block;
+}
+
+.vertical label {
+    display: block;
+    width: 100%;
+} */
