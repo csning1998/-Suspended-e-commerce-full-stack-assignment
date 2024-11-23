@@ -29,15 +29,16 @@ app.use(bodyParser.json())
 // for routes
 app.use('/users', userRoutes);
 
-
-// Import route handlers here
-// import sessionRoutes from "./routes/session"
-
+/* Import route handlers here */
 
 // Root route for basic health check
 app.get("/", (req: Request, res: Response): void => {
   res.send("Hello World!");
 });
+
+// ERROR HANDLER MUST BE THE FINAL ROUTE
+require('./errorHandler')(app);
+
 
 // Main function, only run once at the application startup.
 (async (): Promise<void> => {

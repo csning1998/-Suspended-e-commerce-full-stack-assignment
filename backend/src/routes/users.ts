@@ -1,4 +1,4 @@
-import express, { Router, Request, Response } from "express";
+import express, { Router, Request, Response, NextFunction } from "express";
 import PGModels from "../models";
 import bcrypt from "bcrypt";
 import { Model } from "sequelize";
@@ -127,6 +127,12 @@ const HTTPJsonResponse = function (res: Response, status: any, payload: any) {
   });
 };
 
+const HTTPJsonUserErrorResponse = function(res: Response, error: Error, statusCode = 400){
+  return res.status(statusCode).json({
+    message: error.message,
+  });
+}
+
 
 router
   .use([JWTToken.verity])
@@ -151,7 +157,7 @@ router
       });
     }
   })
-  .put(async (req: Request, res: Response): Promise<any> => {
+  .put(async (req: Request, res: Response, next : NextFunction): Promise<any> => {
     // userId can not be changed
     delete req.body.user.userId
 
@@ -161,25 +167,13 @@ router
       ...req.body.user
     })
 
-
-
     try {
-      // req.body.address.forEach( async(_address: string) => {
+      // if(req.body.address && req.body.address.length > 0){
       //   await PGModels.Address.create({
       //     userId: req.currentUser.userId,
       //     address: req.body.address
       //   })
-      // })
-
-
-      if(req.body.address && req.body.address.length > 0){
-        await PGModels.Address.create({
-          userId: req.currentUser.userId,
-          address: req.body.address
-        })
-      }
-
-
+      // }
 
       await req.currentUser.save()
 
@@ -187,8 +181,8 @@ router
         ...statusCodes.USER_UPDATE.SUCCESS
       })
     } catch (error: any) {
-      console.error(error)
-      return HTTPJsonResponse(res, statusCodes.USER_UPDATE.FAILED, error.message)
+      error.status = 400
+      return next(error)
     }
   })
 
