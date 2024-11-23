@@ -1,19 +1,36 @@
 .form-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    width: 600px;
     margin: 20px auto;
     padding: 20px;
-    min-height: 100vh;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
     background-color: var(--color-background);
-    transition: background-color 0.3s;
+    color: var(--color-text);
+}
+
+.form-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.form-header h1 {
+    font-size: 1.8rem;
+    font-weight: bold;
+}
+
+.form-section {
+    margin-bottom: 20px;
+    padding-bottom: 10px;
 }
 
 .form-card {
     background-color: var(--color-background-soft);
     padding: 32px;
-    width: 600px;
-
+    /* width: 600px; */
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     transition: background-color 0.3s, box-shadow 0.3s;
@@ -31,13 +48,47 @@
     flex-direction: column;
 }
 
+.form-item {
+    width:100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.form-item label {
+    font-weight: bold;
+    width: 150px;
+}
+
+.form-item span {
+    flex: 1;
+    text-align: right;
+    line-height: 1.5;
+    padding: 5px 0;
+}
+
+.form-item input [type="text"] .form-item input [type="date"] {
+    flex: 1;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;
+    outline: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.form-item input:focus {
+    border: 1px solid #1e88e5;
+}
+
 .form-field {
-    margin-bottom: 16px;
+    margin-bottom: 12px;
+    display: flex;
 }
 
 .form-field label {
     display: block;
-    margin-bottom: 8px;
+    margin: 8px 8px 8px 0;
     font-size: 14px;
     color: var(--vt-c-text-light-2);
     transition: color 0.3s;
@@ -47,7 +98,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     width: 100%;
 }
 
@@ -76,7 +127,8 @@
     background-color: var(--vt-c-indigo);
     color: var(--vt-c-white);
     padding: 12px 24px;
-    width: 288px;
+    margin:0;
+    /* width: 288px; */
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -84,7 +136,16 @@
     transition: background-color 0.3s, box-shadow 0.3s;
 }
 
+.form-button:disabled {
+    background-color: #424242;
+    cursor: not-allowed;
+}
+
 .form-button:hover {
     background-color: var(--vt-c-black-soft);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.form-button:hover:not(:disabled) {
+    background-color: #1565c0;
 }
