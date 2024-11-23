@@ -133,7 +133,17 @@ router
   .route('/current')
   .get(async (req: Request, res: Response): Promise<any> => {
     try {
-      return HTTPJsonResponse(res, statusCodes.SESSION.RETRIEVED_SESSION, req.currentUser)
+
+      const addresses = await PGModels.Address.findAll({
+        where:{
+          userId: req.currentUser.userId,
+        }
+      })
+
+      return HTTPJsonResponse(res, statusCodes.SESSION.RETRIEVED_SESSION, {
+        ...req.currentUser.toJSON(),
+        userAddress: addresses
+      })
     } catch (error) {
       console.error("Error while processing session route:", error);
       return res.status(statusCodes.SESSION.INQUIRY_FAILED.code).send({
@@ -150,13 +160,31 @@ router
     req.currentUser.set({
       ...req.body.user
     })
+
+
+
     try {
+      // req.body.address.forEach( async(_address: string) => {
+      //   await PGModels.Address.create({
+      //     userId: req.currentUser.userId,
+      //     address: req.body.address
+      //   })
+      // })
+
+      await PGModels.Address.create({
+        userId: req.currentUser.userId,
+        address: req.body.address
+      })
+
+
       await req.currentUser.save()
 
       res.status(statusCodes.USER_UPDATE.SUCCESS.code).send({
         ...statusCodes.USER_UPDATE.SUCCESS
       })
     } catch (error: any) {
+
+      console.error(error)
       res.status(statusCodes.USER_UPDATE.FAILED.code).send({
         ...statusCodes.USER_UPDATE.FAILED,
       })

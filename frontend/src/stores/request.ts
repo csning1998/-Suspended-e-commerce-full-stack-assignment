@@ -1,15 +1,31 @@
-import axios, { type AxiosInstance } from "axios";
-
-axios.defaults.headers.common["CommerceAuthToken"] =
-  localStorage.getItem("token");
+import axios from "axios";
 
 const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
 console.log("baseURL", baseURL);
 
-const request: AxiosInstance = axios.create({
+const request = axios.create({
   baseURL,
 });
-// request.interceptors.request.use()
+
+// We can use interceptor to change the request config before perform the request
+
+request.interceptors.request.use((config: any): any => {
+  config.headers.token = localStorage.getItem("token");
+  return config
+})
+
+// We also can use interceptor to modify the response after the request finished.
+
+request.interceptors.response.use((response: any): any => {
+
+  if (response.data && response.data.payload) {
+    return response.data.payload
+  } else {
+    return response
+  }
+
+})
+
 
 export default request;

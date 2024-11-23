@@ -26,26 +26,17 @@ let currentUser = reactive({
   userGender: "",
   userEmail: "",
   userPhoneNumber: "",
-  userAddress: "",
+  userAddress: [],
   createdAt: 0,
 });
+
+let newAddress = ''
 
 const originalUser = reactive({ ...currentUser });
 
 const saveProfile = async () => {
   try {
-    await request.put(
-      "/users/current",
-      {
-        user: currentUser,
-      },
-      {
-        headers: {
-          token: localStorage.getItem("token"),
-        },
-      },
-    );
-
+    await request.put("/users/current", { user: currentUser, address: newAddress})
     alert("Profile saved!");
   } catch (error: any) {
     alert(error.response.data.message);
@@ -64,18 +55,12 @@ const logout = () => {
 
 async function fetchUserInfo() {
   try {
-    const res = (
-      await request.get("/users/current", {
-        headers: {
-          token: localStorage.getItem("token"),
-        },
-      })
-    ).data.payload;
+    const res = await request.get("/users/current")
 
     Object.assign(currentUser, res);
     Object.assign(originalUser, res);
 
-    console.log("currentUser.value", currentUser);
+    console.log("currentUser.userAddress", currentUser.userAddress);
 
     watch(currentUser, function(n){
       if(n.id != 0) {
@@ -90,6 +75,7 @@ onMounted(() => {
   // toggleEditMode();
 });
 </script>
+
 
 <template>
   <div class="form-container">
@@ -190,13 +176,20 @@ onMounted(() => {
 
     <section class="form-card">
       <h2>Addresses</h2>
+
+      <label class="form-field label">Add new address :</label>
+      <input type="text" v-model="newAddress" />
+
       <div
-        v-for="address in currentUser.userAddress"
+        v-for="(address, index) in currentUser.userAddress"
         class="form-item address-item"
+        :key="index"
       >
         <!--        <label>Address {{ index + 1 }}:</label>-->
         <label class="form-field label">Address :</label>
-        <span class="form-item span">{{ address }}</span>
+        <span>{{ address['address'] }}</span>
+
+        <!-- <input type="text" v-model="address[index][address]" /> -->
       </div>
     </section>
 
@@ -237,12 +230,7 @@ onMounted(() => {
   margin-bottom: 10px;
 }
 
-.address-item span {
-  flex: 1;
-  word-break: break-word;
-  text-align: right;
-  color: var(--color-text);
-}
+
 
 h1,
 h2 {

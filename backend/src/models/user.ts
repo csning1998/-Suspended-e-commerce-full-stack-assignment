@@ -23,8 +23,9 @@ import {
 } from "sequelize";
 
 import sequelize from "../db";
+import Address from './address'
 
-export default class User extends Model {
+class User extends Model {
     // https://stackoverflow.com/questions/27972271/sequelize-dont-return-password
     toJSON(): Object {
         let values = Object.assign({}, this.get());
@@ -59,10 +60,10 @@ User.init(
             type: DataTypes.STRING,
             allowNull: false,
         },
-        userAddress: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
+        // userAddress: {
+        //     type: DataTypes.STRING,
+        //     allowNull: true,
+        // },
         userPhoneNumber: {
             type: DataTypes.INTEGER,
             allowNull: true,
@@ -91,3 +92,6 @@ User.init(
     }
 );
 // https://stackoverflow.com/questions/34258938/sequelize-classmethods-vs-instancemethods
+
+User.hasMany(Address)
+export default User
