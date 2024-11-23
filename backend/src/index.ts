@@ -42,10 +42,10 @@ app.get("/", (req: Request, res: Response): void => {
 // Main function, only run once at the application startup.
 (async (): Promise<void> => {
 
-/*
-* Add Schemas here. https://stackoverflow.com/questions/42497254/sequelize-schema-for-postgresql-how-to-accurately-define-a-schema-in-a-model
-* Create schemas if not already present in the database
-* */
+  /*
+  * Add Schemas here. https://stackoverflow.com/questions/42497254/sequelize-schema-for-postgresql-how-to-accurately-define-a-schema-in-a-model
+  * Create schemas if not already present in the database
+  * */
   try {
     await sequelize.createSchema('user_management', { logging: false });
     // await sequelize.createSchema('some_schema', { logging: false });

@@ -1,7 +1,7 @@
 import express, { Router, Request, Response } from "express";
 import PGModels from "../models";
 import bcrypt from "bcrypt";
-import {Model} from "sequelize";
+import { Model } from "sequelize";
 import * as JWTToken from "../lib/jwt-token";
 import "dotenv/config";
 import { statusCodes } from "../lib/statusCodes";
@@ -10,7 +10,7 @@ const router: Router = express.Router();
 // For Security
 const saltRounds: number = 10;
 
-router.post("/register", async (req: Request, res: Response): Promise<any>=> {
+router.post("/register", async (req: Request, res: Response): Promise<any> => {
 
   // const isExistingUser: boolean = false
   try {
@@ -23,7 +23,7 @@ router.post("/register", async (req: Request, res: Response): Promise<any>=> {
       })
     }
 
-    if (userPassword != confirmPassword){
+    if (userPassword != confirmPassword) {
       res.status(statusCodes.REGISTRATION.PASSWORD_MISMATCH.code).send({
         ...statusCodes.REGISTRATION.PASSWORD_MISMATCH
       })
@@ -33,7 +33,7 @@ router.post("/register", async (req: Request, res: Response): Promise<any>=> {
       where: { userEmail: userEmail },
     });
 
-    if (isExistingUser){
+    if (isExistingUser) {
       res.status(statusCodes.REGISTRATION.EMAIL_ALREADY_REGISTERED.code).send({
         ...statusCodes.REGISTRATION.EMAIL_ALREADY_REGISTERED,
       })
@@ -68,12 +68,12 @@ router.post("/register", async (req: Request, res: Response): Promise<any>=> {
 
 router.post("/login", async (req: Request, res: Response): Promise<any> => {
 
-  const { userId, userPassword} = req.body;
+  const { userId, userPassword } = req.body;
   console.log("userId||userEmail in req.Body: \n", req.body.userId)
   console.log("userPassword in req.Body: \n", req.body.userPassword)
 
   try {
-    if (!userId || !userPassword){
+    if (!userId || !userPassword) {
       res.status(statusCodes.LOGIN.USERNAME_OR_PASSWORD_NULL.code).send({
         ...statusCodes.LOGIN.USERNAME_OR_PASSWORD_NULL,
       })
@@ -104,7 +104,7 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
 
     const actualUserId: string = isEmail ? (user.get("userId") as string) : userId;
 
-    const token = JWTToken.create({userId: actualUserId})
+    const token = JWTToken.create({ userId: actualUserId })
 
     res.status(statusCodes.LOGIN.SUCCESS.code).send({
       ...statusCodes.LOGIN.SUCCESS,
@@ -120,48 +120,47 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
   }
 });
 
-var HTTPJsonResponse = function(res: Response, status: any, payload: any){
-    return res.status(status.code).json({
-      payload,
-      ...status
-    });
-}
-
+const HTTPJsonResponse = function (res: Response, status: any, payload: any) {
+  return res.status(status.code).json({
+    payload,
+    ...status
+  });
+};
 
 
 router
-.use([
-  JWTToken.verity
-])
-.route('/current')
-.get(async (req: Request, res: Response) : Promise<any> => {
-  try{
-    return HTTPJsonResponse(res, statusCodes.SESSION.RETRIEVED_SESSION, req.currentUser)
-  } catch (error) {
-    console.error("Error while processing session route:", error);
-    return res.status(statusCodes.SESSION.INQUIRY_FAILED.code).send({
-      ...statusCodes.SESSION.INQUIRY_FAILED,
-    });
-  }
-})
-.put(async (req: Request, res: Response) : Promise<any> =>{
-  // userId can not be changed
-  delete req.body.user.userId
-
-  req.currentUser.set({
-    ...req.body.user
+  .use([JWTToken.verity])
+  .route('/current')
+  .get(async (req: Request, res: Response): Promise<any> => {
+    try {
+      return HTTPJsonResponse(res, statusCodes.SESSION.RETRIEVED_SESSION, req.currentUser)
+    } catch (error) {
+      console.error("Error while processing session route:", error);
+      return res.status(statusCodes.SESSION.INQUIRY_FAILED.code).send({
+        ...statusCodes.SESSION.INQUIRY_FAILED,
+      });
+    }
   })
-  try {
-    await req.currentUser.save()
+  .put(async (req: Request, res: Response): Promise<any> => {
+    // userId can not be changed
+    delete req.body.user.userId
 
-    res.status(statusCodes.USER_UPDATE.SUCCESS.code).send({
-      ...statusCodes.USER_UPDATE.SUCCESS
+    console.log("req.body.user", req.body.user);
+
+    req.currentUser.set({
+      ...req.body.user
     })
-  } catch (error: any) {
-    res.status(statusCodes.USER_UPDATE.FAILED.code).send({
-      ...statusCodes.USER_UPDATE.FAILED,
-    })
-  }
-})
+    try {
+      await req.currentUser.save()
+
+      res.status(statusCodes.USER_UPDATE.SUCCESS.code).send({
+        ...statusCodes.USER_UPDATE.SUCCESS
+      })
+    } catch (error: any) {
+      res.status(statusCodes.USER_UPDATE.FAILED.code).send({
+        ...statusCodes.USER_UPDATE.FAILED,
+      })
+    }
+  })
 
 export default router

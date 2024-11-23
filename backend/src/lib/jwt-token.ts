@@ -1,7 +1,7 @@
-import {Request, Response, NextFunction} from "express";
-import jwt, {Secret, JwtPayload} from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+import jwt, { Secret, JwtPayload } from "jsonwebtoken";
 import PGModels from "../models";
-import {statusCodes} from "./statusCodes";
+import { statusCodes } from "./statusCodes";
 import User from "../models/user";
 
 
@@ -43,7 +43,7 @@ export const verity = async (req: Request, res: Response, next: NextFunction): P
 
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
 
-    if(decoded.userId) {
+    if (decoded.userId) {
       const currentUser: User | null = await PGModels.User.findOne({
         where: {
           userId: decoded.userId,
@@ -51,7 +51,7 @@ export const verity = async (req: Request, res: Response, next: NextFunction): P
         }
       });
 
-      if(currentUser) {
+      if (currentUser) {
         req.currentUser = currentUser;
         next();
       } else {
@@ -75,10 +75,10 @@ export const verity = async (req: Request, res: Response, next: NextFunction): P
 
 // export verity
 
-export const create = function(payload: any): String {
-    const token: string = jwt.sign(payload, SECRET_KEY, {
-      expiresIn: "12h"
-    })
+export const create = function (payload: any): String {
+  const token: string = jwt.sign(payload, SECRET_KEY, {
+    expiresIn: "12h"
+  })
 
-    return token
+  return token
 }

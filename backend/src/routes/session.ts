@@ -1,4 +1,4 @@
-import express, {Express, Request, Response} from "express";
+import express, { Express, Request, Response } from "express";
 
 const router = express.Router();
 const app: Express = express();
