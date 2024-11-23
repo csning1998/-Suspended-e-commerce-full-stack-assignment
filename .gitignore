@@ -129,9 +129,10 @@ dist
 .yarn/install-state.gz
 .pnp.*
 
-
+# Databases
 postgres-data
 postgres
+mongo
 
-frontend/vite.config.ts.timestamp-1732163285504-add4955e6a6c4.mjs
-.idea/dataSources.xml
+frontend/vite.config.ts*
+.idea

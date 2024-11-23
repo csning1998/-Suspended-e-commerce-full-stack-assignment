@@ -29,3 +29,13 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-e-commerce-password}
     ports:
       - 5433:5432
+  mongo:
+    image: mongo:8.0.3
+    volumes:
+      - ./mongo:/data/db
+    ports:
+      - "27017:27017"
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: 
+    #   MONGO_INITDB_ROOT_PASSWORD: 
+    #   MONGO_INITDB_DATABASE:
