@@ -1,63 +1,62 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import request from "@/stores/request";
 
 const router = useRouter();
+const GENDER_LIST = ["male", "female", "apache", "non-Binary"];
+const isEditing = ref(false);
+const hasChanges = ref(false);
 
-// const userId = localStorage.getItem("userId");
-// const userName = localStorage.getItem("userName");
+const toggleEditMode = (): void => {
+  isEditing.value = !isEditing.value;
+  if (!isEditing.value) {
+    Object.assign(currentUser, originalUser);
+  }
+};
 
-// const user = reactive({
-//   name: "C.S. Ning",
-//   birthday: "January 6, 1998",
-//   gender: "Male",
-//   email: "HelloWorld@noreply.gmail.com",
-//   phone: "(+886) 0987 654 321",
-//   addresses: ["Somewhere in Taiwan"],
-// });
 
-const GENDER_LIST = [
-  'male', 'female', 'apache'
-]
 
 let currentUser = reactive({
   id: 0,
   userId: "",
-  userName: "",
-  birthday: "",
+  userFamilyName: "",
+  userGivenName: "",
+  userBirthday: "",
   userGender: "",
   userEmail: "",
   userPhoneNumber: "",
-  addresses: [""],
+  userAddress: "",
   createdAt: 0,
 });
 
-const saveProfile = async () => {
-  // Add your logic to handle profile editing here.  This could involve:
-  // 1. Showing editable fields.
-  // 2. Making API calls to update the user data.
-  // 3. Updating the `user` reactive data objects.
+const originalUser = reactive({ ...currentUser });
 
+const saveProfile = async () => {
   try {
-    await request.put("/users/current", {
-        user: currentUser
-      }, {
-      headers: {
-        token: localStorage.getItem("token")
-      }
-    });
+    await request.put(
+      "/users/current",
+      {
+        user: currentUser,
+      },
+      {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      },
+    );
 
     alert("Profile saved!");
   } catch (error: any) {
     alert(error.response.data.message);
   }
-
 };
 
 const logout = () => {
   localStorage.removeItem("isLoggedIn");
   localStorage.removeItem("token");
+  localStorage.removeItem("UserID");
+
   window.dispatchEvent(new CustomEvent("userLoggedOut")); // Dispatch the event
   alert("You have been logged out.");
   router.push("/"); // Redirect to home or login after logout
@@ -65,26 +64,36 @@ const logout = () => {
 
 async function fetchUserInfo() {
   try {
-    const res = (await request.get("/users/current", {
-      headers: {
-        token: localStorage.getItem("token")
+    const res = (
+      await request.get("/users/current", {
+        headers: {
+          token: localStorage.getItem("token"),
+        },
+      })
+    ).data.payload;
+
+    Object.assign(currentUser, res);
+    Object.assign(originalUser, res);
+
+    console.log("currentUser.value", currentUser);
+
+    watch(currentUser, function(n){
+      if(n.id != 0) {
+        hasChanges.value = true;
       }
-    })).data.payload;
-
-    currentUser = Object.assign(currentUser, res)
-
-    console.log("currentUser.value", currentUser)
+    })
   } catch (err) {}
 }
 
 onMounted(() => {
-  fetchUserInfo()
-})
+  fetchUserInfo();
+  // toggleEditMode();
+});
 </script>
 
 <template>
-  <div class="profile-container">
-    <div class="profile-header">
+  <div class="form-container">
+    <div class="form-header">
       <h1>Your Profile</h1>
       <img
         class="profile-picture"
@@ -93,115 +102,146 @@ onMounted(() => {
       />
     </div>
 
-    <section class="profile-section">
-      <h2>Basic Info</h2>
-      <div class="profile-item">
-        <label>User ID:</label>>
-        <span>{{ currentUser.userId }}</span>
-      </div>
-      <div class="profile-item">
-        <label>Name:</label>
-        <input v-model="currentUser.userName" />
-        <!-- <span>{{ currentUser.name }}</span> -->
-      </div>
-      <div class="profile-item">
-        <label>Birthday:</label>
-        <span>{{ currentUser.birthday }}</span>
-      </div>
-      <div class="profile-item">
-        <label>Gender:</label>
-
-        <label v-for="(g, key) in GENDER_LIST" :key="key" :for="g">
+    <section class="form-section">
+      <div class="form-card">
+        <h2 class="form-title">Basic Info</h2>
+        <div class="form-field">
+          <label class="form-field label">User ID:</label>
+          <span class="form-item span">{{ currentUser.userId }}</span>
+        </div>
+        <div class="form-field">
+          <label class="form-field label">Family Name:</label>
+          <span class="span" v-if="!isEditing">{{
+            currentUser.userFamilyName
+          }}</span>
           <input
-            :id="g"
-            type="radio"
-            v-model="currentUser.userGender"
-            :value="g"
+            v-if="isEditing"
+            v-model="currentUser.userFamilyName"
           />
-          {{ g }}
-        </label>
-      </div>
-      <div class="profile-item">
-        <label>Registered At:</label>
-        <span>{{ currentUser.createdAt }}</span>
+          <!-- <span>{{ currentUser.name }}</span> -->
+        </div>
+        <div class="form-field">
+          <label class="form-field label">Given Name:</label>
+          <span class="form-item span" v-if="!isEditing">{{
+            currentUser.userGivenName
+          }}</span>
+          <input
+            class="form-field input"
+            v-if="isEditing"
+            v-model="currentUser.userGivenName"
+          />
+        </div>
+        <div class="form-field">
+          <label class="form-field label">Birthday:</label>
+          <span class="form-item span" v-if="!isEditing">{{
+            currentUser.userBirthday
+          }}</span>
+          <input
+            type="date"
+            class="form-field input"
+            v-if="isEditing"
+            v-model="currentUser.userBirthday"
+          />
+        </div>
+        <div class="form-field radiogroup">
+          <label class="form-field label">Gender:</label>
+          <span class="form-item span" v-if="!isEditing">{{
+            currentUser.userGender
+          }}</span>
+          <div v-if="isEditing">
+            <label v-for="(g, key) in GENDER_LIST" :key="key" :for="g">
+              <input
+                :id="g"
+                type="radio"
+                v-model="currentUser.userGender"
+                :value="g"
+              />
+              {{ g }}
+            </label>
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Registered At:</label>
+          <span class="form-item span">{{ currentUser.createdAt }}</span>
+        </div>
       </div>
     </section>
 
-    <section class="profile-section">
+    <section class="form-card">
       <h2>Contact Info</h2>
-      <div class="profile-item">
-        <label>Email:</label>
-        <span>{{ currentUser.userEmail }}</span>
+      <div class="form-field">
+        <label class="form-field label">Email:</label>
+        <span class="form-item span">{{ currentUser.userEmail }}</span>
       </div>
-      <div class="profile-item">
-        <label>Phone:</label>
-        <input type="text" v-model="currentUser.userPhoneNumber" />
+      <div class="form-field">
+        <label class="form-field label">Phone:</label>
+        <span class="form-item span" v-if="!isEditing">{{
+          currentUser.userPhoneNumber
+        }}</span>
+        <input
+          type="text"
+          class="form-field"
+          v-if="isEditing"
+          v-model="currentUser.userPhoneNumber"
+        />
         <!-- <span>{{ currentUser.userPhoneNumber }}</span> -->
       </div>
     </section>
 
-    <section class="profile-section">
+    <section class="form-card">
       <h2>Addresses</h2>
       <div
-	v-for="(address, index) in currentUser.addresses"
-	:key="index"
-        class="profile-item address-item"
+        v-for="address in currentUser.userAddress"
+        class="form-item address-item"
       >
-        <label>Address {{ index + 1 }}:</label>
-        <span>{{ address }}</span>
+        <!--        <label>Address {{ index + 1 }}:</label>-->
+        <label class="form-field label">Address :</label>
+        <span class="form-item span">{{ address }}</span>
       </div>
     </section>
 
     <div class="form-button-container">
-      <button class="form-button" @click="saveProfile">Save Profile</button>
-      <button class="form-button" @click.prevent="logout">Logout</button>
+      <button class="form-button" @click="toggleEditMode">
+        {{ isEditing ? "Cancel" : "Edit" }}
+      </button>
+      <button
+        class="form-button"
+        v-if="isEditing"
+        @click="saveProfile"
+        :disabled="!hasChanges"
+      >
+        Save Profile
+      </button>
+      <button class="form-button" v-if="!isEditing" @click.prevent="logout">
+        Logout
+      </button>
     </div>
   </div>
 </template>
 
 <style scoped>
-.profile-container {
-  display: flex;
-  flex-direction: column;
-  width: 600px;
-  margin: 20px auto;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background-color: var(--color-background); /* Use theme color */
-  color: var(--color-text); /* Use theme color */
-}
-
-.profile-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 20px;
+.form-title {
+  text-align: left;
 }
 
 .profile-picture {
   width: 100px;
   height: 100px;
   border-radius: 50%;
-  margin-left: 20px;
+  border: 2px solid var(--color-border);
 }
 
-.profile-section {
-  margin-bottom: 20px;
-}
-
-.profile-item {
+.address-item {
   display: flex;
-  justify-content: space-between;
+  align-items: center;
   margin-bottom: 10px;
 }
 
-.profile-item label {
-  font-weight: bold;
-  width: 120px; /* Increased width for better readability */
-}
-
 .address-item span {
+  flex: 1;
   word-break: break-word;
+  text-align: right;
+  color: var(--color-text);
 }
 
 h1,

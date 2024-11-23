@@ -148,6 +148,17 @@
     background-color: #1565c0;
 }
 
+.radiogroup label {
+    width: 22%;
+    display: inline-block;
+}
+
+.radiogroup input {
+    width: 15px;
+    display: inline-block;
+}
+
+
 
 
 /* .vertical .form-field {
