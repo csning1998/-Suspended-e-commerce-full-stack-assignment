@@ -1,5 +1,5 @@
 import express, { Router, Request, Response, NextFunction } from "express";
-import PGModels from "../models";
+import PGModels from "../postgres-models";
 import bcrypt from "bcrypt";
 import { Model } from "sequelize";
 import * as JWTToken from "../lib/jwt-token";

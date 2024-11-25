@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
-import jwt, { Secret, JwtPayload } from "jsonwebtoken";
-import PGModels from "../models";
-import { statusCodes } from "./statusCodes";
-import User from "../models/user";
+import {NextFunction, Request, Response} from "express";
+import jwt, {JwtPayload, Secret} from "jsonwebtoken";
+import PGModels from "../postgres-models";
+import {statusCodes} from "./statusCodes";
+import User from "@src/postgres-models/user";
 
 
 /*
@@ -76,9 +76,7 @@ export const verity = async (req: Request, res: Response, next: NextFunction): P
 // export verity
 
 export const create = function (payload: any): String {
-  const token: string = jwt.sign(payload, SECRET_KEY, {
+  return jwt.sign(payload, SECRET_KEY, {
     expiresIn: "12h"
   })
-
-  return token
 }

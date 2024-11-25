@@ -62,7 +62,7 @@ function request() {
   // })
 
 
-  // Morden world
+  // Modern world
 
   try {
     await request()

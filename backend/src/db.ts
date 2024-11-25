@@ -9,5 +9,5 @@ export default new Sequelize({
   username: process.env.POSTGRES_USER || 'e-commerce-dev',
   password: process.env.POSTGRES_PASSWORD || 'e-commerce-password'
   // logging: false,
-  // models: [Dog],
+  // postgres-models: [Dog],
 })

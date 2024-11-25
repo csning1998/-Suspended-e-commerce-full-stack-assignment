@@ -3,6 +3,7 @@ import "dotenv/config"; // https://www.npmjs.com/package/dotenv
 import cors from "cors"; // Enable Cross-Origin Resource Sharing
 import bodyParser from "body-parser"; // Parse incoming request bodies
 import userRoutes from "./routes/users";
+import productQuery from "./routes/product"
 import { connect } from 'mongoose';
 
 import Product from './mongo-models/product'
@@ -14,9 +15,7 @@ const app: Express = express();
 const port: string | 3000 = process.env.PORT || 3000;
 const MONGO_URI: string= process.env.MONGO_URI || 'mongodb://mongo:27017/test'
 
-/*
-* Middlewares here
-* */
+/* Middlewares here */
 
 // for handling CORS
 app.use(cors({
@@ -32,6 +31,7 @@ app.use(bodyParser.json())
 
 // for routes
 app.use('/users', userRoutes);
+app.use('/products', productQuery);
 
 /* Import route handlers here */
 
@@ -44,17 +44,21 @@ app.get("/", (req: Request, res: Response): void => {
 require('./lib/errorHandler')(app);
 
 
-// Main function, only run once at the application startup.
+/*
+* Main function, only run once at the application startup.
+* */
 (async (): Promise<void> => {
 
   try {
+
+    /*
+    * Testing MongoDB connecting here.
+    * */
     console.log('Connecting to mongo')
-    // https://mongoosejs.com/docs/typescript.html
-    await connect(MONGO_URI);
+    await connect(MONGO_URI); // https://mongoosejs.com/docs/typescript.html
   } catch (error) {
     console.error(error)
   }
-
   // const product = new Product({
   //   productName: 'Bill' + Math.random(),
   // });
@@ -62,14 +66,12 @@ require('./lib/errorHandler')(app);
 
   /*
   * Add Schemas here. https://stackoverflow.com/questions/42497254/sequelize-schema-for-postgresql-how-to-accurately-define-a-schema-in-a-model
-  * Create schemas if not already present in the database
+  * Create schemas if not already present in the Postgres database
   * */
   console.log('Checking Postgres database schema')
   try {
     await sequelize.createSchema('user_management', { logging: false });
-    // await sequelize.createSchema('some_schema', { logging: false });
-    // await sequelize.createSchema('some_schema', { logging: false });
-    // await sequelize.createSchema('some_schema', { logging: false });
+    // await sequelize.createSchema('add_some_schema', { logging: false });
 
   } catch (err) {
     // Ignore schema creation errors (e.g., schema already exists)
@@ -77,7 +79,7 @@ require('./lib/errorHandler')(app);
 
   console.log('Syncing Postgres database')
   try {
-    // Sync database models with the database
+    // Sync database postgres-models with the database
     await sequelize.sync({
       // force: true,  // for development to reset tables
       alter: true      // Safe adjustment for schema updates

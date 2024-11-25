@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref } from "vue";
 import { useRouter } from "vue-router";
 
 interface FooterLink {
@@ -10,16 +10,14 @@ interface FooterLink {
 const router = useRouter();
 
 const footerLinks = ref<FooterLink[]>([
-  {text: 'Privacy Policy', href: '/privacy-policy'},
-  {text: 'Terms of Services', href: '/terms-of-service'},
-  {text: 'Contact Us', href: 'ContactUs'},
+  { text: "Privacy Policy", href: "/privacy-policy" },
+  { text: "Terms of Services", href: "/terms-of-service" },
+  { text: "Contact Us", href: "ContactUs" },
 ]);
 
 const Nav2Push = (link: FooterLink) => {
-  router.push(link.href)
-}
-
-
+  router.push(link.href);
+};
 </script>
 
 <template>
@@ -35,6 +33,4 @@ const Nav2Push = (link: FooterLink) => {
   </footer>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
