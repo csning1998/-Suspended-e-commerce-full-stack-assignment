@@ -20,6 +20,14 @@ import ProductCard from "@/components/product/ProductCard.vue";
   </div>
 </template>
 
+<template>
+  <div>
+    <h1>首頁</h1>
+    <!-- Add link to product list -->
+    <router-link to="/products">查看商品</router-link>
+  </div>
+</template>
+
 <style scoped>
 
 </style>
