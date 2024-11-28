@@ -29,7 +29,7 @@ if (!process.env.JWT_SECRET) {
 
 const SECRET_KEY: Secret = process.env.JWT_SECRET || "DEFAULT_SECRET";
 
-export const verity = async (
+export const verity: any = async (
     req: Request,
     res: Response,
     next: NextFunction,

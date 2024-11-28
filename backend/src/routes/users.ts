@@ -5,6 +5,7 @@ import { Model } from "sequelize";
 import * as JWTToken from "../lib/jwt-token";
 import "dotenv/config";
 import { statusCodes } from "../lib/statusCodes";
+import { HTTPJsonResponse } from "../lib/errorHandler";
 
 const router: Router = express.Router();
 // For Security
@@ -111,7 +112,7 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
             ? (user.get("userId") as string)
             : userId;
 
-        const token = JWTToken.create({ userId: actualUserId });
+        const token: String = JWTToken.create({ userId: actualUserId });
 
         res.status(statusCodes.LOGIN.SUCCESS.code).send({
             ...statusCodes.LOGIN.SUCCESS,
@@ -125,24 +126,6 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
         });
     }
 });
-
-const HTTPJsonResponse = function (
-    res: Response,
-    status: any,
-    payload: any,
-): Response {
-    return res.status(status.code).json({
-        payload,
-        ...status,
-    });
-};
-
-const HTTPJsonUserErrorResponse = function(res: Response, error: Error, statusCode = 400){
-  return res.status(statusCode).json({
-    message: error.message,
-  });
-}
-
 
 router
     .use([JWTToken.verity])

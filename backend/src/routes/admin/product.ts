@@ -11,6 +11,28 @@ import { HTTPJsonResponse } from "../../lib/errorHandler";
 
 const router: Router = express.Router();
 
+// router.get("/products", async (req: Request, res: Response): Promise<void> => {
+//     const { keyword } = req.body;
+//     try {
+//         // https://www.mongodb.com/docs/manual/reference/operator/query/regex/
+//         const query:
+//             | { name: { $regex: any; $options: string }; state: boolean }
+//             | { state: boolean } = keyword
+//             ? { state: true, name: { $regex: keyword, $options: "i" } }
+//             : { state: true };
+//         const products: any = await ProductModel.find(query);
+//
+//         HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_BULK.code, {
+//             products,
+//         });
+//     } catch (err) {
+//         console.error(err);
+//         res.status(statusCodes.BACKEND_LOGIC.code).json({
+//             ...statusCodes.BACKEND_LOGIC,
+//         });
+//     }
+// });
+
 router.post("/products", async (req: Request, res: Response): Promise<any> => {
     try {
         const { productName, description, price, state } = req.body;
@@ -56,7 +78,7 @@ router.put(
                 );
             }
 
-            const existingProduct = await ProductModel.findById(id);
+            const existingProduct: any = await ProductModel.findById(id);
             if (!existingProduct) {
                 return HTTPJsonResponse(
                     res,
@@ -67,7 +89,7 @@ router.put(
                 );
             }
 
-            const updatedProduct = await ProductModel.findByIdAndUpdate(
+            const updatedProduct: any = await ProductModel.findByIdAndUpdate(
                 id,
                 updates,
                 { new: true },

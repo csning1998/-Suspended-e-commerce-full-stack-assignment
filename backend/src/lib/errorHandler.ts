@@ -4,7 +4,7 @@ import type { ErrorRequestHandler } from "express";
 // const app: Express = express();
 // app.use(errorHandler);
 
-export const HTTPJsonResponse = function (
+export const HTTPJsonResponse: any = function (
     res: Response,
     status: any,
     payload: any,
@@ -15,7 +15,7 @@ export const HTTPJsonResponse = function (
     });
 };
 
-export const HTTPJsonUserErrorResponse = function (
+export const HTTPJsonUserErrorResponse: any = function (
     res: Response,
     error: Error,
     statusCode = 400,
