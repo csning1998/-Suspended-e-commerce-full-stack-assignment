@@ -15,6 +15,16 @@ export const HTTPJsonResponse = function (
     });
 };
 
+export const HTTPJsonUserErrorResponse = function (
+    res: Response,
+    error: Error,
+    statusCode = 400,
+): Response<any, Record<string, any>> {
+    return res.status(statusCode).json({
+        message: error.message,
+    });
+};
+
 module.exports = function (app: Express): void {
     const errorHandler: ErrorRequestHandler = (
         err: any,

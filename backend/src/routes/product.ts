@@ -1,11 +1,7 @@
 import express, { Router, Request, Response } from "express";
-import * as JWTToken from "../lib/jwt-token";
-// import "dotenv.config";
 import { statusCodes } from "../lib/statusCodes";
 import ProductModel from "../mongo-models/product";
 import { HTTPJsonResponse } from "../lib/errorHandler";
-import { Schema } from "mongoose";
-import Product from "../mongo-models/product";
 
 /*
  * User can view and search products without login.
