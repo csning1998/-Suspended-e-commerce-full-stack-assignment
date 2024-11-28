@@ -137,6 +137,13 @@ const HTTPJsonResponse = function (
     });
 };
 
+const HTTPJsonUserErrorResponse = function(res: Response, error: Error, statusCode = 400){
+  return res.status(statusCode).json({
+    message: error.message,
+  });
+}
+
+
 router
     .use([JWTToken.verity])
     .route("/current")
