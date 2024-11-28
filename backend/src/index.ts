@@ -55,14 +55,12 @@ require('./lib/errorHandler')(app);
     * Testing MongoDB connecting here.
     * */
     console.log('Connecting to mongo')
-    await connect(MONGO_URI); // https://mongoosejs.com/docs/typescript.html
+    const db = await connect(MONGO_URI);
+    console.log('MongoDB is connected to ', db.connection.name);
+    // await connect(MONGO_URI); // https://mongoosejs.com/docs/typescript.html
   } catch (error) {
     console.error(error)
   }
-  // const product = new Product({
-  //   productName: 'Bill' + Math.random(),
-  // });
-  // await product.save();
 
   /*
   * Add Schemas here. https://stackoverflow.com/questions/42497254/sequelize-schema-for-postgresql-how-to-accurately-define-a-schema-in-a-model

@@ -104,9 +104,29 @@ export const statusCodes = {
             message: "(500) Failed to process JWT verification."
         }
     },
+    QUERYING: {
+        SUCCEED_BULK: {
+            code: 200,
+            status: 'success',
+            message: "(200) Successfully queried."
+        },
+
+        SUCCEED_UNPUBLISHED_PRODUCT: {
+            code: 200,
+            status: 'success',
+            message: "(204) Product is unpublished or does not exist."
+        },
+    },
     BACKEND_LOGIC: {
         code: 401,
         status: 'error',
         message: "(401) Internal server error."
     }
 };
+
+
+/*
+ * status code using OOP method. error code case
+ * may consider refine it to be compatible with all status codes.
+ * https://medium.com/@it.ermias.asmare/part-two-enhancing-our-express-typescript-and-mongodb-project-51344509cf42
+* */
