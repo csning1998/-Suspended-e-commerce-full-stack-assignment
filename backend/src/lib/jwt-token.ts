@@ -1,9 +1,8 @@
-import {NextFunction, Request, Response} from "express";
-import jwt, {JwtPayload, Secret} from "jsonwebtoken";
+import { NextFunction, Request, Response } from "express";
+import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import PGModels from "../postgres-models";
-import {statusCodes} from "./statusCodes";
+import { statusCodes } from "./statusCodes";
 import User from "@src/postgres-models/user";
-
 
 /*
   * In the jsonwebtoken package, the function definition for jwt.sign looks like this (simplified version):
@@ -16,67 +15,80 @@ import User from "@src/postgres-models/user";
   * Adding an if statement allows the TypeScript compiler to ensure that when you execute jwt.sign,
     process.env.JWT_SECRET is always a valid string (or other type conforming to Secret).
   *
-  
+
   By using this library, we can remove every process.env.JWT_SECRET in the project
 */
 
 // Ensure JWT_SECRET exists
 if (!process.env.JWT_SECRET) {
-  console.warn("JWT_SECRET is not defined in the environment variables.");
+    console.warn("JWT_SECRET is not defined in the environment variables.");
 
-  // Also can break the application startup process by throwing an error.
-  // throw new Error("JWT_SECRET is not defined in the environment variables")
+    // Also can break the application startup process by throwing an error.
+    // throw new Error("JWT_SECRET is not defined in the environment variables")
 }
 
-const SECRET_KEY: Secret = process.env.JWT_SECRET || 'DEFAULT_SECRET';
+const SECRET_KEY: Secret = process.env.JWT_SECRET || "DEFAULT_SECRET";
 
-export const verity = async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-  try {
-    // const { userId, userName } = req.body;
-    const token = req.headers.token as string | undefined;
+export const verity = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+): Promise<any> => {
+    try {
+        // const { userId, userName } = req.body;
+        const token = req.headers.token as string | undefined;
 
-    if (!token) {
-      return res.status(statusCodes.AUTHENTICATION.NO_TOKEN_PROVIDED.code).send({
-        ...statusCodes.AUTHENTICATION.NO_TOKEN_PROVIDED,
-      });
-    }
-
-    const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
-
-    if (decoded.userId) {
-      const currentUser: User | null = await PGModels.User.findOne({
-        where: {
-          userId: decoded.userId,
-          // userName: decoded.userName
+        if (!token) {
+            return res
+                .status(statusCodes.AUTHENTICATION.NO_TOKEN_PROVIDED.code)
+                .send({
+                    ...statusCodes.AUTHENTICATION.NO_TOKEN_PROVIDED,
+                });
         }
-      });
 
-      if (currentUser) {
-        req.currentUser = currentUser;
-        next();
-      } else {
-        return res.status(statusCodes.AUTHENTICATION.USER_NOT_FOUND.code).send({
-          ...statusCodes.AUTHENTICATION.USER_NOT_FOUND,
-        });
-      }
+        const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
+
+        if (decoded.userId) {
+            const currentUser: User | null = await PGModels.User.findOne({
+                where: {
+                    userId: decoded.userId,
+                    // userName: decoded.userName
+                },
+            });
+
+            if (currentUser) {
+                req.currentUser = currentUser;
+                next();
+            } else {
+                return res
+                    .status(statusCodes.AUTHENTICATION.USER_NOT_FOUND.code)
+                    .send({
+                        ...statusCodes.AUTHENTICATION.USER_NOT_FOUND,
+                    });
+            }
+        } else {
+            return res
+                .status(statusCodes.AUTHENTICATION.INVALID_TOKEN.code)
+                .send({
+                    ...statusCodes.AUTHENTICATION.INVALID_TOKEN,
+                });
+        }
+    } catch (error) {
+        console.error("JWT verification failed:", error);
+        return res
+            .status(statusCodes.AUTHENTICATION.JWT_VERIFICATION_FAILED.code)
+            .send({
+                ...statusCodes.AUTHENTICATION.JWT_VERIFICATION_FAILED,
+            });
     }
-    else {
-      return res.status(statusCodes.AUTHENTICATION.INVALID_TOKEN.code).send({
-        ...statusCodes.AUTHENTICATION.INVALID_TOKEN,
-      });
-    }
-  } catch (error) {
-    console.error("JWT verification failed:", error);
-    return res.status(statusCodes.AUTHENTICATION.JWT_VERIFICATION_FAILED.code).send({
-      ...statusCodes.AUTHENTICATION.JWT_VERIFICATION_FAILED,
-    });
-  }
 };
 
 // export verity
 
-export const create = function (payload: any): String {
-  return jwt.sign(payload, SECRET_KEY, {
-    expiresIn: "12h"
-  })
-}
+export const create: (payload: any) => String = function (
+    payload: any,
+): String {
+    return jwt.sign(payload, SECRET_KEY, {
+        expiresIn: "12h",
+    });
+};
