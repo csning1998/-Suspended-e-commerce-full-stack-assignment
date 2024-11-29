@@ -17,14 +17,13 @@ import ProductCard from "@/components/product/ProductCard.vue";
     <section class="categories">
       <ProductCard />
     </section>
-  </div>
-</template>
 
-<template>
-  <div>
+    <div>
     <h1>首頁</h1>
     <!-- Add link to product list -->
     <router-link to="/products">查看商品</router-link>
+  </div>
+  
   </div>
 </template>
 

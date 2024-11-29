@@ -46,12 +46,12 @@ const router = createRouter({
       name: "ProductList",
       component: ProductListView,
     },
-    {
-      path: "/product/:id",
-      name: "ProductDetail",
-      component: ProductDetailView,
-      props: true  
-    }
+    // {
+    //   path: "/product/:id",
+    //   name: "ProductDetail",
+    //   component: ProductDetailView,
+    //   props: true  
+    // }
   ],
 });
 
