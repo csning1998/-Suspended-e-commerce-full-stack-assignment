@@ -4,7 +4,7 @@ import LoginView from "@/views/LoginView.vue";
 import RegistrationView from "@/views/RegistrationView.vue";
 import UserProfileView from "@/views/UserProfileView.vue";
 import PrivacyPolicy from "../views/PrivacyPolicy.vue";
-import TermsofService from "../views/TermsofService.vue";
+import TermsOfService from "../views/TermsofService.vue";
 import ProductListView from "@/views/ProductListView.vue";
 import ProductDetailView from "@/views/ProductDetailView.vue";
 const router = createRouter({
@@ -37,8 +37,8 @@ const router = createRouter({
     },
     {
       path: "/terms-of-service",
-      name: "TermsofService",
-      component: TermsofService,
+      name: "TermsOfService",
+      component: TermsOfService,
     },
 
     {
@@ -46,12 +46,12 @@ const router = createRouter({
       name: "ProductList",
       component: ProductListView,
     },
-    // {
-    //   path: "/product/:id",
-    //   name: "ProductDetail",
-    //   component: ProductDetailView,
-    //   props: true  
-    // }
+    {
+      path: "/productDetailView",
+      name: "ProductDetailView",
+      component: ProductDetailView,
+      props: true,
+    },
   ],
 });
 
