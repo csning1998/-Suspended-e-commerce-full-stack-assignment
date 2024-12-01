@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import Router from "@/router";
 
-const router: Router = useRouter();
+const router = useRouter();
 
 interface SimilarItem {
   id: string;
@@ -26,6 +25,11 @@ const similarItems = reactive<SimilarItem[]>([
     link2Pic: "https://via.placeholder.com/150",
   },
 ]);
+
+const handleProductClick = (id: string) => {
+  const router = useRouter();
+  router.push(`/product/${id}`);
+};
 </script>
 
 <template>

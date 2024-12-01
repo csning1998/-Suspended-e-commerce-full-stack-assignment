@@ -13,3 +13,15 @@ interface RegistrationFormData {
   userPassword: string;
   confirmPassword: string;
 }
+
+interface Products {
+  id: number;
+  name: string;
+  link2Pic: string;
+  price: number;
+  discountPrice: number;
+  collection: string;
+  category: string;
+  sizes: number[];
+  colors: string[];
+}

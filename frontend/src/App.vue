@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import Navbar from "@/components/common/Navbar.vue";
 import Footer from "@/components/common/Footer.vue";
-import HomeView from "@/views/HomeView.vue";
 </script>
 
 <template>
@@ -17,5 +16,4 @@ import HomeView from "@/views/HomeView.vue";
   </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>
