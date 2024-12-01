@@ -106,7 +106,7 @@
 
 .form-field input {
     width: 100%;
-    padding: 12px;
+    padding: 8px;
     border: 1px solid var(--color-border);
     border-radius: 4px;
     box-sizing: border-box;
@@ -154,10 +154,55 @@
 }
 
 .radiogroup input {
-    width: 15px;
     display: inline-block;
 }
 
+.form-field.radiogroup {
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    align-content: space-around;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.form-field.radiogroup label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    margin-bottom: 8px;
+    color: var(--vt-c-text-light-1);
+}
+
+.form-field.radiogroup input[type="radio"] {
+    appearance: none;
+    background-color: var(--color-background-soft);
+    border: 2px solid var(--color-border);
+    border-radius: 50%;
+    width: 4px;
+    height: 4px;
+    outline: none;
+    cursor: pointer;
+    margin-right: 8px;
+    transition: all 0.3s ease;
+}
+
+.form-field.radiogroup input[type="radio"]:checked {
+    background-color: var(--vt-c-indigo);
+    border: 2px solid var(--vt-c-white-soft);
+}
+
+.form-field.radiogroup input[type="radio"]:hover {
+    border-color: var(--color-border-hover);
+}
+
+.form-field.radiogroup label:hover {
+    color: var(--color-text);
+}
+
+.form-field.radiogroup input[type="radio"]:focus {
+    box-shadow: 0 0 0 4px rgba(50, 125, 200, 0.3);
+}
 
 
 

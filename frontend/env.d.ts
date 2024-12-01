@@ -25,3 +25,13 @@ interface Products {
   sizes: number[];
   colors: string[];
 }
+
+
+// interface IProduct extends Document {
+//   productName: string;
+//   description?: string;
+//   price: number;
+//   state: boolean; // true if the product is published to customers.
+//   createdAt?: Date;
+//   test: string;
+// }

@@ -4,7 +4,6 @@ import { useRouter } from "vue-router";
 import request from "@/stores/request";
 
 const router = useRouter();
-const GENDER_LIST = ["male", "female", "apache", "non-Binary"];
 const isEditing = ref(false);
 const hasChanges = ref(false);
 
@@ -15,31 +14,48 @@ const toggleEditMode = (): void => {
   }
 };
 
-
-
 let currentUser = reactive({
   id: 0,
   userId: "",
   userFamilyName: "",
   userGivenName: "",
-  userBirthday: "",
-  userGender: "",
-  userEmail: "",
   userPhoneNumber: "",
-  userAddress: [],
+  identity: "",
+  hireDate: "",
+  userBirthday: "",
+  phoneNumber: "",
+  userEmail: "",
+  userAddress: [
+    {
+      country: "",
+      state: "",
+      city: "",
+      street: "",
+      zipCode: "",
+    },
+  ],
+  paymentMethods: [
+    {
+      cardNumber: "",
+      cardHolderName: "",
+      expirationDate: "",
+      cvv: "",
+    },
+  ],
   createdAt: 0,
 });
-
-let newAddress = ''
 
 const originalUser = reactive({ ...currentUser });
 
 const saveProfile = async () => {
   try {
-    await request.put("/users/current", { user: currentUser, address: newAddress})
+    await request.put("/users/current", {
+      user: currentUser,
+    });
     alert("Profile saved!");
+    hasChanges.value = false;
   } catch (error: any) {
-    // alert(error.response.data.message);
+    console.error("Error saving profile:", error);
   }
 };
 
@@ -48,39 +64,80 @@ const logout = () => {
   localStorage.removeItem("token");
   localStorage.removeItem("UserID");
 
-  window.dispatchEvent(new CustomEvent("userLoggedOut")); // Dispatch the event
+  window.dispatchEvent(new CustomEvent("userLoggedOut"));
   alert("You have been logged out.");
-  router.push("/"); // Redirect to home or login after logout
+  router.push("/");
+};
+
+const addAddress = () => {
+  if (currentUser.userAddress.length < 5) {
+    currentUser.userAddress.push({
+      country: "",
+      state: "",
+      city: "",
+      street: "",
+      zipCode: "",
+    });
+  } else {
+    alert("You can add to five address at most.");
+  }
+};
+
+const removeAddress = (index: number) => {
+  if (currentUser.userAddress.length > 1) {
+    currentUser.userAddress.splice(index, 1);
+  } else {
+    alert("You must have at least one address.");
+  }
+};
+
+const addPaymentMethod = () => {
+  if (currentUser.paymentMethods.length < 10) {
+    currentUser.paymentMethods.push({
+      cardNumber: "",
+      cardHolderName: "",
+      expirationDate: "",
+      cvv: "",
+    });
+  } else {
+    alert("You can add up to ten payment methods.");
+  }
+};
+
+const removePaymentMethod = (index: number) => {
+  if (currentUser.paymentMethods.length > 1) {
+    currentUser.paymentMethods.splice(index, 1);
+  } else {
+    alert("You must have at least one payment method.");
+  }
 };
 
 async function fetchUserInfo() {
   try {
-    const res = await request.get("/users/current")
+    const res = await request.get("/users/current");
 
-    Object.assign(currentUser, res);
-    Object.assign(originalUser, res);
+    Object.assign(currentUser, res.data);
+    Object.assign(originalUser, res.data);
 
-    console.log("currentUser.userAddress", currentUser.userAddress);
-
-    watch(currentUser, function(n){
-      if(n.id != 0) {
+    watch(currentUser, function (n) {
+      if (n.id != 0) {
         hasChanges.value = true;
       }
-    })
-  } catch (err) {}
+    });
+  } catch (err) {
+    console.error("Error fetching user info:", err);
+  }
 }
 
 onMounted(() => {
   fetchUserInfo();
-  // toggleEditMode();
 });
 </script>
-
 
 <template>
   <div class="form-container">
     <div class="form-header">
-      <h1>Your Profile</h1>
+      <h1>User Profile</h1>
       <img
         class="profile-picture"
         src="https://via.placeholder.com/150"
@@ -92,104 +149,169 @@ onMounted(() => {
       <div class="form-card">
         <h2 class="form-title">Basic Info</h2>
         <div class="form-field">
-          <label class="form-field label">User ID:</label>
-          <span class="form-item span">{{ currentUser.userId }}</span>
+          <label>User ID:</label>
+          <span>{{ currentUser.userId }}</span>
         </div>
+
         <div class="form-field">
-          <label class="form-field label">Family Name:</label>
-          <span class="span" v-if="!isEditing">{{
-            currentUser.userFamilyName
-          }}</span>
-          <input
-            v-if="isEditing"
-            v-model="currentUser.userFamilyName"
-          />
-          <!-- <span>{{ currentUser.name }}</span> -->
+          <label>First Name:</label>
+          <span v-if="!isEditing">{{ currentUser.userFamilyName }}</span>
+          <input v-if="isEditing" v-model="currentUser.userFamilyName" />
         </div>
+
         <div class="form-field">
-          <label class="form-field label">Given Name:</label>
-          <span class="form-item span" v-if="!isEditing">{{
-            currentUser.userGivenName
-          }}</span>
-          <input
-            class="form-field input"
-            v-if="isEditing"
-            v-model="currentUser.userGivenName"
-          />
+          <label>Last Name:</label>
+          <span v-if="!isEditing">{{ currentUser.userGivenName }}</span>
+          <input v-if="isEditing" v-model="currentUser.userGivenName" />
         </div>
+
         <div class="form-field">
-          <label class="form-field label">Birthday:</label>
-          <span class="form-item span" v-if="!isEditing">{{
-            currentUser.userBirthday
-          }}</span>
+          <label>Identity:</label>
+          <span v-if="!isEditing">{{ currentUser.identity }}</span>
+          <input v-if="isEditing" v-model="currentUser.identity" />
+        </div>
+
+        <div class="form-field">
+          <label>Created Date:</label>
+          <span v-if="!isEditing">{{ currentUser.createdAt }}</span>
+          <input type="date" v-if="isEditing" v-model="currentUser.createdAt" />
+        </div>
+
+        <div class="form-field">
+          <label>Birth Date:</label>
+          <span v-if="!isEditing">{{ currentUser.userBirthday }}</span>
           <input
             type="date"
-            class="form-field input"
             v-if="isEditing"
             v-model="currentUser.userBirthday"
           />
         </div>
-        <div class="form-field radiogroup">
-          <label class="form-field label">Gender:</label>
-          <span class="form-item span" v-if="!isEditing">{{
-            currentUser.userGender
-          }}</span>
-          <div v-if="isEditing">
-            <label v-for="(g, key) in GENDER_LIST" :key="key" :for="g">
-              <input
-                :id="g"
-                type="radio"
-                v-model="currentUser.userGender"
-                :value="g"
-              />
-              {{ g }}
-            </label>
-          </div>
-        </div>
+      </div>
+    </section>
+
+    <section class="form-section">
+      <div class="form-card">
+        <h2>Contact Info</h2>
         <div class="form-field">
-          <label>Registered At:</label>
-          <span class="form-item span">{{ currentUser.createdAt }}</span>
+          <label>Phone Number:</label>
+          <span v-if="!isEditing">{{ currentUser.userPhoneNumber }}</span>
+          <input v-if="isEditing" v-model="currentUser.userPhoneNumber" />
+        </div>
+
+        <div class="form-field">
+          <label>userEmail:</label>
+          <span v-if="!isEditing">{{ currentUser.userEmail }}</span>
+          <input v-if="isEditing" v-model="currentUser.userEmail" />
         </div>
       </div>
     </section>
 
-    <section class="form-card">
-      <h2>Contact Info</h2>
-      <div class="form-field">
-        <label class="form-field label">Email:</label>
-        <span class="form-item span">{{ currentUser.userEmail }}</span>
-      </div>
-      <div class="form-field">
-        <label class="form-field label">Phone:</label>
-        <span class="form-item span" v-if="!isEditing">{{
-          currentUser.userPhoneNumber
-        }}</span>
-        <input
-          type="text"
-          class="form-field"
+    <section class="form-section">
+      <div class="form-card">
+        <h2>Addresses</h2>
+        <div
+          v-for="(address, index) in currentUser.userAddress"
+          :key="index"
+          class="form-field address-item"
+        >
+          <h3>Address {{ index + 1 }}</h3>
+          <div class="form-field">
+            <label>Street:</label>
+            <span v-if="!isEditing">{{ address.street }}</span>
+            <input v-if="isEditing" v-model="address.street" />
+          </div>
+
+          <div class="form-field">
+            <label>City:</label>
+            <span v-if="!isEditing">{{ address.city }}</span>
+            <input v-if="isEditing" v-model="address.city" />
+          </div>
+
+          <div class="form-field">
+            <label>State:</label>
+            <span v-if="!isEditing">{{ address.state }}</span>
+            <input v-if="isEditing" v-model="address.state" />
+          </div>
+
+          <div class="form-field">
+            <label>Country:</label>
+            <span v-if="!isEditing">{{ address.country }}</span>
+            <input v-if="isEditing" v-model="address.country" />
+          </div>
+
+          <div class="form-field">
+            <label>Zip Code:</label>
+            <span v-if="!isEditing">{{ address.zipCode }}</span>
+            <input v-if="isEditing" v-model="address.zipCode" />
+          </div>
+
+          <button
+            v-if="isEditing"
+            class="form-button remove-address-button"
+            @click="removeAddress(index)"
+          >
+            Remove Address
+          </button>
+        </div>
+
+        <button
           v-if="isEditing"
-          v-model="currentUser.userPhoneNumber"
-        />
-        <!-- <span>{{ currentUser.userPhoneNumber }}</span> -->
+          class="form-button add-address-button"
+          @click="addAddress"
+        >
+          Add Address
+        </button>
       </div>
     </section>
 
-    <section class="form-card">
-      <h2>Addresses</h2>
-
-      <label class="form-field label">Add new address :</label>
-      <input type="text" v-model="newAddress" />
-
-      <div
-        v-for="(address, index) in currentUser.userAddress"
-        class="form-item address-item"
-        :key="index"
-      >
-        <!--        <label>Address {{ index + 1 }}:</label>-->
-        <label class="form-field label">Address :</label>
-        <span>{{ address['address'] }}</span>
-
-        <!-- <input type="text" v-model="address[index][address]" /> -->
+    <section class="form-section">
+      <div class="form-card">
+        <h2>Payment Methods</h2>
+        <div
+          v-for="(paymentMethod, index) in currentUser.paymentMethods"
+          :key="index"
+          class="form-field payment-method-item"
+        >
+          <h3>Payment Method {{ index + 1 }}</h3>
+          <div class="form-field">
+            <label>Card Number:</label>
+            <span v-if="!isEditing">{{ paymentMethod.cardNumber }}</span>
+            <input v-if="isEditing" v-model="paymentMethod.cardNumber" />
+          </div>
+          <div class="form-field">
+            <label>Card Holder Name:</label>
+            <span v-if="!isEditing">{{ paymentMethod.cardHolderName }}</span>
+            <input v-if="isEditing" v-model="paymentMethod.cardHolderName" />
+          </div>
+          <div class="form-field">
+            <label>Expiration Date:</label>
+            <span v-if="!isEditing">{{ paymentMethod.expirationDate }}</span>
+            <input
+              type="month"
+              v-if="isEditing"
+              v-model="paymentMethod.expirationDate"
+            />
+          </div>
+          <div class="form-field">
+            <label>CVV:</label>
+            <span v-if="!isEditing">{{ paymentMethod.cvv }}</span>
+            <input type="text" v-if="isEditing" v-model="paymentMethod.cvv" />
+          </div>
+          <button
+            v-if="isEditing"
+            class="form-button remove-payment-method-button"
+            @click="removePaymentMethod(index)"
+          >
+            Remove Payment Method
+          </button>
+        </div>
+        <button
+          v-if="isEditing"
+          class="form-button add-payment-method-button"
+          @click="addPaymentMethod"
+        >
+          Add Payment Method
+        </button>
       </div>
     </section>
 
@@ -205,9 +327,7 @@ onMounted(() => {
       >
         Save Profile
       </button>
-      <button class="form-button" v-if="!isEditing" @click.prevent="logout">
-        Logout
-      </button>
+      <button class="form-button" @click.prevent="logout">Logout</button>
     </div>
   </div>
 </template>
@@ -223,14 +343,6 @@ onMounted(() => {
   border-radius: 50%;
   border: 2px solid var(--color-border);
 }
-
-.address-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
-
 
 h1,
 h2 {
