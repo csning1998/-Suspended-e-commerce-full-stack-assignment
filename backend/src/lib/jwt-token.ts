@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import PGModels from "../postgres-models";
 import { statusCodes } from "./statusCodes";
-import User from "@src/postgres-models/user";
+import User from "../postgres-models/user";
 
 /*
   * In the jsonwebtoken package, the function definition for jwt.sign looks like this (simplified version):

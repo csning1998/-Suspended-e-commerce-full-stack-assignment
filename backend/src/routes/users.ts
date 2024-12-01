@@ -17,7 +17,7 @@ router.post("/register", async (req: Request, res: Response): Promise<any> => {
         const { userId, userEmail, userPassword, confirmPassword } = req.body;
         console.log("Body: \n", req.body);
 
-        if (!userId || !userPassword || !userPassword) {
+        if (!userId || !userPassword) {
             res.status(statusCodes.LOGIN.USERNAME_OR_PASSWORD_NULL.code).send({
                 ...statusCodes.LOGIN.USERNAME_OR_PASSWORD_NULL,
             });
@@ -139,14 +139,19 @@ router
                     },
                 });
 
-            return HTTPJsonResponse(
-                res,
-                statusCodes.SESSION.RETRIEVED_SESSION,
-                {
-                    ...req.currentUser.toJSON(),
-                    userAddress: addresses,
-                },
-            );
+            // return HTTPJsonResponse(
+            //     res,
+            //     statusCodes.SESSION.RETRIEVED_SESSION.code,
+            //     {
+            //         ...req.currentUser.toJSON(),
+            //         userAddress: addresses,
+            //     },
+            // );
+
+            return res.status(statusCodes.SESSION.RETRIEVED_SESSION.code).send({
+                ...req.currentUser.toJSON(),
+                userAddress: addresses,
+            });
         } catch (error) {
             console.error("Error while processing session route:", error);
             return res.status(statusCodes.SESSION.INQUIRY_FAILED.code).send({

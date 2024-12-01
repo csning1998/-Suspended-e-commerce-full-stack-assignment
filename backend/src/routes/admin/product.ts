@@ -6,59 +6,75 @@ import express, {
     Router,
 } from "express";
 import { statusCodes } from "../../lib/statusCodes";
-import ProductModel from "../../mongo-models/product";
 import { HTTPJsonResponse } from "../../lib/errorHandler";
+import mongoose from "mongoose";
+import Product from "../../mongo-models/product";
 
 const router: Router = express.Router();
 
-// router.get("/products", async (req: Request, res: Response): Promise<void> => {
-//     const { keyword } = req.body;
-//     try {
-//         // https://www.mongodb.com/docs/manual/reference/operator/query/regex/
-//         const query:
-//             | { name: { $regex: any; $options: string }; state: boolean }
-//             | { state: boolean } = keyword
-//             ? { state: true, name: { $regex: keyword, $options: "i" } }
-//             : { state: true };
-//         const products: any = await ProductModel.find(query);
-//
-//         HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_BULK.code, {
-//             products,
-//         });
-//     } catch (err) {
-//         console.error(err);
-//         res.status(statusCodes.BACKEND_LOGIC.code).json({
-//             ...statusCodes.BACKEND_LOGIC,
-//         });
-//     }
-// });
+router.get("/products", async (req: Request, res: Response): Promise<void> => {
+    const { keyword } = req.body;
+    try {
+        // https://www.mongodb.com/docs/manual/reference/operator/query/regex/
+        const query:
+            | { name: { $regex: any; $options: string }; state: boolean }
+            | { state: boolean } = keyword
+            ? { state: true, name: { $regex: keyword, $options: "i" } }
+            : { state: true };
+        const products: any = await Product.find(query);
+
+        HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_BULK.code, {
+            products,
+        });
+    } catch (err) {
+        console.error(err);
+        res.status(statusCodes.BACKEND_LOGIC.code).json({
+            ...statusCodes.BACKEND_LOGIC,
+        });
+    }
+});
+
+
+router.get("products/:id", async (req: Request, res: Response): Promise<any> => {
+    const { id } = req.params;
+    try {
+        const product: any = await Product.findById(id);
+        if (!product || !product.state) {
+            return res
+                .status(statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT.code)
+                .json({
+                    ...statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT,
+                });
+        }
+        return HTTPJsonResponse(
+            res,
+            statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT,
+            product,
+        );
+    } catch (error) {
+        return HTTPJsonResponse(res, statusCodes.BACKEND_LOGIC, error);
+    }
+});
+
+
+// const Product = mongoose.model("Product");
 
 router.post("/products", async (req: Request, res: Response): Promise<any> => {
     try {
         const { productName, description, price, state } = req.body;
 
         if (!productName || !price || !state) {
-            return HTTPJsonResponse(
-                res,
-                statusCodes.QUERYING.MISSING_FIELD.code,
-                {
-                    ...req.body,
-                },
-            );
+            res.json({ message: "Product name is required" });
         }
 
-        const newProduct = {
-            ...req.body,
-        };
+        const newProduct = new Product({ ...req.body });
 
         await newProduct.save();
-        return HTTPJsonResponse(
-            res,
-            statusCodes.QUERYING.SUCCEED_INSERTED.code,
-            newProduct,
-        );
+
+        res.status(200).json(newProduct);
     } catch (error) {
-        return HTTPJsonResponse(res, statusCodes.BACKEND_LOGIC.code, error);
+        // return HTTPJsonResponse(res, statusCodes.BACKEND_LOGIC.code, error);
+        console.log(error);
     }
 });
 
@@ -69,46 +85,23 @@ router.put(
             const updates: any = req.body;
             const { id } = req.params;
             if (!id) {
-                return HTTPJsonResponse(
-                    res,
-                    statusCodes.QUERYING.MISSING_FIELD.code,
-                    {
-                        ...req.body,
-                    },
-                );
+                return res.json({ message: "Product name is required" });
             }
 
-            const existingProduct: any = await ProductModel.findById(id);
-            if (!existingProduct) {
-                return HTTPJsonResponse(
-                    res,
-                    statusCodes.QUERYING.MISSING_PRODUCT.code,
-                    {
-                        ...req.body,
-                    },
-                );
-            }
-
-            const updatedProduct: any = await ProductModel.findByIdAndUpdate(
-                id,
+            const updatedProduct: any = await Product.updateOne(
+                { _id: id },
+                // { $set: { ...updates } },
                 updates,
                 { new: true },
             );
-            if (!updatedProduct) {
-                return HTTPJsonResponse(res, statusCodes.BACKEND_LOGIC.code, {
-                    ...req.body,
-                });
-            }
 
-            return HTTPJsonResponse(
-                res,
-                statusCodes.QUERYING.SUCCEED_UPDATED.code,
-                updatedProduct,
-            );
+            await updatedProduct?.save()
+
+            res.status(200).json(updatedProduct);
         } catch (error) {
-            return HTTPJsonResponse(res, statusCodes.BACKEND_LOGIC.code, error);
+            console.log(error);
         }
-    },
+    }
 );
 
 router.delete(
@@ -116,16 +109,18 @@ router.delete(
     async (req: Request, res: Response): Promise<any> => {
         const { id } = req.params;
         try {
-            await ProductModel.findByIdAndDelete(id);
-            return HTTPJsonResponse(
-                res,
-                statusCodes.QUERYING.SUCCEED_DELETED.code,
-                {
-                    ...req.body,
-                },
-            );
+            await Product.findByIdAndDelete(id);
+
+            res.json({
+                message: "The product has been deleted."
+            })
+            // return HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_DELETED.code, {
+            //     ...req.body,
+            // });
         } catch (error) {
-            return HTTPJsonResponse(res, statusCodes.BACKEND_LOGIC, error);
+            console.log(error);
         }
-    },
+    }
 );
+
+export default router;

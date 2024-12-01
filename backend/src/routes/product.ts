@@ -10,7 +10,7 @@ import { HTTPJsonResponse } from "../lib/errorHandler";
  * */
 const router: Router = express.Router();
 
-router.get("/products", async (req: Request, res: Response): Promise<void> => {
+router.get("/", async (req: Request, res: Response): Promise<void> => {
     const { keyword } = req.body;
     try {
         // https://www.mongodb.com/docs/manual/reference/operator/query/regex/
@@ -32,30 +32,25 @@ router.get("/products", async (req: Request, res: Response): Promise<void> => {
     }
 });
 
-router.get(
-    "products/:id",
-    async (req: Request, res: Response): Promise<any> => {
-        const { id } = req.params;
-        try {
-            const product: any = await ProductModel.findById(id);
-            if (!product || !product.state) {
-                return res
-                    .status(
-                        statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT.code,
-                    )
-                    .json({
-                        ...statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT,
-                    });
-            }
-            return HTTPJsonResponse(
-                res,
-                statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT,
-                product,
-            );
-        } catch (error) {
-            return HTTPJsonResponse(res, statusCodes.BACKEND_LOGIC, error);
+router.get("/:id", async (req: Request, res: Response): Promise<any> => {
+    const { id } = req.params;
+    try {
+        const product: any = await ProductModel.findById(id);
+        if (!product || !product.state) {
+            return res
+                .status(statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT.code)
+                .json({
+                    ...statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT,
+                });
         }
-    },
-);
+        return HTTPJsonResponse(
+            res,
+            statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT,
+            product,
+        );
+    } catch (error) {
+        return HTTPJsonResponse(res, statusCodes.BACKEND_LOGIC, error);
+    }
+});
 
 export default router;

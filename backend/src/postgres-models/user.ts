@@ -23,7 +23,7 @@ import {
 } from "sequelize";
 
 import sequelize from "../db";
-import Address from './address'
+import Address from "./address";
 
 class User extends Model {
     // https://stackoverflow.com/questions/27972271/sequelize-dont-return-password
@@ -85,13 +85,17 @@ User.init(
             type: DataTypes.STRING,
             allowNull: true,
         },
+        userPermission: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+        },
     },
     {
         schema: "user_management",
         sequelize,
-    }
+    },
 );
 // https://stackoverflow.com/questions/34258938/sequelize-classmethods-vs-instancemethods
 
-User.hasMany(Address)
-export default User
+User.hasMany(Address);
+export default User;
