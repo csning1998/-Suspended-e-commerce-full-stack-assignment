@@ -14,19 +14,17 @@ const toggleEditMode = (): void => {
   }
 };
 
-const GENDER_LIST = ["Male", "Female", "Apache", "non-Binary"];
-
 let currentUser = reactive({
   id: 0,
   userId: "",
-  userEmail: "",
   userFamilyName: "",
   userGivenName: "",
   userPhoneNumber: "",
-  userIdentity: "",
-  userGender: "",
+  identity: "",
+  hireDate: "",
   userBirthday: "",
   phoneNumber: "",
+  userEmail: "",
   userAddress: [
     {
       country: "",
@@ -36,14 +34,7 @@ let currentUser = reactive({
       zipCode: "",
     },
   ],
-  paymentMethods: [
-    {
-      cardNumber: "",
-      cardHolderName: "",
-      expirationDate: "",
-      cvv: "",
-    },
-  ],
+  supervisor: "",
   createdAt: 0,
 });
 
@@ -72,7 +63,9 @@ const logout = () => {
 };
 
 const addAddress = () => {
-  if (currentUser.userAddress.length < 5) {
+  if (currentUser.userAddress.length > 5) {
+    alert("You can add to five address at most.");
+  } else {
     currentUser.userAddress.push({
       country: "",
       state: "",
@@ -80,8 +73,6 @@ const addAddress = () => {
       street: "",
       zipCode: "",
     });
-  } else {
-    alert("You can add to five address at most.");
   }
 };
 
@@ -90,27 +81,6 @@ const removeAddress = (index: number) => {
     currentUser.userAddress.splice(index, 1);
   } else {
     alert("You must have at least one address.");
-  }
-};
-
-const addPaymentMethod = () => {
-  if (currentUser.paymentMethods.length < 10) {
-    currentUser.paymentMethods.push({
-      cardNumber: "",
-      cardHolderName: "",
-      expirationDate: "",
-      cvv: "",
-    });
-  } else {
-    alert("You can add up to ten payment methods.");
-  }
-};
-
-const removePaymentMethod = (index: number) => {
-  if (currentUser.paymentMethods.length > 1) {
-    currentUser.paymentMethods.splice(index, 1);
-  } else {
-    alert("You must have at least one payment method.");
   }
 };
 
@@ -168,31 +138,21 @@ onMounted(() => {
         </div>
 
         <div class="form-field">
-          <label class="form-field label">Gender:</label>
-          <span class="form-item span" v-if="!isEditing">{{
-            currentUser.userGender
-          }}</span>
-          <div class="form-field radiogroup" v-if="isEditing">
-            <label v-for="(g, key) in GENDER_LIST" :key="key" :for="g">
-              <input
-                :id="g"
-                type="radio"
-                v-model="currentUser.userGender"
-                :value="g"
-              />
-              {{ g }}
-            </label>
-          </div>
+          <label>Phone Number:</label>
+          <span v-if="!isEditing">{{ currentUser.userPhoneNumber }}</span>
+          <input v-if="isEditing" v-model="currentUser.userPhoneNumber" />
         </div>
 
         <div class="form-field">
           <label>Identity:</label>
-          <span>{{ currentUser.userIdentity }}</span>
+          <span v-if="!isEditing">{{ currentUser.identity }}</span>
+          <input v-if="isEditing" v-model="currentUser.identity" />
         </div>
 
         <div class="form-field">
           <label>Created Date:</label>
-          <span>{{ currentUser.createdAt }}</span>
+          <span v-if="!isEditing">{{ currentUser.createdAt }}</span>
+          <input type="date" v-if="isEditing" v-model="currentUser.createdAt" />
         </div>
 
         <div class="form-field">
@@ -212,8 +172,8 @@ onMounted(() => {
         <h2>Contact Info</h2>
         <div class="form-field">
           <label>Phone Number:</label>
-          <span v-if="!isEditing">{{ currentUser.userPhoneNumber }}</span>
-          <input v-if="isEditing" v-model="currentUser.userPhoneNumber" />
+          <span v-if="!isEditing">{{ currentUser.phoneNumber }}</span>
+          <input v-if="isEditing" v-model="currentUser.phoneNumber" />
         </div>
 
         <div class="form-field">
@@ -282,57 +242,6 @@ onMounted(() => {
       </div>
     </section>
 
-    <section class="form-section">
-      <div class="form-card">
-        <h2>Payment Methods</h2>
-        <div
-          v-for="(paymentMethod, index) in currentUser.paymentMethods"
-          :key="index"
-          class="form-field payment-method-item"
-        >
-          <h3>Payment Method {{ index + 1 }}</h3>
-          <div class="form-field">
-            <label>Card Number:</label>
-            <span v-if="!isEditing">{{ paymentMethod.cardNumber }}</span>
-            <input v-if="isEditing" v-model="paymentMethod.cardNumber" />
-          </div>
-          <div class="form-field">
-            <label>Card Holder Name:</label>
-            <span v-if="!isEditing">{{ paymentMethod.cardHolderName }}</span>
-            <input v-if="isEditing" v-model="paymentMethod.cardHolderName" />
-          </div>
-          <div class="form-field">
-            <label>Expiration Date:</label>
-            <span v-if="!isEditing">{{ paymentMethod.expirationDate }}</span>
-            <input
-              type="month"
-              v-if="isEditing"
-              v-model="paymentMethod.expirationDate"
-            />
-          </div>
-          <div class="form-field">
-            <label>CVV:</label>
-            <span v-if="!isEditing">{{ paymentMethod.cvv }}</span>
-            <input type="text" v-if="isEditing" v-model="paymentMethod.cvv" />
-          </div>
-          <button
-            v-if="isEditing"
-            class="form-button remove-payment-method-button"
-            @click="removePaymentMethod(index)"
-          >
-            Remove Payment Method
-          </button>
-        </div>
-        <button
-          v-if="isEditing"
-          class="form-button add-payment-method-button"
-          @click="addPaymentMethod"
-        >
-          Add Payment Method
-        </button>
-      </div>
-    </section>
-
     <div class="form-button-container">
       <button class="form-button" @click="toggleEditMode">
         {{ isEditing ? "Cancel" : "Edit" }}
@@ -350,20 +259,4 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
-.form-title {
-  text-align: left;
-}
-
-.profile-picture {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  border: 2px solid var(--color-border);
-}
-
-h1,
-h2 {
-  color: var(--color-heading); /* Use theme color */
-}
-</style>
+<style scoped></style>

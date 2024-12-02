@@ -1,41 +1,43 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../db";
-import Users from "./user";
+import User from "./user";
 
-class Address extends Model {}
+class Payment extends Model {}
 
-Address.init(
+Payment.init(
     {
-        addressId: {
+        paymentId: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true,
         },
-        country: {
+        cardNumber: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate: {
+                isCreditCard: true,
+            },
+        },
+        cardHolderName: {
             type: DataTypes.STRING,
             allowNull: false,
         },
-        state: {
-            type: DataTypes.STRING,
-            allowNull: true,
-        },
-        city: {
-            type: DataTypes.STRING,
+        expirationDate: {
+            type: DataTypes.DATEONLY,
             allowNull: false,
         },
-        street: {
+        cvv: {
             type: DataTypes.STRING,
             allowNull: false,
-        },
-        zipCode: {
-            type: DataTypes.STRING,
-            allowNull: false,
+            validate: {
+                len: [3, 4],
+            },
         },
         userId: {
             type: DataTypes.STRING,
             allowNull: false,
             references: {
-                model: Users,
+                model: User,
                 key: "userId",
             },
         },
@@ -43,17 +45,19 @@ Address.init(
     {
         sequelize,
         schema: "user_management",
-        modelName: "Address",
-        tableName: "Addresses",
+        modelName: "Payment",
+        tableName: "Payments",
         timestamps: true,
     },
 );
-Users.hasMany(Address, {
+
+User.hasMany(Payment, {
     foreignKey: "userId",
-    as: "Addresses",
+    as: "Payments",
 });
-Address.belongsTo(Users, {
+Payment.belongsTo(User, {
     foreignKey: "userId",
     as: "User",
 });
-export default Address;
+
+export default Payment;

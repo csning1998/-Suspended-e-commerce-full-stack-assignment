@@ -41,24 +41,19 @@ app.get("/", (req: Request, res: Response): void => {
     res.send("Hello World!");
 });
 
-
-
 import * as JWTToken from "./lib/jwt-token";
 
-app.use(JWTToken.verity)
+app.use(JWTToken.verity);
 app.use(function (req, res, next) {
-    if(req.currentUser.role !== 'admin'){
-        return next(new Error('You must be an admin'))    
+    if (req.currentUser.role !== "admin") {
+        return next(new Error("You must be an admin"));
     }
 
-    next()
-})
+    next();
+});
 app.use("/admin", adminProduct);
 
-
-
 /* Import route handlers here */
-
 
 // ERROR HANDLER MUST BE THE FINAL ROUTE
 require("./lib/errorHandler")(app);
@@ -95,7 +90,7 @@ require("./lib/errorHandler")(app);
     try {
         // Sync database postgres-models with the database
         await sequelize.sync({
-            // force: true,  // for development to reset tables
+            // force: true, // for development to reset tables
             alter: true, // Safe adjustment for schema updates
         });
     } catch (err) {

@@ -5,7 +5,8 @@ import { Model } from "sequelize";
 import * as JWTToken from "../lib/jwt-token";
 import "dotenv/config";
 import { statusCodes } from "../lib/statusCodes";
-import { HTTPJsonResponse } from "../lib/errorHandler";
+import Address from "../postgres-models/address";
+import Payment from "../postgres-models/payment";
 
 const router: Router = express.Router();
 // For Security
@@ -132,25 +133,22 @@ router
     .route("/current")
     .get(async (req: Request, res: Response): Promise<any> => {
         try {
-            const addresses: Model<string, string>[] =
-                await PGModels.Address.findAll({
-                    where: {
-                        userId: req.currentUser.userId,
-                    },
-                });
+            const addresses: Address[] = await PGModels.Address.findAll({
+                where: {
+                    userId: req.currentUser.userId,
+                },
+            });
 
-            // return HTTPJsonResponse(
-            //     res,
-            //     statusCodes.SESSION.RETRIEVED_SESSION.code,
-            //     {
-            //         ...req.currentUser.toJSON(),
-            //         userAddress: addresses,
-            //     },
-            // );
+            const payments: Payment[] = await PGModels.Payment.findAll({
+                where: {
+                    userId: req.currentUser.userId,
+                },
+            });
 
             return res.status(statusCodes.SESSION.RETRIEVED_SESSION.code).send({
                 ...req.currentUser.toJSON(),
                 userAddress: addresses,
+                userPayments: payments,
             });
         } catch (error) {
             console.error("Error while processing session route:", error);
@@ -166,27 +164,32 @@ router
             next: NextFunction,
         ): Promise<any> => {
             // userId can not be changed
-            delete req.body.user.userId;
-
-            console.log("req.body.user", req.body.user);
-
+            // delete req.body.user.userId;
+            //
+            // console.log("req.body.user", req.body.user);
+            //
             req.currentUser.set({
                 ...req.body.user,
             });
 
             try {
-                // if(req.body.address && req.body.address.length > 0){
-                //   await PGModels.Address.create({
-                //     userId: req.currentUser.userId,
-                //     address: req.body.address
-                //   })
-                // }
-
+                // Update basic data for current user
                 await req.currentUser.save();
 
+                if (
+                    req.body.user.userAddress &&
+                    Array.isArray(req.body.user.userAddress)
+                ) {
+                    const existingAddress = await PGModels.Address.findOne({
+                        where: { userId: req.currentUser.userId },
+                    });
+                }
                 res.status(statusCodes.USER_UPDATE.SUCCESS.code).send({
                     ...statusCodes.USER_UPDATE.SUCCESS,
                 });
+
+                // To-do: Fetch the data or data in array from the db respectively
+                // and then apply data update using .save().
             } catch (error: any) {
                 error.status = 400;
                 return next(error);

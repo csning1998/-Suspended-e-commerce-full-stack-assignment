@@ -41,6 +41,10 @@ User.init(
             allowNull: false,
             unique: true,
         },
+        userPassword: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
         userEmail: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -49,27 +53,16 @@ User.init(
         userFamilyName: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: false,
         },
         userGivenName: {
             type: DataTypes.STRING,
             allowNull: false,
-            unique: false,
         },
-        userPassword: {
-            type: DataTypes.STRING,
-            allowNull: false,
-        },
-        // userAddress: {
-        //     type: DataTypes.STRING,
-        //     allowNull: true,
-        // },
         userPhoneNumber: {
             type: DataTypes.INTEGER,
             allowNull: true,
         },
         userProfilePicture: {
-            // https://stackoverflow.com/questions/47701640/saving-images-with-sequelize
             type: DataTypes.BLOB("long"),
             allowNull: true,
         },
@@ -86,16 +79,18 @@ User.init(
             allowNull: true,
         },
         userPermission: {
-            type: DataTypes.BOOLEAN,
+            type: DataTypes.STRING,
             allowNull: true,
         },
     },
     {
         schema: "user_management",
         sequelize,
+        modelName: "User",
+        tableName: "Users",
+        timestamps: true,
     },
 );
 // https://stackoverflow.com/questions/34258938/sequelize-classmethods-vs-instancemethods
 
-User.hasMany(Address);
 export default User;
