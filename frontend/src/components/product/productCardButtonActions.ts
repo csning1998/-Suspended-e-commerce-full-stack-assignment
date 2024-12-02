@@ -1,15 +1,27 @@
 import { ref } from "vue";
 
 export function productCardButtonActions(userId?: string) {
-    const cart = ref<Products[]>([]);
-    const favorites = ref<Products[]>([]);
+    const cart = ref<CartItem[]>([]);
+    const favorites = ref<CartItem[]>([]);
 
     const getLocalStorageKey = (key: string): string => {
         return userId ? `${userId}-${key}` : key;
     };
 
-    const addToCart = (product: Products): void => {
-        const exists = cart.value.find((item) => item.id === product.id);
+    /*
+     * Check if the merchandise exists in the cart or fav list.
+     * if (exists) then do nothing -> console.log("messages")
+     * if (!exists) then save into LocalStorage using JSON.
+     * */
+    const addToCart = (product: CartItem): void => {
+        const exists = cart.value.find((item) => {
+            return (
+                item.id === product.id &&
+                JSON.stringify(item.selectedOptions) ===
+                    JSON.stringify(product.selectedOptions)
+            );
+        });
+
         if (!exists) {
             cart.value.push(product);
             console.log("Added to cart", cart.value);
@@ -22,8 +34,15 @@ export function productCardButtonActions(userId?: string) {
         }
     };
 
-    const addToFavorites = (product: Products): void => {
-        const exists = favorites.value.find((item) => item.id === product.id);
+    const addToFavorites = (product: CartItem): void => {
+        const exists = favorites.value.find((item) => {
+            return (
+                item.id === product.id &&
+                JSON.stringify(item.selectedOptions) ===
+                    JSON.stringify(product.selectedOptions)
+            );
+        });
+
         if (!exists) {
             favorites.value.push(product);
             console.log("Added to favorites", favorites.value);
@@ -32,7 +51,7 @@ export function productCardButtonActions(userId?: string) {
                 JSON.stringify(favorites.value),
             );
         } else {
-            console.log("Already in favorites:", product.id);
+            console.log("Already in the favorites:", product.id);
         }
     };
 

@@ -2,19 +2,57 @@
 import { defineProps } from "vue";
 import { products } from "./mockProducts";
 import { productCardButtonActions } from "@/components/product/productCardButtonActions";
+import { useProductOptions } from "./useProductOptions";
 
 defineProps<{
   readonly products: Products[];
 }>();
+
 const userId = undefined; // if (!isLoggedIn) then make it undefined
 
 const { cart, favorites, addToCart, addToFavorites } =
   productCardButtonActions(userId);
 
+const {
+  selectedOptions,
+  updateSelectedOption,
+  calculateTotalPrice,
+  areAllOptionsSelected,
+} = useProductOptions();
+
+// const selectedOptions = ref<Record<number, Record<string, string | number>>>(
+//   {},
+// );
+
 const emit = defineEmits<{
-  (e: "addToCart", product: Products): void;
-  (e: "addToFavorites", product: Products): void;
+  (e: "addToCart", product: CartItem): void;
+  (e: "addToFavorites", product: CartItem): void;
 }>();
+
+// const calculateTotalPrice = (product: Products) => {
+//   let _bestPrice: number = product.basePrice;
+//   let _discountPrice: number = product.discountPrice;
+//   const options = selectedOptions.value[product.id] || {};
+//
+//   product.options.forEach((option) => {
+//     const selectedValue = options[option.name];
+//     const matchedValue = option.values.find(
+//       (value) => value.value === selectedValue,
+//     );
+//     if (matchedValue?.priceAdj) {
+//       _bestPrice += matchedValue.priceAdj;
+//       _discountPrice += matchedValue.priceAdj;
+//     }
+//   });
+//
+//   return { _bestPrice, _discountPrice };
+// };
+//
+// const areAllOptionsSelected = (product: Products): boolean => {
+//   const options = selectedOptions.value[product.id];
+//   if (!options) return false;
+//   return product.options.every((option) => options[option.name] !== undefined);
+// };
 </script>
 
 <template>
@@ -33,53 +71,84 @@ const emit = defineEmits<{
       </div>
       <div class="right">
         <div class="product-info">
-          <div class="product-name">
-            <h1>{{ item.name }}</h1>
+          <div class="product-brand">
+            {{ item.brand }}
+            <div class="price-container">
+              <span class="discount">
+                <fa icon="dollar-sign" />
+                {{ calculateTotalPrice(item)._bestPrice }}
+              </span>
+              <span class="original-price">
+                <fa icon="dollar-sign" />
+                {{ calculateTotalPrice(item)._discountPrice }}
+              </span>
+            </div>
           </div>
         </div>
         <div class="details">
           <h3>{{ item.collection }}</h3>
-          <h2>{{ item.category }}</h2>
-          <div class="price-container">
-            <span class="discount">
-              <fa icon="dollar-sign" />{{ item.discountPrice }}
-            </span>
-            <span class="original-price">
-              <fa icon="dollar-sign" />{{ item.price }}
-            </span>
+          <h2>{{ item.title }}</h2>
+
+          <div v-for="option in item.options" :key="option.name">
+            <p class="label">
+              {{ option.name.toUpperCase() }}
+            </p>
+            <div class="options-container">
+              <span
+                v-for="value in option.values"
+                :key="value.value"
+                class="option-button"
+                :class="{
+                  selected:
+                    selectedOptions[item.id]?.[option.name] === value.value,
+                }"
+                @click="
+                  () => {
+                    if (!selectedOptions[item.id]) {
+                      selectedOptions[item.id] = {};
+                    }
+                    selectedOptions[item.id][option.name] = value.value;
+                  }
+                "
+              >
+                {{ value.value }}
+              </span>
+            </div>
           </div>
-          <ul>
-            <li>SIZE</li>
-            <li v-for="size in item.sizes" :key="size" class="bg">
-              {{ size }}
-            </li>
-          </ul>
-          <ul>
-            <li>COLOR</li>
-            <li v-for="color in item.colors" :key="color" class="bg">
-              {{ color }}
-            </li>
-          </ul>
         </div>
         <div class="actions">
-          <span class="foot">
-            <span class="icon">
-              <fa icon="bag-shopping" id="buyNow" />
-            </span>
-            Buy Now
-          </span>
-          <span class="foot" @click="emit('addToCart', item)">
+          <span
+            class="foot"
+            :class="{ disabled: !areAllOptionsSelected(item) }"
+            @click="
+              () => {
+                if (areAllOptionsSelected(item)) {
+                  emit('addToCart', {
+                    ...item,
+                    selectedOptions: selectedOptions[item.id],
+                  });
+                }
+              }
+            "
+          >
             <span class="icon">
               <fa icon="cart-arrow-down" id="addToCart" />
             </span>
             Add to Cart
           </span>
-          <span class="foot" @click="emit('addToFavorites', item)">
-            <!--          <span class="foot">-->
+          <span
+            class="foot"
+            @click="
+              emit('addToFavorites', {
+                ...item,
+                selectedOptions: selectedOptions[item.id],
+              })
+            "
+          >
             <span class="icon" id="addToFavorites">
               <fa icon="heart" />
             </span>
-            Add to Favourites
+            Add to Favorites
           </span>
         </div>
       </div>
@@ -89,14 +158,13 @@ const emit = defineEmits<{
 
 <style scoped>
 .form-container {
-  width: 768px;
+  width: 800px;
 }
 .card {
   display: flex;
   justify-content: space-between;
-  height: 300px;
   width: 100%;
-  max-width: 768px;
+  max-width: 800px;
   margin: 20px auto;
   border-radius: 16px;
   position: relative;
@@ -114,22 +182,24 @@ const emit = defineEmits<{
 
 .left {
   flex: 1 1 40%;
-  height: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 0 50% 50% 0;
   position: relative;
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
 }
 
 .left img {
-  border-radius: 12px 12px 12px 12px;
-  max-width: 90%;
+  max-width: 95%;
+  max-height: 95%;
   object-fit: contain;
+  border-radius: 12px;
 }
 
 .right {
   flex: 1 1 60%;
+  display: inline-grid;
   height: 100%;
   padding: 20px;
   background-color: var(--color-background-soft);
@@ -141,13 +211,12 @@ const emit = defineEmits<{
   flex-direction: column;
 }
 
-.product-name {
+.product-brand {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  font-size: 22px;
-  font-weight: bold;
+  font-size: 18px;
   font-family: "Muli", Ubuntu, sans-serif;
   color: var(--color-heading);
 }
@@ -173,23 +242,27 @@ const emit = defineEmits<{
   font-family: "Muli", Ubuntu, sans-serif;
 }
 
+.label {
+  margin-top: 8px;
+}
+
 h1 {
-  font-size: 18px;
+  font-size: 20px;
   font-family: "Muli", Ubuntu, sans-serif;
 }
 
 h2 {
   font-size: 24px;
-  font-family: "Muli", Ubuntu, sans-serif;
-}
-
-h1 h3 {
-  font-size: 18px;
   font-weight: bold;
   font-family: "Muli", Ubuntu, sans-serif;
 }
 
-.details h2 {
+h3 {
+  font-size: 14px;
+  font-family: "Muli", Ubuntu, sans-serif;
+}
+
+.details {
   margin-top: 6px;
   margin-bottom: 6px;
   font-weight: normal;
@@ -240,17 +313,47 @@ ul li.bg:hover {
   color: var(--color-background);
 }
 
+.options-container {
+  align-items: center;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.option-button {
+  display: inline-flex;
+  justify-content: center;
+  padding: 6px 12px;
+  min-width: 90px;
+  margin: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.option-button.selected {
+  background-color: var(--vt-c-indigo);
+  border-color: var(--color-background);
+}
+
+.foot.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 .actions {
   display: flex;
-  margin-top: 16px;
+  flex-direction: row;
+  margin: 8px;
+  height: 48px;
   gap: 24px;
 }
 
 .actions .foot {
   display: inline-flex;
   align-items: center;
+  gap: 10px;
   justify-content: center;
-  font-size: 12px;
   font-weight: bold;
   font-family: "Muli", Ubuntu, sans-serif;
   padding: 6px 10px;
@@ -271,36 +374,72 @@ ul li.bg:hover {
 }
 
 @media (max-width: 768px) {
+  .form-container {
+    width: 90%;
+    margin: 0 auto;
+  }
+
   .card {
     flex-direction: column;
+    padding: 16px;
+    width: 100%;
     height: auto;
     border-radius: 12px;
+    margin: 16px auto;
   }
 
   .left {
-    height: 150px;
     width: 100%;
-    border-radius: 0;
+    height: 200px;
+    border-radius: 12px 12px 0 0;
     justify-content: center;
     align-items: center;
   }
 
-  .right {
-    justify-content: center;
-    height: auto;
-    width: 100%;
-    padding: 10px;
+  .left img {
+    max-width: 90%;
+    max-height: 100%;
+    border-radius: 12px;
   }
 
-  .product-name {
+  .right {
+    width: 100%;
+    padding: 12px;
+    display: flex;
     flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
+    align-items: center;
+  }
+
+  .product-brand {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 8px;
+    font-size: 16px;
+  }
+
+  .details {
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .price-container {
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
   }
 
   .actions {
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    margin: 16px 0;
+    gap: 12px;
+  }
+
+  .option-button {
+    min-width: 70px;
+    margin: 4px;
   }
 }
 </style>

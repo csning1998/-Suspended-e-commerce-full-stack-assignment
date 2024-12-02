@@ -56,12 +56,6 @@
     margin-bottom: 12px;
 }
 
-.form-field label {
-    font-weight: bold;
-    width: 100%;
-    /* width: 150px; */
-}
-
 .form-field span {
     flex: 1;
     text-align: right;
@@ -82,9 +76,9 @@
     border: 1px solid #1e88e5;
 }
 
-
-
 .form-field label {
+    font-weight: bold;
+    width: 100%;
     display: block;
     margin: 8px 8px 8px 0;
     font-size: 14px;

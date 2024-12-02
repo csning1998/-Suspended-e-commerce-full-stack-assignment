@@ -2,6 +2,7 @@
 import { defineProps } from "vue";
 import { products } from "./mockProducts";
 import { productCardButtonActions } from "@/components/product/productCardButtonActions";
+import { useProductOptions } from "./useProductOptions";
 
 defineProps<{
   readonly products: Products[];
@@ -11,9 +12,16 @@ const userId = undefined; // if (!isLoggedIn) then make it undefined
 const { cart, favorites, addToCart, addToFavorites } =
   productCardButtonActions(userId);
 
+const {
+  selectedOptions,
+  updateSelectedOption,
+  calculateTotalPrice,
+  areAllOptionsSelected,
+} = useProductOptions();
+
 const emit = defineEmits<{
-  (e: "addToCart", product: Products): void;
-  (e: "addToFavorites", product: Products): void;
+  (e: "addToCart", product: CartItem): void;
+  (e: "addToFavorites", product: CartItem): void;
 }>();
 </script>
 
@@ -24,41 +32,83 @@ const emit = defineEmits<{
         <img :src="item.link2Pic" alt="Product Image" />
       </div>
       <div class="content-container">
-        <div class="product-info">
-          <div class="product-name">
-            <h1>{{ item.name }}</h1>
+        <div class="product-brand">
+          {{ item.brand }}
+          <div class="price-container">
+            <span class="discount">
+              <fa icon="dollar-sign" />
+              {{ calculateTotalPrice(item)._bestPrice }}
+            </span>
+            <span class="original-price">
+              <fa icon="dollar-sign" />
+              {{ calculateTotalPrice(item)._discountPrice }}
+            </span>
           </div>
-          <div class="details">
-            <h3>{{ item.collection }}</h3>
-            <h2>{{ item.category }}</h2>
-            <div class="price-container">
-              <span class="original-price">
-                <fa icon="dollar-sign" />{{ item.price }}
-              </span>
-              <span class="discount">
-                <fa icon="dollar-sign" />{{ item.discountPrice }}
+        </div>
+        <div class="details">
+          <h3>{{ item.collection }}</h3>
+          <h2>{{ item.title }}</h2>
+
+          <div v-for="option in item.options" :key="option.name">
+            <p class="label">
+              {{ option.name.toUpperCase() }}
+            </p>
+            <div class="options-container">
+              <span
+                v-for="value in option.values"
+                :key="value.value"
+                class="option-button"
+                :class="{
+                  selected:
+                    selectedOptions[item.id]?.[option.name] === value.value,
+                }"
+                @click="
+                  () => {
+                    if (!selectedOptions[item.id]) {
+                      selectedOptions[item.id] = {};
+                    }
+                    selectedOptions[item.id][option.name] = value.value;
+                  }
+                "
+              >
+                {{ value.value }}
               </span>
             </div>
           </div>
         </div>
         <div class="actions">
-          <span class="foot">
-            <span class="icon">
-              <fa icon="bag-shopping" id="buyNow" />
-            </span>
-            Buy Now
-          </span>
-          <span class="foot" @click="emit('addToCart', item)">
+          <span
+            class="foot"
+            :class="{ disabled: !areAllOptionsSelected(item) }"
+            @click="
+              () => {
+                if (areAllOptionsSelected(item)) {
+                  emit('addToCart', {
+                    ...item,
+                    selectedOptions: selectedOptions[item.id],
+                  });
+                }
+              }
+            "
+          >
             <span class="icon">
               <fa icon="cart-arrow-down" id="addToCart" />
             </span>
             Add to Cart
           </span>
-          <span class="foot" @click="emit('addToFavorites', item)">
+          <span
+            class="foot"
+            @click="
+              emit('addToFavorites', {
+                ...item,
+                selectedOptions: selectedOptions[item.id],
+              })
+            "
+          >
             <span class="icon" id="addToFavorites">
               <fa icon="heart" />
             </span>
-            Add to Favourites
+            Add to Favorites
           </span>
         </div>
       </div>
@@ -68,22 +118,22 @@ const emit = defineEmits<{
 
 <style scoped>
 .product-container {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   flex-wrap: wrap;
   gap: 20px;
-  justify-content: center;
+  justify-content: space-between;
   align-items: flex-start;
-  margin: 20px auto;
+  margin: -10px;
   max-width: 1200px;
 }
 
 .card {
-  flex: 1 1 calc(33% - 20px);
-  max-width: 300px;
-  min-width: 200px;
+  flex: 1 1 200px;
+
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin: 20px 0;
+  margin: 10px;
   overflow: hidden;
   background-color: var(--color-background-soft);
 }
@@ -117,10 +167,14 @@ const emit = defineEmits<{
   margin-bottom: 20px;
 }
 
-.product-name {
-  font-size: 22px;
-  font-weight: bold;
-  margin-bottom: 10px;
+.product-brand {
+  display: flex;
+  margin-bottom: 6px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 18px;
+  font-family: "Muli", Ubuntu, sans-serif;
   color: var(--color-heading);
 }
 
@@ -131,20 +185,23 @@ const emit = defineEmits<{
 
 .price-container {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 10px;
 }
 
 .original-price {
-  font-size: 18px;
-  font-weight: bold;
-  color: var(--vt-c-indigo);
+  font-size: 16px;
+  font-weight: normal;
+  text-decoration: line-through;
+  color: var(--vt-c-divider-dark-1);
 }
 
 .discount {
-  font-size: 14px;
-  text-decoration: line-through;
-  color: var(--color-border);
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--vt-c-indigo);
+  gap: 4px;
 }
 
 ul {
@@ -173,7 +230,8 @@ ul li.bg:hover {
 
 .actions {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-around;
   gap: 10px;
 }
 
@@ -190,7 +248,10 @@ ul li.bg:hover {
   border: 1px solid var(--color-border);
   color: var(--vt-c-indigo);
   background-color: var(--color-background-mute);
-  transition: all 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    transform 0.3s ease,
+    color 0.3s ease;
 }
 
 .actions .foot:hover {
@@ -200,24 +261,64 @@ ul li.bg:hover {
 }
 
 h1 {
-  font-size: 14px;
+  font-size: 20px;
   font-family: "Muli", Ubuntu, sans-serif;
 }
 
 h2 {
-  font-size: 18px;
-  font-family: "Muli", Ubuntu, sans-serif;
-}
-
-h1 h3 {
-  font-size: 14px;
+  font-size: 24px;
   font-weight: bold;
   font-family: "Muli", Ubuntu, sans-serif;
 }
 
+h3 {
+  font-size: 14px;
+  font-family: "Muli", Ubuntu, sans-serif;
+}
+
+.details {
+  margin-top: 2px;
+  margin-bottom: 2px;
+  font-weight: normal;
+  font-family: "Muli", Ubuntu, sans-serif;
+}
+
+.options-container {
+  align-items: center;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.option-button {
+  display: inline-flex;
+  justify-content: center;
+  min-width: 90px;
+  padding: 4px 8px;
+  margin: 8px;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.option-button.selected {
+  background-color: var(--vt-c-indigo);
+  border-color: var(--color-background);
+}
+
+.foot.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
 @media (max-width: 768px) {
   .card {
-    flex: 1 1 calc(50% - 10px);
+    flex: 1 1 100%;
+    max-width: none;
+  }
+
+  .product-container {
+    justify-content: center;
   }
 
   .image-container img {
