@@ -1,8 +1,20 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
 import { products } from "./mockProducts";
+import { productCardButtonActions } from "@/components/product/productCardButtonActions";
 
-defineProps<{ products: Products[] }>();
+defineProps<{
+  readonly products: Products[];
+}>();
+const userId = undefined; // if (!isLoggedIn) then make it undefined
+
+const { cart, favorites, addToCart, addToFavorites } =
+  productCardButtonActions(userId);
+
+const emit = defineEmits<{
+  (e: "addToCart", product: Products): void;
+  (e: "addToFavorites", product: Products): void;
+}>();
 </script>
 
 <template>
@@ -36,13 +48,13 @@ defineProps<{ products: Products[] }>();
             </span>
             Buy Now
           </span>
-          <span class="foot">
+          <span class="foot" @click="emit('addToCart', item)">
             <span class="icon">
               <fa icon="cart-arrow-down" id="addToCart" />
             </span>
             Add to Cart
           </span>
-          <span class="foot">
+          <span class="foot" @click="emit('addToFavorites', item)">
             <span class="icon" id="addToFavorites">
               <fa icon="heart" />
             </span>

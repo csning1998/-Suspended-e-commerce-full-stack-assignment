@@ -1,3 +1,4 @@
+ductList
 <script setup lang="ts">
 import request from "../stores/request";
 import { ref } from "vue";
