@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
+import { products } from "./mockProducts";
 
 defineProps<{ products: Products[] }>();
 </script>

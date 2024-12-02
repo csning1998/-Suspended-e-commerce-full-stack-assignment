@@ -8,12 +8,11 @@ interface NavLink {
 }
 
 const navLinks = ref<NavLink[]>([
+  { text: "Products", href: "./Products" },
   { text: "Favourites", href: "#" },
   { text: "Shopping Cart", href: "#" },
   { text: "Ships to", href: "#" },
   { text: "Notifications", href: "#" },
-  // { text: "Login / Logout", href: "/login", auth: false },
-  // { text: "Profile", href: "/profile", auth: true },
 ]);
 
 // To-do: This should be further implemented by other controller or handler instead of hardcoding.
