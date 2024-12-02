@@ -84,6 +84,7 @@ defineProps<{ products: Products[] }>();
 .image-container {
   width: 100%;
   max-height: 200px;
+  min-height: 200px;
   overflow: hidden;
   display: flex;
   justify-content: center;

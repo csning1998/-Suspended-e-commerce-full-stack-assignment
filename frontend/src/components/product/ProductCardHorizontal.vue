@@ -29,11 +29,11 @@ defineProps<{ products: Products[] }>();
           <h3>{{ item.collection }}</h3>
           <h2>{{ item.category }}</h2>
           <div class="price-container">
-            <span class="original-price"
-              ><fa icon="dollar-sign" />{{ item.price }}</span
-            >
             <span class="discount">
               <fa icon="dollar-sign" />{{ item.discountPrice }}
+            </span>
+            <span class="original-price">
+              <fa icon="dollar-sign" />{{ item.price }}
             </span>
           </div>
           <ul>
@@ -190,17 +190,17 @@ h1 h3 {
 }
 
 .original-price {
-  font-size: 24px;
-  font-weight: bold;
-  color: var(--vt-c-indigo);
-  gap: 4px;
-}
-
-.discount {
   font-size: 16px;
   font-weight: normal;
   text-decoration: line-through;
   color: var(--vt-c-divider-dark-1);
+}
+
+.discount {
+  font-size: 24px;
+  font-weight: bold;
+  color: var(--vt-c-indigo);
+  gap: 4px;
 }
 
 ul {
