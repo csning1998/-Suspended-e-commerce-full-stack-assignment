@@ -61,6 +61,7 @@ require("./lib/errorHandler")(app);
 /*
  * Main function, only run once at the application startup.
  * */
+// import mockProducts from '../../mock/product'
 (async (): Promise<void> => {
     try {
         /*
@@ -70,9 +71,22 @@ require("./lib/errorHandler")(app);
         const db = await connect(MONGO_URI);
         console.log("MongoDB is connected to ", db.connection.name);
         // await connect(MONGO_URI); // https://mongoosejs.com/docs/typescript.html
+
+        await Product.create({
+            title: "test product",
+        })
     } catch (error) {
         console.error(error);
     }
+
+    // if(await Product.countDocuments() === 0) {
+    //     mockProducts.forEach(product => {
+    //         const _product :any = product
+    //         delete _product.id;
+    //         Product.create(_product)
+    //     })
+
+    // }
 
     /*
      * Add Schemas here. https://stackoverflow.com/questions/42497254/sequelize-schema-for-postgresql-how-to-accurately-define-a-schema-in-a-model

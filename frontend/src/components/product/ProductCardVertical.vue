@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
-import { products } from "./mockProducts";
 import { productCardButtonActions } from "@/components/product/productCardButtonActions";
 import { useProductOptions } from "./useProductOptions";
 
 defineProps<{
-  readonly products: Products[];
+   products: Products[];
 }>();
 const userId = undefined; // if (!isLoggedIn) then make it undefined
 
@@ -37,11 +36,11 @@ const emit = defineEmits<{
           <div class="price-container">
             <span class="discount">
               <fa icon="dollar-sign" />
-              {{ calculateTotalPrice(item)._bestPrice }}
+              {{ calculateTotalPrice(item).bestPrice }}
             </span>
             <span class="original-price">
               <fa icon="dollar-sign" />
-              {{ calculateTotalPrice(item)._discountPrice }}
+              {{ calculateTotalPrice(item).discountPrice }}
             </span>
           </div>
         </div>

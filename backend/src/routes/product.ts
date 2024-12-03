@@ -14,16 +14,21 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
     const { keyword } = req.body;
     try {
         // https://www.mongodb.com/docs/manual/reference/operator/query/regex/
-        const query:
-            | { name: { $regex: any; $options: string }; state: boolean }
-            | { state: boolean } = keyword
-            ? { state: true, name: { $regex: keyword, $options: "i" } }
-            : { state: true };
-        const products: any = await ProductModel.find(query);
+        // const query:
+        //     | { name: { $regex: any; $options: string }; state: boolean }
+        //     | { state: boolean } = keyword
+        //     ? { state: true, name: { $regex: keyword, $options: "i" } }
+        //     : { state: true };
+        // const products: any = await ProductModel.find(query);
 
-        HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_BULK.code, {
-            products,
-        });
+
+        const products: any = await ProductModel.find();
+
+        res.json(products)
+
+        // HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_BULK.code, {
+        //     products,
+        // });
     } catch (err) {
         console.error(err);
         res.status(statusCodes.BACKEND_LOGIC.code).json({

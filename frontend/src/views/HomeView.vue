@@ -1,6 +1,17 @@
 <script setup lang="ts">
-import ProductCard from "@/components/product/ProductCardVertical.vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import ProductCardVertical from "@/components/product/ProductCardVertical.vue";
 import HeroSection from "@/components/common/HeroSection.vue";
+import request from "../stores/request";;
+
+
+// import { products } from '@/components/product/mockProducts';
+
+let products = ref([]);
+onMounted(async () => {
+  const res = await request.get("/products");
+  products.value = res.data;
+});
 </script>
 
 <template>
@@ -11,7 +22,7 @@ import HeroSection from "@/components/common/HeroSection.vue";
 
     <!-- ProductCard Section -->
     <section class="categories">
-      <ProductCard />
+      <ProductCardVertical :products="products" />
     </section>
   </div>
 </template>

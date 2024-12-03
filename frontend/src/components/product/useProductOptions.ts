@@ -1,6 +1,19 @@
 import { ref } from "vue";
+import type { Ref } from "vue";
 
-export function useProductOptions() {
+export function useProductOptions(): {
+    selectedOptions: Ref<Record<number, Record<string, string | number>>>;
+    updateSelectedOption: (
+        productId: number,
+        optionName: string,
+        optionValue: string | number,
+    ) => void;
+    calculateTotalPrice: (product: Products) => {
+        bestPrice: number;
+        discountPrice: number;
+    };
+    areAllOptionsSelected: (product: Products) => boolean;
+} {
     const selectedOptions = ref<
         Record<number, Record<string, string | number>>
     >({});
@@ -8,35 +21,34 @@ export function useProductOptions() {
     // Calculate the price in the product obj
     const calculateTotalPrice = (
         product: Products,
-    ): { _bestPrice: number; _discountPrice: number } => {
-        let _bestPrice: number = product.basePrice;
-        let _discountPrice: number = product.discountPrice || product.basePrice;
-        const options: Record<string, number | string> =
-            selectedOptions.value[product.id] || {};
+    ): { bestPrice: number; discountPrice: number } => {
+        let bestPrice = product.basePrice;
+        let discountPrice = product.discountPrice || product.basePrice;
 
-        product.options.forEach((option: ProductOption): void => {
-            const selectedValue: string | number = options[option.name];
+        const options = selectedOptions.value[product.id] || {};
+
+        product.options.forEach((option): void => {
+            const selectedValue = options[option.name];
             const matchedValue = option.values.find(
-                (value): boolean => value.value === selectedValue,
+                (value) => value.value === selectedValue,
             );
+
             if (matchedValue?.priceAdj) {
-                _bestPrice += matchedValue.priceAdj;
-                _discountPrice += matchedValue.priceAdj;
+                bestPrice += matchedValue.priceAdj;
+                discountPrice += matchedValue.priceAdj;
             }
         });
 
-        return { _bestPrice, _discountPrice };
+        return { bestPrice, discountPrice };
     };
 
     //
     const areAllOptionsSelected = (product: Products): boolean => {
-        const options: Record<string, number | string> =
-            selectedOptions.value[product.id];
-
+        const options = selectedOptions.value[product.id];
         if (!options) return false;
+
         return product.options.every(
-            (option: ProductOption): boolean =>
-                options[option.name] !== undefined,
+            (option) => options[option.name] !== undefined,
         );
     };
 
