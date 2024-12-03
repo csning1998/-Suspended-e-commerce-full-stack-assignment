@@ -14,6 +14,7 @@ let products = ref([]);
 onMounted(async () => {
   products.value = await request.get("/products");
 });
+
 </script>
 
 <template>

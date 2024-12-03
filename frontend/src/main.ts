@@ -15,15 +15,31 @@ import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { createVfm } from 'vue-final-modal'
 
 
+// Vuetify
+import 'vuetify/styles'
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+
+
 import AppComponent from "./App.vue";
 import router from "./router";
 
 const app = createApp(AppComponent).component("fa", FontAwesomeIcon);
-const vfm = createVfm()
+
+const vuetify = createVuetify({
+  components,
+  directives,
+})
+
 
 library.add(fas);
 app.use(createPinia());
 app.use(router);
-app.use(vfm)
+app.use(vuetify)
+
 
 app.mount('#app')
+
+
+

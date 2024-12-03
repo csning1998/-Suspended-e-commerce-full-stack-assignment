@@ -1,9 +1,20 @@
 <script setup lang="ts">
 import SearchBar from "@/components/common/SearchBar.vue";
 import CartView from "@/views/CartView.vue";
+// import SellerProductManagementView from "@/views/SellerProductManagementView.vue";
 </script>
 
 <template>
+
+  <h1> Seller Product MAangement View </h1>
+    <p>
+    ------------------------------------------------------------------------------------------------------
+  </p>
+    <SellerProductManagementView />
+
+
+
+
   <h1>Cart View</h1>
   <p>
     ------------------------------------------------------------------------------------------------------
