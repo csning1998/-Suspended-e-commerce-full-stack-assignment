@@ -4,13 +4,9 @@ import ProductCardVertical from "@/components/product/ProductCardVertical.vue";
 import HeroSection from "@/components/common/HeroSection.vue";
 import request from "../stores/request";;
 
-
-// import { products } from '@/components/product/mockProducts';
-
 let products = ref([]);
 onMounted(async () => {
-  const res = await request.get("/products");
-  products.value = res.data;
+  products.value = await request.get("/products");
 });
 </script>
 

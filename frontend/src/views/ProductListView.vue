@@ -12,8 +12,7 @@ const { cart, favorites, addToCart, addToFavorites } =
 
 let products = ref([]);
 onMounted(async () => {
-  const res = await request.get("/products");
-  products.value = res.data;
+  products.value = await request.get("/products");
 });
 </script>
 

@@ -22,9 +22,11 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
         // const products: any = await ProductModel.find(query);
 
 
-        const products: any = await ProductModel.find();
+        const products = await ProductModel.find();
 
-        res.json(products)
+        res.json({
+            payload: products
+        })
 
         // HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_BULK.code, {
         //     products,
