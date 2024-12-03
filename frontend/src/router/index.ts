@@ -55,7 +55,8 @@ const router = createRouter({
             name: "profile",
             component: UserProfileView,
             meta: {
-                require_login: true
+                require_login: true,
+                allowRoles: ['admin', 'supplier', 'user']
             }
         },
         {
@@ -63,24 +64,39 @@ const router = createRouter({
             name: "SellerProductManagementView",
             component: SellerProductManagementView,
             meta: {
-                require_login: true
+                require_login: true,
+                allowRoles: ['admin', 'supplier']
             }
         },
     ],
 });
 
+/**
+ * We
+ */
+
 import request from '@/stores/request'
+
+import store from '@/stores/user'
 
 router.beforeEach(async (to, from , next) => {
     console.log('from: ', from)
     console.log('to: ', to)
 
-    if(to.meta && to.meta.require_login === true) {
+    if(localStorage.getItem('token') && store.currentUser == null) {
         try {
             const user = await request.get('/users/current')
-            next()    
+            store.currentUser = user.data
         } catch (error) {
             alert(error)
+        }
+    }
+
+    if(to.meta && to.meta.require_login === true) {
+        const currentUser = store.currentUser
+        // @ts-ignore
+        if(to.meta.allowRoles.includes(currentUser.userPermission)){
+            next()
         }
     }
 

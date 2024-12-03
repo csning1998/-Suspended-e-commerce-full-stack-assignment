@@ -27,7 +27,7 @@ router.get("/products", async (req: Request, res: Response): Promise<void> => {
 
         if(req.currentUser.userPermission !== 'admin'){
             query = {
-                supplierId: req.currentUser.id,
+                supplierID: req.currentUser.id,
             }
         }
 

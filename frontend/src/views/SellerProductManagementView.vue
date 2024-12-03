@@ -48,9 +48,15 @@ async function amendProduct(){
   })
   alert('Successfully amended ')
 }
+import store from '@/stores/user'
+let currentUser = store.currentUser
 </script>
 
 <template>
+
+  <!-- <pre>
+  {{ currentUser }}
+  </pre> -->
   <v-dialog v-model="dialog" width="auto">
     <v-card
       max-width="768"
@@ -89,7 +95,8 @@ async function amendProduct(){
         <img :src="item.link2Pic" alt="Product Image" />
       </div>
       <div class="right">
-        <v-btn @click="dialog = true; currentEditProduct = item"> Edit Product </v-btn>
+        <v-btn color="red-darken-2" v-if="currentUser.userPermission === 'admin' "  @click="dialog = true; currentEditProduct = item"> Delete Product </v-btn>
+        <v-btn  @click="dialog = true; currentEditProduct = item"> Edit Product </v-btn>
         <div class="product-info">
           <div class="product-brand">
             {{ item.brand }}

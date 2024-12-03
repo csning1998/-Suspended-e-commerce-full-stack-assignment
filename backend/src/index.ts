@@ -43,10 +43,15 @@ app.get("/", (req: Request, res: Response): void => {
 
 import * as JWTToken from "./lib/jwt-token";
 
+
+const allowManagementRoles = ['admin', 'supplier']
 app.use(JWTToken.verity);
 app.use(function (req, res, next) {
-    if (req.currentUser.userPermission !== "admin") {
-        return next(new Error("You must be an admin"));
+
+    console.log('req.currentUser.userPermission', req.currentUser.userPermission)
+    console.log('allowManagementRoles', allowManagementRoles)
+    if (!allowManagementRoles.includes(req.currentUser.userPermission)) {
+        return next(new Error(`You must be one of ${allowManagementRoles.join(', ')}`));
     }
 
     next();
