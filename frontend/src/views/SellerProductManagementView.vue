@@ -32,14 +32,22 @@ let dialog = ref(false)
 
 let valid = ref(false)
 let currentEditProduct = ref({
+  _id: '',
   title: ''
 })
 
 let isEditModalVisible = ref
-let products: Products = ref([])
+let products: any = ref([])
 onMounted(async () => {
-  products = await request.get('/admin/products')
+  products.value = await request.get('/admin/products')
 })
+
+async function amendProduct(){
+  await request.put('/admin/products/' + currentEditProduct.value._id, {
+    ...currentEditProduct.value
+  })
+  alert('Successfully amended ')
+}
 </script>
 
 <template>
@@ -59,6 +67,7 @@ onMounted(async () => {
       </v-form>
       <template v-slot:actions>
         <v-btn class="ms-auto" text="Ok" @click="dialog = false"></v-btn>
+        <v-btn class="ms-auto" text="Amend" @click="amendProduct()"></v-btn>
       </template>
     </v-card>
   </v-dialog>

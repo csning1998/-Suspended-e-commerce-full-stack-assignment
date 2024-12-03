@@ -11,6 +11,7 @@ interface IProductOptions {
 }
 
 interface IProduct extends Document {
+    supplierId: number;
     brand: string;
     link2Pic: string;
     basePrice: number;
@@ -21,6 +22,7 @@ interface IProduct extends Document {
 }
 // https://mongoosejs.com/docs/schematypes.html#:~:text=Buffer%22%2C%22data%22%3A%5B1%2C2%2C3%5D%7D-,Mixed,-An%20%22anything%20goes
 const productSchema: Schema = new Schema<IProduct>({
+    supplierId: { Number},
     brand: { type: String },
     link2Pic: { type: String },
     basePrice: { type: Number },

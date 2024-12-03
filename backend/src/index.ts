@@ -45,7 +45,7 @@ import * as JWTToken from "./lib/jwt-token";
 
 app.use(JWTToken.verity);
 app.use(function (req, res, next) {
-    if (req.currentUser.role !== "admin") {
+    if (req.currentUser.userPermission !== "admin") {
         return next(new Error("You must be an admin"));
     }
 
@@ -72,9 +72,9 @@ require("./lib/errorHandler")(app);
         console.log("MongoDB is connected to ", db.connection.name);
         // await connect(MONGO_URI); // https://mongoosejs.com/docs/typescript.html
 
-        await Product.create({
-            title: "test product",
-        })
+        // await Product.create({
+        //     title: "test product",
+        // })
     } catch (error) {
         console.error(error);
     }

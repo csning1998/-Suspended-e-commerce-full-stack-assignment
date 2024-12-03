@@ -29,11 +29,6 @@ const router = createRouter({
             component: RegistrationView,
         },
         {
-            path: "/profile",
-            name: "profile",
-            component: UserProfileView,
-        },
-        {
             path: "/privacy-policy",
             name: "PrivacyPolicy",
             component: PrivacyPolicy,
@@ -56,11 +51,40 @@ const router = createRouter({
             props: true,
         },
         {
+            path: "/profile",
+            name: "profile",
+            component: UserProfileView,
+            meta: {
+                require_login: true
+            }
+        },
+        {
             path: "/seller-product-management",
             name: "SellerProductManagementView",
             component: SellerProductManagementView,
+            meta: {
+                require_login: true
+            }
         },
     ],
 });
+
+import request from '@/stores/request'
+
+router.beforeEach(async (to, from , next) => {
+    console.log('from: ', from)
+    console.log('to: ', to)
+
+    if(to.meta && to.meta.require_login === true) {
+        try {
+            const user = await request.get('/users/current')
+            next()    
+        } catch (error) {
+            alert(error)
+        }
+    }
+
+    next()
+})
 
 export default router;

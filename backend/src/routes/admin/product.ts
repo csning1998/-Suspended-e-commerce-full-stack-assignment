@@ -16,16 +16,31 @@ router.get("/products", async (req: Request, res: Response): Promise<void> => {
     const { keyword } = req.body;
     try {
         // https://www.mongodb.com/docs/manual/reference/operator/query/regex/
-        const query:
-            | { name: { $regex: any; $options: string }; state: boolean }
-            | { state: boolean } = keyword
-            ? { state: true, name: { $regex: keyword, $options: "i" } }
-            : { state: true };
-        const products: any = await Product.find(query);
+        // const query:
+        //     | { name: { $regex: any; $options: string }; state: boolean }
+        //     | { state: boolean } = keyword
+        //     ? { state: true, name: { $regex: keyword, $options: "i" } }
+        //     : { state: true };
 
-        HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_BULK.code, {
-            products,
-        });
+        let query = {}
+        let products: any = []
+
+        if(req.currentUser.userPermission !== 'admin'){
+            query = {
+                supplierId: req.currentUser.id,
+            }
+        }
+
+        products = await Product.find(query);
+
+
+        res.json({
+            payload: products
+        })
+
+        // HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_BULK.code, {
+        //     products,
+        // });
     } catch (err) {
         console.error(err);
         res.status(statusCodes.BACKEND_LOGIC.code).json({
@@ -95,7 +110,7 @@ router.put(
                 { new: true },
             );
 
-            await updatedProduct?.save()
+            // await updatedProduct?.save()
 
             res.status(200).json(updatedProduct);
         } catch (error) {

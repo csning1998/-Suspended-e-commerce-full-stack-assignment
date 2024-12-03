@@ -39,11 +39,7 @@ export const verity: any = async (
         const token = req.headers.token as string | undefined;
 
         if (!token) {
-            return res
-                .status(statusCodes.AUTHENTICATION.NO_TOKEN_PROVIDED.code)
-                .send({
-                    ...statusCodes.AUTHENTICATION.NO_TOKEN_PROVIDED,
-                });
+            return next(new Error(statusCodes.AUTHENTICATION.NO_TOKEN_PROVIDED.message))
         }
 
         const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
@@ -58,28 +54,16 @@ export const verity: any = async (
 
             if (currentUser) {
                 req.currentUser = currentUser;
-                next();
+                return next();
             } else {
-                return res
-                    .status(statusCodes.AUTHENTICATION.USER_NOT_FOUND.code)
-                    .send({
-                        ...statusCodes.AUTHENTICATION.USER_NOT_FOUND,
-                    });
+                return next(new Error(statusCodes.AUTHENTICATION.USER_NOT_FOUND.message))
             }
         } else {
-            return res
-                .status(statusCodes.AUTHENTICATION.INVALID_TOKEN.code)
-                .send({
-                    ...statusCodes.AUTHENTICATION.INVALID_TOKEN,
-                });
+            return next(new Error(statusCodes.AUTHENTICATION.INVALID_TOKEN.message))
         }
     } catch (error) {
         console.error("JWT verification failed:", error);
-        return res
-            .status(statusCodes.AUTHENTICATION.JWT_VERIFICATION_FAILED.code)
-            .send({
-                ...statusCodes.AUTHENTICATION.JWT_VERIFICATION_FAILED,
-            });
+        return next(new Error(statusCodes.AUTHENTICATION.JWT_VERIFICATION_FAILED.message))
     }
 };
 
