@@ -8,7 +8,7 @@ import TermsOfService from "@/views/TermsofService.vue";
 import ProductListView from "@/views/ProductListView.vue";
 import ProductDetailView from "@/views/ProductDetailView.vue";
 // import TestComponents from "@/components/TestComponents.vue";
-import SellerProductManagementView from "@/views/SellerProductManagementView.vue";
+import SellerProductManagementView from "@/views/SellerProductManagementView.vue"; 
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -27,6 +27,11 @@ const router = createRouter({
             path: "/register",
             name: "register",
             component: RegistrationView,
+        },
+        {
+            path: "/profile",
+            name: "profile",
+            component: UserProfileView,
         },
         {
             path: "/privacy-policy",
@@ -62,7 +67,7 @@ const router = createRouter({
         {
             path: "/seller-product-management",
             name: "SellerProductManagementView",
-            component: SellerProductManagementView,
+            component: SellerProductManagementView, 
             meta: {
                 require_login: true,
                 allowRoles: ['admin', 'supplier']
