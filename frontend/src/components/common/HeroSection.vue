@@ -108,6 +108,17 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
+
+.hero-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px;
+  background-color: var(--color-background-mute);
+  text-align: center;
+  transition: background-color 0.5s;
+}
+
 .hero-section-container {
   position: relative;
   width: 100%;

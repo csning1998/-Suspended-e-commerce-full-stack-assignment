@@ -61,14 +61,18 @@ const saveProfile = async () => {
   }
 };
 
+import store from '@/stores/user'
+
 const logout = () => {
   localStorage.removeItem("isLoggedIn");
   localStorage.removeItem("token");
   localStorage.removeItem("UserID");
+  store.currentUser = null
 
   window.dispatchEvent(new CustomEvent("userLoggedOut"));
   alert("You have been logged out.");
   router.push("/");
+  window.location.reload();
 };
 
 const addAddress = () => {

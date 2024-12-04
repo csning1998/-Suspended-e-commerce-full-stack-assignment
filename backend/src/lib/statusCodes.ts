@@ -149,9 +149,9 @@ export const statusCodes = {
         },
     },
     BACKEND_LOGIC: {
-        code: 401,
+        code: 500,
         status: "error",
-        message: "(401) Internal server error.",
+        message: "(500) Internal server error.",
     },
 };
 

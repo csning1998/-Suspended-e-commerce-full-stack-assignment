@@ -1,13 +1,14 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+import HomeView from "@/views/HomeView.vue";
 import LoginView from "@/views/LoginView.vue";
 import RegistrationView from "@/views/RegistrationView.vue";
 import UserProfileView from "@/views/UserProfileView.vue";
-import PrivacyPolicy from "../views/PrivacyPolicy.vue";
-import TermsOfService from "../views/TermsofService.vue";
+import PrivacyPolicy from "@/views/PrivacyPolicy.vue";
+import TermsOfService from "@/views/TermsofService.vue";
 import ProductListView from "@/views/ProductListView.vue";
 import ProductDetailView from "@/views/ProductDetailView.vue";
-import TestComponents from "@/components/TestComponents.vue";
+// import TestComponents from "@/components/TestComponents.vue";
+import SellerProductManagementView from "@/views/SellerProductManagementView.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -26,11 +27,6 @@ const router = createRouter({
             path: "/register",
             name: "register",
             component: RegistrationView,
-        },
-        {
-            path: "/profile",
-            name: "profile",
-            component: UserProfileView,
         },
         {
             path: "/privacy-policy",
@@ -55,11 +51,56 @@ const router = createRouter({
             props: true,
         },
         {
-            path: "/test-components",
-            name: "TestComponents",
-            component: TestComponents,
+            path: "/profile",
+            name: "profile",
+            component: UserProfileView,
+            meta: {
+                require_login: true,
+                allowRoles: ['admin', 'supplier', 'user']
+            }
+        },
+        {
+            path: "/seller-product-management",
+            name: "SellerProductManagementView",
+            component: SellerProductManagementView,
+            meta: {
+                require_login: true,
+                allowRoles: ['admin', 'supplier']
+            }
         },
     ],
 });
+
+/**
+ * We
+ */
+
+import request from '@/stores/request'
+
+import store from '@/stores/user'
+
+router.beforeEach(async (to, from , next) => {
+    console.log('from: ', from)
+    console.log('to: ', to)
+
+    if(localStorage.getItem('token') && store.currentUser == null) {
+        try {
+            const user = await request.get('/users/current')
+            store.currentUser = user.data
+        } catch (error) {
+            alert(error)
+        }
+    }
+
+    if(to.meta && to.meta.require_login === true) {
+        const currentUser = store.currentUser
+        // @ts-ignore
+        if(to.meta.allowRoles.includes(currentUser.userPermission)){
+            next()
+        }
+    }
+
+    next()
+})
 
 export default router;
