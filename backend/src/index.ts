@@ -6,6 +6,8 @@ import userRoutes from "./routes/users";
 import productQuery from "./routes/product";
 import adminProduct from "./routes/admin/product";
 import { connect } from "mongoose";
+import session from "express-session"; 
+import passport from "passport";
 
 import Product from "./mongo-models/product";
 
@@ -32,6 +34,63 @@ app.use(express.json());
 // for parsing JSON payloads
 app.use(bodyParser.json());
 
+// SET UP SESSION for OAuth ------below code comes from express-session
+
+try {
+    let secret: string | undefined = process.env.PASSPORT_LONG_SECRET
+    if (secret || !(secret === undefined)) {
+        app.use(session({
+            secret: process.env.PASSPORT_LONG_SECRET || "Our little secret.",
+            resave: false, 
+            saveUninitialized: false
+        }));
+    }
+} catch (err) {
+    console.error("You have to provide secret.")
+}
+
+// Initialize and use passport.
+app.use(passport.initialize());
+app.use(passport.session());
+
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
+const GitHubStrategy = require('passport-github').Strategy;
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/google/secrets"
+  },
+
+/* To-do: Rewrite in TypeScript
+function (accessToken, refreshToken, profile, cb) {
+    User.findOrCreate(
+      { googleId: profile.id },
+      function (err, user) {
+        return cb(err, user);
+      }
+    );
+  }
+));
+*/
+
+// -------GITHUB STRATEGY--------
+passport.use(new GitHubStrategy({
+    clientID: process.env.GITHUB_CLIENT_ID,
+    clientSecret: process.env.GITHUB_CLIENT_SECRET,
+    callbackURL: "http://localhost:3000/auth/github/secrets"
+  },
+
+/* To-do: Rewrite in TypeScript
+
+function(accessToken, refreshToken, profile, cb) {
+    User.findOrCreate({ githubId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));
+*/
+
 // for routes
 app.use("/users", userRoutes);
 app.use("/products", productQuery);
@@ -48,8 +107,10 @@ const allowManagementRoles = ['admin', 'supplier']
 app.use(JWTToken.verity);
 app.use(function (req, res, next) {
 
+    // @ts-ignore
     console.log('req.currentUser.userPermission', req.currentUser.userPermission)
     console.log('allowManagementRoles', allowManagementRoles)
+    // @ts-ignore
     if (!allowManagementRoles.includes(req.currentUser.userPermission)) {
         return next(new Error(`You must be one of ${allowManagementRoles.join(', ')}`));
     }
@@ -63,7 +124,7 @@ app.use("/admin", adminProduct);
 // ERROR HANDLER MUST BE THE FINAL ROUTE
 require("./lib/errorHandler")(app);
 
-/*
+/* 
  * Main function, only run once at the application startup.
  * */
 // import mockProducts from '../../mock/product'
