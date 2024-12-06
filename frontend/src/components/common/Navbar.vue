@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 
 interface NavLink {
@@ -17,20 +17,31 @@ const navLinks = ref<NavLink[]>([
 ]);
 
 // To-do: This should be further implemented by other controller or handler instead of hardcoding.
-const isLoggedIn = ref(localStorage.getItem("isLoggedIn") === "true"); // Use ref
+// const isLoggedIn = ref(localStorage.getItem("isLoggedIn") === "true"); // Use ref
 
-console.log("Is the user logged in? ", isLoggedIn.value);
+const token = localStorage.getItem("token")
+
+const isLoggedIn = ref(!!token)
+
+// console.log("Is the user logged in? ", isLoggedIn.value);
 
 const router = useRouter();
 
-onMounted(() => {
-  window.addEventListener("userLoggedIn", () => {
-    isLoggedIn.value = true;
-  });
-  window.addEventListener("userLoggedOut", () => {
-    isLoggedIn.value = false;
-  });
+window.addEventListener("userLoggedIn", () => {
+  isLoggedIn.value = true;
 });
+window.addEventListener("userLoggedOut", () => {
+  isLoggedIn.value = false;
+});
+
+// onMounted(() => {
+//   window.addEventListener("userLoggedIn", () => {
+//     isLoggedIn.value = true;
+//   });
+//   window.addEventListener("userLoggedOut", () => {
+//     isLoggedIn.value = false;
+//   });
+// });
 
 function navLinkHandler(link: NavLink) {
   if (link.href === "#") {
@@ -39,6 +50,10 @@ function navLinkHandler(link: NavLink) {
 
   router.push(link.href);
 }
+
+// watch( localStorage.getItem("token"), () => {
+//   const token = localStorage.getItem("token")
+// })
 </script>
 
 <template>

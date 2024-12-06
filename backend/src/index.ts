@@ -187,7 +187,9 @@ app.get(
         // @ts-ignore
         userId: req.user.userId
     });
-    res.redirect(`http://localhost:5173/?token=${jwt}`)
+
+    res.cookie('token', jwt)
+    res.redirect(`http://localhost:5173/oauth`)
   }
 );
 

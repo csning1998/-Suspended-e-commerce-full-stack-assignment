@@ -1,13 +1,60 @@
 <script setup lang="ts">
+// @ts-nocheck
 import Navbar from "@/components/common/Navbar.vue";
 import Footer from "@/components/common/Footer.vue";
-import { computed} from 'vue'
+import { computed, ref} from 'vue'
 import { mapStores } from 'pinia' 
 import overlayStore from '@/stores/overlay'
+import request from '@/stores/request'
+
 const store = overlayStore()
 const overlay = computed(() => store.overlay)
 
-// const overlay = true
+/*
+let windowObjectReference = null;
+let previousUrl = null;
+
+const receiveMessage = event => {
+ // Do we trust the sender of this message? (might be
+ // different from what we originally opened, for example).
+ if (event.origin !== BASE_URL) {
+   return;
+ }
+ const { data } = event;
+ // if we trust the sender and the source is our popup
+ if (data.source === 'lma-login-redirect') {
+   // get the URL params and redirect to our server to use Passport to auth/login
+   const { payload } = data;
+   const redirectUrl = `/auth/google/login${payload}`;
+   window.location.pathname = redirectUrl;
+ }
+};
+
+// https://stackoverflow.com/questions/4068373/center-a-popup-window-on-screen
+ const popupCenter = ({url, title, w, h}) => {
+    // Fixes dual-screen position                             Most browsers      Firefox
+    const dualScreenLeft = window.screenLeft !==  undefined ? window.screenLeft : window.screenX;
+    const dualScreenTop = window.screenTop !==  undefined   ? window.screenTop  : window.screenY;
+
+    const width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+    const height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+    const systemZoom = width / window.screen.availWidth;
+    const left = (width - w) / 2 / systemZoom + dualScreenLeft
+    const top = (height - h) / 2 / systemZoom + dualScreenTop
+    const newWindow = window.open(url, title, 
+      `
+      scrollbars=yes,
+      width=${w / systemZoom}, 
+      height=${h / systemZoom}, 
+      top=${top}, 
+      left=${left}
+      `
+    )
+
+    if (window.focus) newWindow.focus();
+}
+*/
 </script>
 
 <template>
@@ -15,13 +62,15 @@ const overlay = computed(() => store.overlay)
     <!-- Navbar Component -->
     <Navbar />
 
+    <!-- <button @click="goauth">Google OAuth</button> -->
+
+    <div v-html="view"></div>
+
     <!-- Hero Section -->
     <router-view />
 
     <!-- Footer Component -->
     <Footer />
-
-
     <v-overlay v-model="overlay"></v-overlay>
 
     <span v-if="overlay" class="loader"></span>

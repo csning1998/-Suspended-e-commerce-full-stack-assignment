@@ -7,6 +7,7 @@ import PrivacyPolicy from "@/views/PrivacyPolicy.vue";
 import TermsOfService from "@/views/TermsofService.vue";
 import ProductListView from "@/views/ProductListView.vue";
 import ProductDetailView from "@/views/ProductDetailView.vue";
+import OauthLoginView from "@/views/OAuthLoginView.vue";
 // import TestComponents from "@/components/TestComponents.vue";
 import SellerProductManagementView from "@/views/SellerProductManagementView.vue";
 
@@ -23,6 +24,12 @@ const router = createRouter({
       name: "login",
       component: LoginView,
     },
+    {
+      path: "/oauth",
+      name: "oauthLogin",
+      component: OauthLoginView,
+    },
+    
     {
       path: "/register",
       name: "register",
@@ -88,15 +95,15 @@ router.beforeEach(async (to, from, next) => {
   console.log("from: ", from);
   console.log("to: ", to);
 
+  const token = localStorage.getItem("token")
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const token = urlParams.get('token');
-
-  if(token) {
-    localStorage.setItem("token", token)
+  if(to.name == 'login' && token) {
+    console.log('!!!!!!!!!!!!!!!!!!!!!');
+    console.log('HAVEN BEEN LOGGED IN');
+    return next({ name: "home" });
   }
 
-  if (localStorage.getItem("token") && store.currentUser == null) {
+  if (token && store.currentUser == null) {
     try {
       const user = await request.get("/users/current");
       store.currentUser = user.data;
@@ -115,7 +122,7 @@ router.beforeEach(async (to, from, next) => {
     // @ts-ignore
       to.meta.allowRoles.includes(currentUser.userPermission)
     ) {
-      next();
+      return next();
     } else {
       return next({
         name: "login",
@@ -126,7 +133,7 @@ router.beforeEach(async (to, from, next) => {
     }
   }
 
-  next();
+  return next();
 });
 
 export default router;

@@ -9,7 +9,7 @@ import 'vue-final-modal/style.css'
 
 import { createApp } from "vue";
 import { createPinia } from "pinia";
-import { library } from "@fortawesome/fontawesome-svg-core";
+import { library, config } from "@fortawesome/fontawesome-svg-core";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { createVfm } from 'vue-final-modal'
