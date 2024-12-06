@@ -88,6 +88,14 @@ router.beforeEach(async (to, from, next) => {
   console.log("from: ", from);
   console.log("to: ", to);
 
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const token = urlParams.get('token');
+
+  if(token) {
+    localStorage.setItem("token", token)
+  }
+
   if (localStorage.getItem("token") && store.currentUser == null) {
     try {
       const user = await request.get("/users/current");

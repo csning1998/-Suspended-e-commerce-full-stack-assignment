@@ -72,6 +72,10 @@ User.init(
             type: DataTypes.BLOB("long"),
             allowNull: true,
         },
+        userProfilePictureUrl: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         userGender: {
             type: DataTypes.STRING,
             allowNull: true,
