@@ -47,11 +47,6 @@ function googleOAuth(){
         <button type="button" class="google-sign-in-button" @click="googleOAuth">
           Sign in with Google
         </button>
-        <fa icon="heart" /><button type="button" class="github-sign-in-button" >
-
-        <fa icon="fa-GitHub" />
-          Sign in with GitHub
-        </button>
       </div>
       <p class="signup-link">
         Not Registered？
