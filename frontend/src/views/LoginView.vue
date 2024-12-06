@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import request from "../stores/request";
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import LoginForm from "@/components/auth/LoginForm.vue";
 
 const loginFormData = ref<LoginFormData>({
@@ -10,6 +10,7 @@ const loginFormData = ref<LoginFormData>({
 });
 
 const router = useRouter();
+const route =  useRoute();
 
 const ajaxErrorHandler = (error: any) => {
   if (error.response && error.response.data && error.response.data.message) {
@@ -39,7 +40,15 @@ async function login(): Promise<void> {
     alert("Login successfully");
     console.log("isLoggedIn", localStorage.getItem("isLoggedIn"));
 
-    await router.push("/");
+    
+
+    if(route.query && route.query.redirectTo){
+      // @ts-ignore
+      router.push(route.query.redirectTo);
+    }else {
+      router.push("/");
+    }
+    
   } catch (error) {
     ajaxErrorHandler(error);
   }

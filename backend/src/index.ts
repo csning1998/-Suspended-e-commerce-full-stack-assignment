@@ -1,3 +1,4 @@
+import * as JWTToken from "./lib/jwt-token";
 import express, { Request, Response, Express } from "express";
 import "dotenv/config"; // https://www.npmjs.com/package/dotenv
 import cors from "cors"; // Enable Cross-Origin Resource Sharing
@@ -6,13 +7,19 @@ import userRoutes from "./routes/users";
 import productQuery from "./routes/product";
 import adminProduct from "./routes/admin/product";
 import { connect } from "mongoose";
-import session from "express-session"; 
-import passport from "passport";
+import session from "express-session"; //https://www.npmjs.com/package/@types/express-session
+import passport from "passport"; //https://www.npmjs.com/package/@types/passport
+
+// npm i @types/express-session --save
+// npm i @types/passport --save
 
 import Product from "./mongo-models/product";
 
 // Initialize database connection
 import sequelize from "./db";
+
+import User from './postgres-models/user';
+
 
 const app: Express = express();
 const port: string | 3000 = process.env.PORT || 3000;
@@ -62,34 +69,72 @@ passport.use(new GoogleStrategy({
     callbackURL: "http://localhost:3000/auth/google/secrets"
   },
 
-/* To-do: Rewrite in TypeScript
-function (accessToken, refreshToken, profile, cb) {
-    User.findOrCreate(
-      { googleId: profile.id },
-      function (err, user) {
-        return cb(err, user);
-      }
-    );
+/* To-do: Rewrite in TypeScript */
+async function (accessToken: any, refreshToken: any, profile: any, cb: Function) {
+    try {
+        const user = User.findOrCreate({
+            where: {
+                userOAuthToken: profile.id,
+                userOAuthProvider: 'google'
+            }
+        })        
+        cb(null, user)
+    } catch (error) {
+        cb(error, null)
+    }
+
+    // User.findOrCreate(
+    //   { googleId: profile.id },
+    //   function (err, user) {
+    //     return cb(err, user);
+    //   }
+    // );
   }
 ));
-*/
 
-// -------GITHUB STRATEGY--------
-passport.use(new GitHubStrategy({
-    clientID: process.env.GITHUB_CLIENT_ID,
-    clientSecret: process.env.GITHUB_CLIENT_SECRET,
-    callbackURL: "http://localhost:3000/auth/github/secrets"
-  },
-
-/* To-do: Rewrite in TypeScript
-
-function(accessToken, refreshToken, profile, cb) {
-    User.findOrCreate({ githubId: profile.id }, function (err, user) {
-      return cb(err, user);
+app.get('/auth/google',
+    passport.authenticate('google', { scope: ['profile'] }));
+  
+  app.get('/auth/google/callback', 
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    function(req, res) {
+      // Successful authentication, redirect home.
+      res.redirect('/');
     });
-  }
-));
+
+/*
+const [user, created] = await User.findOrCreate({
+  where: { username: 'sdepold' },
+  defaults: {
+    job: 'Technical Lead JavaScript',
+  },
+});
+console.log(user.username); // 'sdepold'
+console.log(user.job); // This may or may not be 'Technical Lead JavaScript'
+console.log(created); // The boolean indicating whether this instance was just created
+if (created) {
+  console.log(user.job); // This will certainly be 'Technical Lead JavaScript'
+}
+
 */
+
+
+// // -------GITHUB STRATEGY--------
+// passport.use(new GitHubStrategy({
+//     clientID: process.env.GITHUB_CLIENT_ID,
+//     clientSecret: process.env.GITHUB_CLIENT_SECRET,
+//     callbackURL: "http://localhost:3000/auth/github/secrets"
+//   },
+
+// /* To-do: Rewrite in TypeScript*/
+
+// function(accessToken, refreshToken, profile, cb) {
+//     User.findOrCreate({ githubId: profile.id }, function (err, user) {
+//       return cb(err, user);
+//     });
+//   }
+// ));
+
 
 // for routes
 app.use("/users", userRoutes);
@@ -100,12 +145,10 @@ app.get("/", (req: Request, res: Response): void => {
     res.send("Hello World!");
 });
 
-import * as JWTToken from "./lib/jwt-token";
-
 
 const allowManagementRoles = ['admin', 'supplier']
-app.use(JWTToken.verity);
-app.use(function (req, res, next) {
+app.use("/admin", JWTToken.verity);
+app.use("/admin", function (req, res, next) {
 
     // @ts-ignore
     console.log('req.currentUser.userPermission', req.currentUser.userPermission)
@@ -118,7 +161,6 @@ app.use(function (req, res, next) {
     next();
 });
 app.use("/admin", adminProduct);
-
 /* Import route handlers here */
 
 // ERROR HANDLER MUST BE THE FINAL ROUTE

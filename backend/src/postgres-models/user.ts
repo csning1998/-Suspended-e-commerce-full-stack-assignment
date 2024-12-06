@@ -41,6 +41,12 @@ User.init(
             allowNull: false,
             unique: true,
         },
+        userOAuthToken: {
+            type: DataTypes.STRING,
+        },
+        userOAuthProvider: {
+            type: DataTypes.STRING,
+        },
         userPassword: {
             type: DataTypes.STRING,
             allowNull: false,

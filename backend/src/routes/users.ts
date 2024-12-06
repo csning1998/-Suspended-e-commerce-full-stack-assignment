@@ -7,7 +7,6 @@ import "dotenv/config";
 import { statusCodes } from "../lib/statusCodes";
 import Address from "../postgres-models/address";
 import Payment from "../postgres-models/payment";
-import passport from "passport";
 
 const router: Router = express.Router();
 // For Security
@@ -128,66 +127,6 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
         });
     }
 });
-
-// Google and GitHub Strategy
-
-
-// -----GOOGLE AUTHENTICATION-----
-
-router.get("/secrets", function(req: Request, res: Response){
-    if (req.isAuthenticated()){
-      res.render("secrets");
-    } else {
-      res.render("/login");
-    }
-});
-
-router.get(
-    "/auth/google",
-    passport.authenticate("google", { scope: ["profile"] }),
-);
-
-router.get(
-    "/auth/google/secrets",
-    passport.authenticate("google", {
-        failureRedirect: "/login",
-    }),
-
-    function (req: Request, res: Response) {
-        // Successful authentication, redirect home.
-        res.redirect("/secrets");
-    },
-);
-
-router.get(
-    "/auth/github",
-    passport.authenticate("github", { scope: ["user:email"] }),
-);
-
-router.get(
-    "/auth/github/secrets",
-    passport.authenticate("github", { failureRedirect: "/login" }),
-    function (req, res) {
-        // Successful authentication, redirect secrets.
-        res.redirect("/secrets");
-    },
-);
-
-/* To-fix
-passport.serializeUser(function(user, cb) {
-    process.nextTick(function() {
-        return cb(null, user.id);
-    });
-});
-
-passport.deserializeUser(function(user, cb) {
-    process.nextTick(function() {
-      return cb(null, user);
-    });
-});
-*/
-
-// ==== //
 
 router
     .use([JWTToken.verity])

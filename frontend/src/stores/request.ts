@@ -32,6 +32,8 @@ request.interceptors.response.use((response: any): any => {
   }
 
 }, function(error: any){
+  const store = overlayStore()
+  store.$state.overlay = false
   if(error.response.data.payload){
     alert(error.response.data.payload)
   }
