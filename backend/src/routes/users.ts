@@ -131,7 +131,7 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
 router
     .use([JWTToken.verity])
     .route("/current")
-    .get(async (req: Request, res: Response): Promise<any> => {
+    .get(async (req: any, res: Response): Promise<any> => {
         try {
             const addresses: Address[] = await PGModels.Address.findAll({
                 where: {
@@ -157,44 +157,38 @@ router
             });
         }
     })
-    .put(
-        async (
-            req: Request,
-            res: Response,
-            next: NextFunction,
-        ): Promise<any> => {
-            // userId can not be changed
-            // delete req.body.user.userId;
-            //
-            // console.log("req.body.user", req.body.user);
-            //
-            req.currentUser.set({
-                ...req.body.user,
+    .put(async (req: any, res: Response, next: NextFunction): Promise<any> => {
+        // userId can not be changed
+        // delete req.body.user.userId;
+        //
+        // console.log("req.body.user", req.body.user);
+        //
+        req.currentUser.set({
+            ...req.body.user,
+        });
+
+        try {
+            // Update basic data for current user
+            await req.currentUser.save();
+
+            if (
+                req.body.user.userAddress &&
+                Array.isArray(req.body.user.userAddress)
+            ) {
+                const existingAddress = await PGModels.Address.findOne({
+                    where: { userId: req.currentUser.userId },
+                });
+            }
+            res.status(statusCodes.USER_UPDATE.SUCCESS.code).send({
+                ...statusCodes.USER_UPDATE.SUCCESS,
             });
 
-            try {
-                // Update basic data for current user
-                await req.currentUser.save();
-
-                if (
-                    req.body.user.userAddress &&
-                    Array.isArray(req.body.user.userAddress)
-                ) {
-                    const existingAddress = await PGModels.Address.findOne({
-                        where: { userId: req.currentUser.userId },
-                    });
-                }
-                res.status(statusCodes.USER_UPDATE.SUCCESS.code).send({
-                    ...statusCodes.USER_UPDATE.SUCCESS,
-                });
-
-                // To-do: Fetch the data or data in array from the db respectively
-                // and then apply data update using .save().
-            } catch (error: any) {
-                error.status = 400;
-                return next(error);
-            }
-        },
-    );
+            // To-do: Fetch the data or data in array from the db respectively
+            // and then apply data update using .save().
+        } catch (error: any) {
+            error.status = 400;
+            return next(error);
+        }
+    });
 
 export default router;
