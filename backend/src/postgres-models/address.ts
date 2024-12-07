@@ -1,6 +1,6 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../db";
-import Users from "./user";
+import User from "./user";
 
 class Address extends Model {}
 
@@ -17,7 +17,7 @@ Address.init(
         },
         state: {
             type: DataTypes.STRING,
-            allowNull: true,
+            allowNull: false,
         },
         city: {
             type: DataTypes.STRING,
@@ -35,7 +35,7 @@ Address.init(
             type: DataTypes.STRING,
             allowNull: false,
             references: {
-                model: Users,
+                model: User,
                 key: "userId",
             },
         },
@@ -48,11 +48,11 @@ Address.init(
         timestamps: true,
     },
 );
-Users.hasMany(Address, {
+User.hasMany(Address, {
     foreignKey: "userId",
     as: "Addresses",
 });
-Address.belongsTo(Users, {
+Address.belongsTo(User, {
     foreignKey: "userId",
     as: "User",
 });

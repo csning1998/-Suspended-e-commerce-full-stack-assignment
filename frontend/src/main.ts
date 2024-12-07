@@ -6,10 +6,8 @@ import router from "./router";
 
 import "./assets/theme.css";
 import "./assets/base.css";
-import "./assets/navbar.css";
 import "./assets/hero-section.css";
 import "./assets/categories.css";
-import "./assets/footer.css";
 import "./assets/form.css";
 import "./assets/button.css";
 import "vue-final-modal/style.css";

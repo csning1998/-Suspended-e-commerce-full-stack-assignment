@@ -164,7 +164,7 @@ const emit = defineEmits<{
   display: flex;
   justify-content: space-between;
   width: 100%;
-  max-width: 800px;
+  max-width: 60rem;
   margin: 20px auto;
   border-radius: 16px;
   position: relative;

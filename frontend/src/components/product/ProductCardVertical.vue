@@ -121,15 +121,14 @@ const emit = defineEmits<{
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 1rem;
+  width: 100%;
   justify-content: space-between;
   align-items: flex-start;
-  margin: -10px;
-  max-width: 1200px;
 }
 
 .card {
-  flex: 1 1 200px;
+  flex: 1 1 15rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   overflow: hidden;

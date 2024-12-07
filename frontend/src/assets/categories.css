@@ -2,10 +2,10 @@
   display: flex;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 20px;
-  padding: 40px;
+  gap: 1rem;
+  padding: 2.5rem;
 }
-
+/*
 .category-card {
   width: 200px;
   padding: 20px;
@@ -33,3 +33,5 @@
   margin-bottom: 10px;
   color: var(--color-heading);
 }
+
+ */

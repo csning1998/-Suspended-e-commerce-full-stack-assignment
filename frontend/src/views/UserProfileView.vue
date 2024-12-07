@@ -26,6 +26,7 @@ let currentUser = reactive({
   userIdentity: "",
   userGender: "",
   userBirthday: "",
+  userProfilePictureURL: "",
   phoneNumber: "",
   userAddress: [
     {
@@ -64,9 +65,7 @@ const saveProfile = async () => {
 import store from "@/stores/user";
 
 const logout = () => {
-  localStorage.removeItem("isLoggedIn");
   localStorage.removeItem("token");
-  localStorage.removeItem("UserID");
   store.currentUser = null;
 
   window.dispatchEvent(new CustomEvent("userLoggedOut"));
@@ -146,7 +145,9 @@ onMounted(() => {
       <h1>User Profile</h1>
       <img
         class="profile-picture"
-        src="https://via.placeholder.com/150"
+        :src="
+          currentUser.userProfilePictureUrl || 'https://via.placeholder.com/150'
+        "
         alt="Profile Picture"
       />
     </div>
@@ -266,23 +267,13 @@ onMounted(() => {
             <span v-if="!isEditing">{{ address.zipCode }}</span>
             <input v-if="isEditing" v-model="address.zipCode" />
           </div>
-
-          <button
-            v-if="isEditing"
-            class="form-button remove-address-button"
-            @click="removeAddress(index)"
-          >
-            Remove Address
-          </button>
+          <div class="form-button-container" v-if="isEditing">
+            <button class="form-button" @click="removeAddress(index)">
+              Remove Address
+            </button>
+            <button class="form-button" @click="addAddress">Add Address</button>
+          </div>
         </div>
-
-        <button
-          v-if="isEditing"
-          class="form-button add-address-button"
-          @click="addAddress"
-        >
-          Add Address
-        </button>
       </div>
     </section>
 
@@ -290,50 +281,44 @@ onMounted(() => {
       <div class="form-card">
         <h2>Payment Methods</h2>
         <div
-          v-for="(paymentMethod, index) in currentUser.paymentMethods"
+          v-for="(payment, index) in currentUser.paymentMethods"
           :key="index"
           class="form-field payment-method-item"
         >
           <h3>Payment Method {{ index + 1 }}</h3>
           <div class="form-field">
             <label>Card Number:</label>
-            <span v-if="!isEditing">{{ paymentMethod.cardNumber }}</span>
-            <input v-if="isEditing" v-model="paymentMethod.cardNumber" />
+            <span v-if="!isEditing">{{ payment.cardNumber }}</span>
+            <input v-if="isEditing" v-model="payment.cardNumber" />
           </div>
           <div class="form-field">
             <label>Card Holder Name:</label>
-            <span v-if="!isEditing">{{ paymentMethod.cardHolderName }}</span>
-            <input v-if="isEditing" v-model="paymentMethod.cardHolderName" />
+            <span v-if="!isEditing">{{ payment.cardHolderName }}</span>
+            <input v-if="isEditing" v-model="payment.cardHolderName" />
           </div>
           <div class="form-field">
             <label>Expiration Date:</label>
-            <span v-if="!isEditing">{{ paymentMethod.expirationDate }}</span>
+            <span v-if="!isEditing">{{ payment.expirationDate }}</span>
             <input
               type="month"
               v-if="isEditing"
-              v-model="paymentMethod.expirationDate"
+              v-model="payment.expirationDate"
             />
           </div>
           <div class="form-field">
             <label>CVV:</label>
-            <span v-if="!isEditing">{{ paymentMethod.cvv }}</span>
-            <input type="text" v-if="isEditing" v-model="paymentMethod.cvv" />
+            <span v-if="!isEditing">{{ payment.cvv }}</span>
+            <input type="text" v-if="isEditing" v-model="payment.cvv" />
           </div>
-          <button
-            v-if="isEditing"
-            class="form-button remove-payment-method-button"
-            @click="removePaymentMethod(index)"
-          >
-            Remove Payment Method
-          </button>
+          <div class="form-button-container" v-if="isEditing">
+            <button class="form-button" @click="removePaymentMethod(index)">
+              Remove Payment Method
+            </button>
+            <button class="form-button" @click="addPaymentMethod">
+              Add Payment Method
+            </button>
+          </div>
         </div>
-        <button
-          v-if="isEditing"
-          class="form-button add-payment-method-button"
-          @click="addPaymentMethod"
-        >
-          Add Payment Method
-        </button>
       </div>
     </section>
 
@@ -369,5 +354,8 @@ onMounted(() => {
 h1,
 h2 {
   color: var(--color-heading); /* Use theme color */
+}
+
+span {
 }
 </style>
