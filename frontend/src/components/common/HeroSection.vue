@@ -108,7 +108,6 @@ onBeforeUnmount(() => {
 </template>
 
 <style scoped>
-
 .hero-section {
   display: flex;
   align-items: center;

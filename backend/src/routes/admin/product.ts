@@ -22,21 +22,22 @@ router.get("/products", async (req: Request, res: Response): Promise<void> => {
         //     ? { state: true, name: { $regex: keyword, $options: "i" } }
         //     : { state: true };
 
-        let query = {}
-        let products: any = []
+        let query = {};
+        let products: any = [];
 
-        if(req.currentUser.userPermission !== 'admin'){
+        // @ts-ignore
+        if (req.currentUser.userPermission !== "admin") {
             query = {
+                // @ts-ignore
                 supplierID: req.currentUser.id,
-            }
+            };
         }
 
         products = await Product.find(query);
 
-
         res.json({
-            payload: products
-        })
+            payload: products,
+        });
 
         // HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_BULK.code, {
         //     products,
@@ -49,28 +50,31 @@ router.get("/products", async (req: Request, res: Response): Promise<void> => {
     }
 });
 
-
-router.get("products/:id", async (req: Request, res: Response): Promise<any> => {
-    const { id } = req.params;
-    try {
-        const product: any = await Product.findById(id);
-        if (!product || !product.state) {
-            return res
-                .status(statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT.code)
-                .json({
-                    ...statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT,
-                });
+router.get(
+    "products/:id",
+    async (req: Request, res: Response): Promise<any> => {
+        const { id } = req.params;
+        try {
+            const product: any = await Product.findById(id);
+            if (!product || !product.state) {
+                return res
+                    .status(
+                        statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT.code,
+                    )
+                    .json({
+                        ...statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT,
+                    });
+            }
+            return HTTPJsonResponse(
+                res,
+                statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT,
+                product,
+            );
+        } catch (error) {
+            return HTTPJsonResponse(res, statusCodes.BACKEND_LOGIC, error);
         }
-        return HTTPJsonResponse(
-            res,
-            statusCodes.QUERYING.SUCCEED_UNPUBLISHED_PRODUCT,
-            product,
-        );
-    } catch (error) {
-        return HTTPJsonResponse(res, statusCodes.BACKEND_LOGIC, error);
-    }
-});
-
+    },
+);
 
 // const Product = mongoose.model("Product");
 
@@ -116,7 +120,7 @@ router.put(
         } catch (error) {
             console.log(error);
         }
-    }
+    },
 );
 
 router.delete(
@@ -127,15 +131,15 @@ router.delete(
             await Product.findByIdAndDelete(id);
 
             res.json({
-                message: "The product has been deleted."
-            })
+                message: "The product has been deleted.",
+            });
             // return HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_DELETED.code, {
             //     ...req.body,
             // });
         } catch (error) {
             console.log(error);
         }
-    }
+    },
 );
 
 export default router;

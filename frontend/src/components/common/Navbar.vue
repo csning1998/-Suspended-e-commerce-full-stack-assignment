@@ -8,7 +8,7 @@ interface NavLink {
 }
 
 const navLinks = ref<NavLink[]>([
-  { text: "Management", href:"./seller-product-management"},
+  { text: "Management", href: "./seller-product-management" },
   { text: "Products", href: "./Products" },
   { text: "Favourites", href: "#" },
   { text: "Shopping Cart", href: "#" },
@@ -19,9 +19,9 @@ const navLinks = ref<NavLink[]>([
 // To-do: This should be further implemented by other controller or handler instead of hardcoding.
 // const isLoggedIn = ref(localStorage.getItem("isLoggedIn") === "true"); // Use ref
 
-const token = localStorage.getItem("token")
+const token = localStorage.getItem("token");
 
-const isLoggedIn = ref(!!token)
+const isLoggedIn = ref(!!token);
 
 // console.log("Is the user logged in? ", isLoggedIn.value);
 
