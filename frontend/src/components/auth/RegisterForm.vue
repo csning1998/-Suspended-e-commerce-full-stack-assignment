@@ -1,23 +1,18 @@
 <script setup lang="ts">
-import { defineProps, ref } from "vue";
-const props = defineProps<{
+import { defineProps } from "vue";
+defineProps<{
   registrationFormData: RegistrationFormData;
   onSubmit: () => void;
 }>();
 
-// const formDirection = ref('horizontal')
+function googleOAuth() {
+  const url = "http://localhost:3000/auth/google";
+  window.location.href = url;
+}
 </script>
 
 <template>
   <div class="form-container">
-    <!-- <label>
-      <input type="radio" v-model="formDirection" value="horizontal" />
-      horizontal
-    </label>
-    <label>
-      <input type="radio" v-model="formDirection" value="vertical" />
-      vertical
-    </label> -->
     <div class="form-card">
       <h2 class="form-title">Registration</h2>
 
@@ -40,26 +35,6 @@ const props = defineProps<{
             required
           />
         </div>
-        <!-- <div class="form-field">
-            <div class="form-item">
-              <label class="form-field label" for="userEmail"
-                >Family Name</label
-              >
-              <input
-                id="userFamilyName"
-                type="text"
-                v-model="registrationFormData.userFamilyName"
-                required
-              />
-              <label class="form-field label" for="userEmail">Given Name</label>
-              <input
-                id="userGivenName"
-                type="text"
-                v-model="registrationFormData.userGivenName"
-                required
-              />
-            </div>
-          </div> -->
         <div class="form-field">
           <label for="userPassword">Password</label>
           <input
@@ -79,15 +54,19 @@ const props = defineProps<{
           />
         </div>
 
-        <!-- <div class="form-field">
-            <div class="form-item">
-              <label class="label">&nbsp;aaa</label>
-              <button class="form-button" type="submit">Register</button>
-            </div>
-          </div> -->
+        <div class="form-button-container">
+          <button class="form-button" type="submit">
+            <fa :icon="['fas', 'user-plus']" />Register
+          </button>
+        </div>
 
         <div class="form-button-container">
-          <button class="form-button" type="submit">Register</button>
+          <button type="button" class="form-button" @click="googleOAuth">
+            <fa :icon="['fab', 'google']" />Sign in with Google
+          </button>
+          <button type="button" class="form-button" @click="googleOAuth">
+            <fa :icon="['fab', 'github']" />Sign in with GitHub
+          </button>
         </div>
       </form>
       <p class="signup-link">

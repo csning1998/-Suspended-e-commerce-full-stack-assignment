@@ -16,50 +16,32 @@ const navLinks = ref<NavLink[]>([
   { text: "Notifications", href: "#" },
 ]);
 
-// To-do: This should be further implemented by other controller or handler instead of hardcoding.
-// const isLoggedIn = ref(localStorage.getItem("isLoggedIn") === "true"); // Use ref
-
 const token = localStorage.getItem("token");
-
 const isLoggedIn = ref(!!token);
-
-// console.log("Is the user logged in? ", isLoggedIn.value);
-
 const router = useRouter();
 
 window.addEventListener("userLoggedIn", () => {
   isLoggedIn.value = true;
 });
+
 window.addEventListener("userLoggedOut", () => {
   isLoggedIn.value = false;
 });
-
-// onMounted(() => {
-//   window.addEventListener("userLoggedIn", () => {
-//     isLoggedIn.value = true;
-//   });
-//   window.addEventListener("userLoggedOut", () => {
-//     isLoggedIn.value = false;
-//   });
-// });
 
 function navLinkHandler(link: NavLink) {
   if (link.href === "#") {
     return;
   }
-
   router.push(link.href);
 }
-
-// watch( localStorage.getItem("token"), () => {
-//   const token = localStorage.getItem("token")
-// })
 </script>
 
 <template>
   <header class="navbar">
     <div class="logo">
-      <a href="/" @click.prevent="router.push('/')"> E-Commerce WebApp</a>
+      <button href="/" @click.prevent="router.push('/')">
+        E-Commerce WebApp
+      </button>
     </div>
     <nav>
       <a

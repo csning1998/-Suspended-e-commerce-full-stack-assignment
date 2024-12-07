@@ -4,8 +4,9 @@ import { productCardButtonActions } from "@/components/product/productCardButton
 import { useProductOptions } from "./useProductOptions";
 
 defineProps<{
-   products: Products[];
+  products: Products[];
 }>();
+
 const userId = undefined; // if (!isLoggedIn) then make it undefined
 
 const { cart, favorites, addToCart, addToFavorites } =
@@ -52,8 +53,8 @@ const emit = defineEmits<{
             <p class="label">
               {{ option.name.toUpperCase() }}
             </p>
-            <div class="options-container">
-              <span
+            <div class="options-button-container">
+              <button
                 v-for="value in option.values"
                 :key="value.value"
                 class="option-button"
@@ -71,13 +72,13 @@ const emit = defineEmits<{
                 "
               >
                 {{ value.value }}
-              </span>
+              </button>
             </div>
           </div>
         </div>
-        <div class="actions">
-          <span
-            class="foot"
+        <div class="action-button-container">
+          <button
+            class="action-button"
             :class="{ disabled: !areAllOptionsSelected(item) }"
             @click="
               () => {
@@ -94,9 +95,9 @@ const emit = defineEmits<{
               <fa icon="cart-arrow-down" id="addToCart" />
             </span>
             Add to Cart
-          </span>
-          <span
-            class="foot"
+          </button>
+          <button
+            class="action-button"
             @click="
               emit('addToFavorites', {
                 ...item,
@@ -108,7 +109,7 @@ const emit = defineEmits<{
               <fa icon="heart" />
             </span>
             Add to Favorites
-          </span>
+          </button>
         </div>
       </div>
     </div>
@@ -129,10 +130,8 @@ const emit = defineEmits<{
 
 .card {
   flex: 1 1 200px;
-
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin: 10px;
   overflow: hidden;
   background-color: var(--color-background-soft);
 }
@@ -227,38 +226,6 @@ ul li.bg:hover {
   color: var(--color-background);
 }
 
-.actions {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  gap: 10px;
-}
-
-.actions .foot {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  font-size: 14px;
-  font-weight: bold;
-  padding: 12px 12px;
-  margin-top: 8px;
-  border-radius: 6px;
-  border: 1px solid var(--color-border);
-  color: var(--vt-c-indigo);
-  background-color: var(--color-background-mute);
-  transition:
-    background-color 0.3s ease,
-    transform 0.3s ease,
-    color 0.3s ease;
-}
-
-.actions .foot:hover {
-  background-color: var(--vt-c-indigo);
-  color: var(--color-background);
-  transform: translateY(-2px);
-}
-
 h1 {
   font-size: 20px;
   font-family: "Muli", Ubuntu, sans-serif;
@@ -282,29 +249,6 @@ h3 {
   font-family: "Muli", Ubuntu, sans-serif;
 }
 
-.options-container {
-  align-items: center;
-  flex-wrap: wrap;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.option-button {
-  display: inline-flex;
-  justify-content: center;
-  min-width: 90px;
-  padding: 4px 8px;
-  margin: 8px;
-  border: 1px solid #ccc;
-  cursor: pointer;
-  border-radius: 4px;
-}
-
-.option-button.selected {
-  background-color: var(--vt-c-indigo);
-  border-color: var(--color-background);
-}
-
 .foot.disabled {
   opacity: 0.5;
   pointer-events: none;
@@ -324,7 +268,7 @@ h3 {
     height: auto;
   }
 
-  .actions {
+  .action-button-container {
     flex-direction: column;
     gap: 10px;
   }

@@ -3,52 +3,48 @@ import { ref, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import request from "@/stores/request";
 const router = useRouter();
-const route =  useRoute();
+const route = useRoute();
 
 function eraseCookie(name: String) {
-    document.cookie = name + '=; Max-Age=0'
+  document.cookie = name + "=; Max-Age=0";
 }
 
-onMounted( async () => {
-  // const urlParams = new URLSearchParams(window.location.search);
-  // const token = urlParams.get('token');
-  let token = null
+onMounted(async () => {
+  let token = null;
 
-  document.cookie.split(';').forEach( (value) =>{
-    const c = value.split('token=')
-    token = c[1]
-  })
+  document.cookie.split(";").forEach((value) => {
+    const c = value.split("token=");
+    token = c[1];
+  });
 
   // console.log('token', token)
 
-  if(token) {
-    localStorage.setItem("token", token)
+  if (token) {
+    localStorage.setItem("token", token);
     try {
       const user = await request.get("/users/current", {
         headers: {
-          token: token
-        }
+          token: token,
+        },
       });
 
       window.dispatchEvent(new CustomEvent("userLoggedIn")); // Dispatch the event
 
       // Clean cookie
-      eraseCookie('token=')
+      eraseCookie("token=");
 
-
-
-      if(route.query && route.query.redirectTo){
-          // @ts-ignore
-          router.push(route.query.redirectTo);
+      if (route.query && route.query.redirectTo) {
+        // @ts-ignore
+        router.push(route.query.redirectTo);
       } else {
-          router.push("/");
+        router.push("/");
       }
     } catch (error) {
       alert(error);
       localStorage.removeItem("token");
     }
   }
-})
+});
 </script>
 
 <template>
