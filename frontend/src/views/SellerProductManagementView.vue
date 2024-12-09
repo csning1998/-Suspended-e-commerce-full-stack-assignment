@@ -214,31 +214,33 @@ async function amendProduct() {
                      :items="tempSizeOptions"
                      item-key="id"
                      item-value="value"
-                     dense
                      class="elevation-1"
                   >
+                     <!-- Size Column -->
                      <template v-slot:[`item.value`]="{ item, index }">
-                        <v-responsive class="mx-auto" min-width="80">
-                           <v-text-field
-                              variant="outlined"
-                              v-model.number="tempSizeOptions[index].value"
-                              label="Size"
-                              type="text"
-                           ></v-text-field
-                        ></v-responsive>
+                        <v-text-field
+                           class="field-input"
+                           variant="outlined"
+                           v-model.number="tempSizeOptions[index].value"
+                           label="Size"
+                           type="text"
+                           hide-details="auto"
+                        ></v-text-field>
                      </template>
 
+                     <!-- Price Adjustment Column -->
                      <template v-slot:[`item.priceAdj`]="{ item, index }">
-                        <v-responsive class="mx-auto" min-width="200">
-                           <v-text-field
-                              variant="outlined"
-                              v-model.number="tempSizeOptions[index].priceAdj"
-                              label="Price Adjustment"
-                              type="number"
-                           ></v-text-field>
-                        </v-responsive>
+                        <v-text-field
+                           class="field-input"
+                           variant="outlined"
+                           v-model.number="tempSizeOptions[index].priceAdj"
+                           label="Price Adjustment"
+                           hide-details="auto"
+                           type="number"
+                        ></v-text-field>
                      </template>
 
+                     <!-- Actions Column -->
                      <template v-slot:[`item.actions`]="{ item, index }">
                         <div class="options-button-container">
                            <button
@@ -263,14 +265,14 @@ async function amendProduct() {
                      class="elevation-1"
                   >
                      <template v-slot:[`item.value`]="{ item, index }">
-                        <v-responsive class="mx-auto" min-width="20">
-                           <v-text-field
-                              variant="outlined"
-                              v-model="tempColorOptions[index].value"
-                              label="Color"
-                              type="text"
-                           ></v-text-field>
-                        </v-responsive>
+                        <v-text-field
+                           class="field-input"
+                           variant="outlined"
+                           v-model="tempColorOptions[index].value"
+                           label="Color"
+                           hide-details="auto"
+                           type="text"
+                        ></v-text-field>
                      </template>
 
                      <template v-slot:[`item.actions`]="{ item, index }">
@@ -291,16 +293,16 @@ async function amendProduct() {
          <template v-slot:actions>
             <div class="form-button-container">
                <button class="form-button" @click.prevent="dialog = false">
-                  Cancel
+                  <fa :icon="['fas', 'ban']" />Cancel
                </button>
                <button class="form-button" type="button" @click="addSizeRow">
-                  Add Size
+                  <fa :icon="['fas', 'ruler']" />Add Size
                </button>
                <button class="form-button" type="button" @click="addColorRow">
-                  Add Color
+                  <fa :icon="['fas', 'palette']" />Add Color
                </button>
                <button class="form-button" @click.prevent="amendProduct()">
-                  Save
+                  <fa :icon="['fas', 'download']" />Amend
                </button>
             </div>
          </template>
@@ -375,7 +377,7 @@ async function amendProduct() {
                   class="action-button"
                   @click="
                      currentEditProduct = item;
-                     openDialog(); // 呼叫 openDialog() 而不是直接對 dialog 賦值
+                     openDialog();
                   "
                >
                   <fa :icon="['fas', 'pen-to-square']" />Edit Product
@@ -558,6 +560,13 @@ ul li.bg:hover {
    padding: 1rem;
    background-color: var(--vt-c-black-soft);
    color: white;
+}
+
+.field-input {
+   min-width: 5rem;
+   max-width: 12rem;
+   margin-top: 0.8rem;
+   margin-bottom: 0.8rem;
 }
 
 @media (max-width: 768px) {
