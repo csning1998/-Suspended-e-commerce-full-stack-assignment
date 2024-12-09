@@ -562,6 +562,7 @@ ul li.bg:hover {
    padding: 1rem;
    background-color: var(--vt-c-black-soft);
    color: white;
+   border-radius: 8px;
 }
 
 .field-input {
