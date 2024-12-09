@@ -2,13 +2,11 @@
 // @ts-nocheck
 import Navbar from "@/components/common/Navbar.vue";
 import Footer from "@/components/common/Footer.vue";
-import { computed, ref} from 'vue'
-import { mapStores } from 'pinia' 
-import overlayStore from '@/stores/overlay'
-import request from '@/stores/request'
+import { computed } from "vue";
+import overlayStore from "@/stores/overlay";
 
-const store = overlayStore()
-const overlay = computed(() => store.overlay)
+const store = overlayStore();
+const overlay = computed(() => store.overlay);
 
 /*
 let windowObjectReference = null;
@@ -42,12 +40,12 @@ const receiveMessage = event => {
     const systemZoom = width / window.screen.availWidth;
     const left = (width - w) / 2 / systemZoom + dualScreenLeft
     const top = (height - h) / 2 / systemZoom + dualScreenTop
-    const newWindow = window.open(url, title, 
+    const newWindow = window.open(url, title,
       `
       scrollbars=yes,
-      width=${w / systemZoom}, 
-      height=${h / systemZoom}, 
-      top=${top}, 
+      width=${w / systemZoom},
+      height=${h / systemZoom},
+      top=${top},
       left=${left}
       `
     )
@@ -58,49 +56,44 @@ const receiveMessage = event => {
 </script>
 
 <template>
-  <div>
-    <!-- Navbar Component -->
-    <Navbar />
+    <div>
+        <div v-html="view"></div>
 
-    <!-- <button @click="goauth">Google OAuth</button> -->
+        <!-- Navbar Component -->
+        <Navbar />
 
-    <div v-html="view"></div>
+        <!-- Hero Section -->
+        <router-view />
 
-    <!-- Hero Section -->
-    <router-view />
+        <!-- Footer Component -->
+        <Footer />
 
-    <!-- Footer Component -->
-    <Footer />
-    <v-overlay v-model="overlay"></v-overlay>
-
-    <span v-if="overlay" class="loader"></span>
-
-
-  </div>
+        <v-overlay v-model="overlay"></v-overlay>
+        <span v-if="overlay" class="loader"></span>
+    </div>
 </template>
 
 <style scoped>
-
 .loader {
     position: fixed;
     top: 50%;
     left: 50%;
     width: 48px;
     height: 48px;
-    border: 5px solid #FFF;
+    border: 5px solid #fff;
     border-bottom-color: transparent;
     border-radius: 50%;
     display: inline-block;
     box-sizing: border-box;
     animation: rotation 1s linear infinite;
-    }
+}
 
-    @keyframes rotation {
+@keyframes rotation {
     0% {
         transform: rotate(0deg);
     }
     100% {
         transform: rotate(360deg);
     }
-    } 
+}
 </style>

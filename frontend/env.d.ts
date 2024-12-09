@@ -37,12 +37,3 @@ interface ProductOption {
 interface CartItem extends Products {
     selectedOptions: Record<string, string | number>;
 }
-
-// interface IProduct extends Document {
-//   productName: string;
-//   description?: string;
-//   price: number;
-//   state: boolean; // true if the product is published to customers.
-//   createdAt?: Date;
-//   test: string;
-// }

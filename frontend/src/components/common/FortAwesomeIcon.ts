@@ -10,6 +10,7 @@ import { faGoogle, faGithub } from "@fortawesome/free-brands-svg-icons";
 // Add icons to the library
 
 library.add(fas, far, fab);
+library.add();
 library.add(faGoogle, faGithub);
 
 export default FontAwesomeIcon;

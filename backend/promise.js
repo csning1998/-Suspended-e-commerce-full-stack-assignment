@@ -1,16 +1,15 @@
 function request() {
   return new Promise(function (resolve, reject) {
-
     var startTime = new Date().getTime();
     setTimeout(() => {
       console.log(new Date());
       console.log("got sometime");
 
       var now = new Date().getTime();
-      if(now - startTime > 50) {
-        return reject(new Error('Timeout'))
+      if (now - startTime > 50) {
+        return reject(new Error("Timeout"));
       }
- 
+
       resolve();
     }, 100 * Math.random());
   });
@@ -45,7 +44,6 @@ function request() {
   //   }
   // }, 10);
 
-
   // MIDDLE AGE Renaissance
   // request()
   // .then(function(){
@@ -61,27 +59,23 @@ function request() {
   //   return request()
   // })
 
-
   // Modern world
 
   try {
-    await request()
+    await request();
     console.log("2", new Date());
-  
-    await request()
+
+    await request();
     console.log("3", new Date());
-  
-    await request()
-    console.log("4", new Date());    
+
+    await request();
+    console.log("4", new Date());
   } catch (error) {
-    console.error(error)
+    console.error(error);
 
     // console.log()  => /dev/stdout
     // console.error() => /dev/stderr
   }
-
-
-
 
   console.log("make sure all requests are finished");
 })();

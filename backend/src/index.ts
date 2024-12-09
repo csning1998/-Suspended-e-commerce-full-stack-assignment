@@ -1,4 +1,4 @@
-import * as JWTToken from "./lib/jwt-token";
+import * as JWT from "./lib/jsonWebToken";
 import express, { Request, Response, Express, NextFunction } from "express";
 import "dotenv/config"; // https://www.npmjs.com/package/dotenv
 import cors from "cors"; // Enable Cross-Origin Resource Sharing
@@ -142,7 +142,7 @@ app.get(
     "/auth/google/secrets",
     passport.authenticate("google", { failureRedirect: "/login" }),
     function (req: Request, res: Response): void {
-        const jwt: String = JWTToken.create({
+        const jwt: String = JWT.create({
             // @ts-ignore
             userId: req.user.userId,
         });
@@ -194,28 +194,23 @@ app.get("/", (req: Request, res: Response): void => {
 });
 
 const allowManagementRoles = ["admin", "supplier"];
-app.use("/admin", JWTToken.verity);
-app.use(
-    "/admin",
-    function (req: Request, res: Response, next: NextFunction): void {
-        // @ts-ignore
-        console.log(
-            "req.currentUser.userPermission",
-            req.currentUser.userPermission,
+app.use("/admin", JWT.verity);
+app.use("/admin", function (req: any, res: Response, next: NextFunction): void {
+    // @ts-ignore
+    console.log(
+        "req.currentUser.userPermission",
+        req.currentUser.userPermission,
+    );
+    console.log("allowManagementRoles", allowManagementRoles);
+    // @ts-ignore
+    if (!allowManagementRoles.includes(req.currentUser.userPermission)) {
+        return next(
+            new Error(`You must be one of ${allowManagementRoles.join(", ")}`),
         );
-        console.log("allowManagementRoles", allowManagementRoles);
-        // @ts-ignore
-        if (!allowManagementRoles.includes(req.currentUser.userPermission)) {
-            return next(
-                new Error(
-                    `You must be one of ${allowManagementRoles.join(", ")}`,
-                ),
-            );
-        }
+    }
 
-        next();
-    },
-);
+    next();
+});
 app.use("/admin", adminProduct);
 
 /* Import route handlers here */

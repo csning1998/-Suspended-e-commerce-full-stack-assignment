@@ -2,7 +2,7 @@ import express, { Router, Request, Response, NextFunction } from "express";
 import PGModels from "../postgres-models";
 import bcrypt from "bcrypt";
 import { Model } from "sequelize";
-import * as JWTToken from "../lib/jwt-token";
+import * as JWT from "../lib/jsonWebToken";
 import "dotenv/config";
 import { statusCodes } from "../lib/statusCodes";
 import Address from "../postgres-models/address";
@@ -113,7 +113,7 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
             ? (user.get("userId") as string)
             : userId;
 
-        const token: String = JWTToken.create({ userId: actualUserId });
+        const token: String = JWT.create({ userId: actualUserId });
 
         res.status(statusCodes.LOGIN.SUCCESS.code).send({
             ...statusCodes.LOGIN.SUCCESS,
@@ -129,7 +129,7 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
 });
 
 router
-    .use([JWTToken.verity])
+    .use([JWT.verity])
     .route("/current")
     .get(async (req: any, res: Response): Promise<any> => {
         try {
