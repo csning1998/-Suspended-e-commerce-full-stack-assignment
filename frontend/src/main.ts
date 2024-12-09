@@ -13,15 +13,7 @@ import "./assets/button.css";
 import "vue-final-modal/style.css";
 
 // Import Vuetify
-import "vuetify/styles";
-import { createVuetify } from "vuetify";
-import * as components from "vuetify/components";
-import * as directives from "vuetify/directives";
-
-const vuetify = createVuetify({
-    components,
-    directives,
-});
+import { vuetifyConfig } from "@/components/common/VuerifyConfig";
 
 // Import FontAwesome Icon Component
 import FontAwesomeIcon from "./components/common/FortAwesomeIcon";
@@ -31,7 +23,7 @@ const app = createApp(AppComponent);
 // Register global plugins
 app.use(createPinia());
 app.use(router);
-app.use(vuetify);
+app.use(vuetifyConfig);
 
 // Register FontAwesomeIcon globally
 app.component("fa", FontAwesomeIcon);

@@ -8,4 +8,4 @@ indent_size = 4
 
 [*.vue]
 indent_style = space
-indent_size = 4
+indent_size = 3
