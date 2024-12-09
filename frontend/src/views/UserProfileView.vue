@@ -2,10 +2,11 @@
 import { onMounted, reactive, ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import request from "@/stores/request";
+import store from "@/stores/user";
 
 const router = useRouter();
 const isEditing = ref(false);
-const hasChanges = ref(false);
+const isModified = ref(false);
 
 const toggleEditMode = (): void => {
    isEditing.value = !isEditing.value;
@@ -16,7 +17,7 @@ const toggleEditMode = (): void => {
 
 const GENDER_LIST = ["Male", "Female", "Apache", "non-Binary"];
 
-let currentUser = reactive({
+const currentUser = reactive<UserProfileFormData>({
    id: 0,
    userId: "",
    userEmail: "",
@@ -26,18 +27,17 @@ let currentUser = reactive({
    userIdentity: "",
    userGender: "",
    userBirthday: "",
-   userProfilePictureURL: "",
-   phoneNumber: "",
+   userProfilePictureUrl: "",
    userAddress: [
       {
-         country: "",
-         state: "",
-         city: "",
+         country: "Taiwan",
+         state: "Taiwan",
+         city: "Taipei",
          street: "",
          zipCode: "",
       },
    ],
-   paymentMethods: [
+   userPayments: [
       {
          cardNumber: "",
          cardHolderName: "",
@@ -45,10 +45,15 @@ let currentUser = reactive({
          cvv: "",
       },
    ],
+   userPermission: "",
+   userCurrency: "",
+   userOAuthToken: null,
+   userOAuthProvider: null,
    createdAt: 0,
+   updatedAt: 0,
 });
 
-const originalUser = reactive({ ...currentUser });
+const originalUser = reactive<UserProfileFormData>({ ...currentUser });
 
 const saveProfile = async () => {
    try {
@@ -56,13 +61,11 @@ const saveProfile = async () => {
          user: currentUser,
       });
       alert("Profile saved!");
-      hasChanges.value = false;
+      isModified.value = false;
    } catch (error: any) {
       console.error("Error saving profile:", error);
    }
 };
-
-import store from "@/stores/user";
 
 const logout = () => {
    localStorage.removeItem("token");
@@ -75,7 +78,7 @@ const logout = () => {
 };
 
 const addAddress = () => {
-   if (currentUser.userAddress.length < 5) {
+   if (currentUser.userAddress && currentUser.userAddress.length < 5) {
       currentUser.userAddress.push({
          country: "",
          state: "",
@@ -84,12 +87,12 @@ const addAddress = () => {
          zipCode: "",
       });
    } else {
-      alert("You can add to five address at most.");
+      alert("You can add up to five addresses.");
    }
 };
 
 const removeAddress = (index: number) => {
-   if (currentUser.userAddress.length > 1) {
+   if (currentUser.userAddress && currentUser.userAddress.length > 1) {
       currentUser.userAddress.splice(index, 1);
    } else {
       alert("You must have at least one address.");
@@ -97,8 +100,8 @@ const removeAddress = (index: number) => {
 };
 
 const addPaymentMethod = () => {
-   if (currentUser.paymentMethods.length < 10) {
-      currentUser.paymentMethods.push({
+   if (currentUser.userPayments && currentUser.userPayments.length < 10) {
+      currentUser.userPayments.push({
          cardNumber: "",
          cardHolderName: "",
          expirationDate: "",
@@ -110,8 +113,8 @@ const addPaymentMethod = () => {
 };
 
 const removePaymentMethod = (index: number) => {
-   if (currentUser.paymentMethods.length > 1) {
-      currentUser.paymentMethods.splice(index, 1);
+   if (currentUser.userPayments && currentUser.userPayments.length > 1) {
+      currentUser.userPayments.splice(index, 1);
    } else {
       alert("You must have at least one payment method.");
    }
@@ -126,13 +129,80 @@ async function fetchUserInfo() {
 
       watch(currentUser, function (n) {
          if (n.id != 0) {
-            hasChanges.value = true;
+            isModified.value = true;
          }
       });
    } catch (err) {
       console.error("Error fetching user info:", err);
    }
 }
+
+type Country = "Taiwan" | "United States";
+type StateName = "California" | "Taiwan";
+
+const countries: Country[] = ["Taiwan", "United States"];
+const states: StateName[] = ["California", "Taiwan"];
+const cities: Record<StateName, { name: string; zipCode: string }[]> = {
+   California: [
+      { name: "Los Angeles", zipCode: "90001" },
+      { name: "San Francisco", zipCode: "94101" },
+      { name: "San Diego", zipCode: "92101" },
+      { name: "San Jose", zipCode: "95101" },
+      { name: "Sacramento", zipCode: "95814" },
+      { name: "Fresno", zipCode: "93701" },
+      { name: "Oakland", zipCode: "94601" },
+      { name: "Bakersfield", zipCode: "93301" },
+      { name: "Long Beach", zipCode: "90802" },
+      { name: "Santa Ana", zipCode: "92701" },
+      { name: "Anaheim", zipCode: "92801" },
+      { name: "Irvine", zipCode: "92602" },
+      { name: "Riverside", zipCode: "92501" },
+      { name: "Stockton", zipCode: "95201" },
+      { name: "Chula Vista", zipCode: "91910" },
+      { name: "Santa Clara", zipCode: "95050" },
+      { name: "Huntington Beach", zipCode: "92646" },
+      { name: "Glendale", zipCode: "91201" },
+      { name: "Fremont", zipCode: "94536" },
+      { name: "Modesto", zipCode: "95350" },
+   ],
+   Taiwan: [
+      { name: "Taipei", zipCode: "100" },
+      { name: "Taichung", zipCode: "400" },
+      { name: "Kaohsiung", zipCode: "800" },
+      { name: "Tainan", zipCode: "700" },
+      { name: "Hsinchu", zipCode: "300" },
+      { name: "Taoyuan", zipCode: "330" },
+      { name: "Keelung", zipCode: "200" },
+      { name: "Chiayi", zipCode: "600" },
+      { name: "Hualien", zipCode: "970" },
+      { name: "Taitung", zipCode: "950" },
+   ],
+};
+
+function getCityNames(state: StateName): string[] {
+   if (!state || !cities[state]) return [];
+   return cities[state].map((city) => city.name);
+}
+
+watch(
+   () => currentUser.userAddress,
+   (newVal) => {
+      if (!newVal) return;
+      newVal.forEach((address) => {
+         if (address.state && address.city) {
+            // @ts-ignore
+            const cityObj = cities[address.state]?.find(
+               (c: { name: string; zipCode: string }) =>
+                  c.name === address.city,
+            );
+            if (cityObj) {
+               address.zipCode = cityObj.zipCode;
+            }
+         }
+      });
+   },
+   { deep: true },
+);
 
 // To-fix: Render the page immediately after "Save Profile" is clicked.
 onMounted(() => {
@@ -142,220 +212,351 @@ onMounted(() => {
 
 <template>
    <div class="form-container">
-      <div class="form-header">
-         <h1>User Profile</h1>
-         <img
-            class="profile-picture"
-            :src="
-               currentUser.userProfilePictureUrl ||
-               'https://via.placeholder.com/150'
-            "
-            alt="Profile Picture"
-         />
-      </div>
+      <v-card class="vuerify-card" max-width="1000">
+         <v-form>
+            <div class="form-card">
+               <h1 class="form-title">User Profile</h1>
+               <h2 class="form-title">Basic Info</h2>
+               <v-card-text>
+                  <v-row align="center" justify="space-between">
+                     <v-col cols="12" md="8">
+                        <v-text-field
+                           disabled
+                           :readonly="!isEditing"
+                           variant="outlined"
+                           v-model="currentUser.userId"
+                           label="User ID"
+                        ></v-text-field>
+                        <v-text-field
+                           :clearable="isEditing"
+                           :readonly="!isEditing"
+                           variant="outlined"
+                           v-model="currentUser.userFamilyName"
+                           label="First Name"
+                        ></v-text-field>
+                        <v-text-field
+                           :clearable="isEditing"
+                           :readonly="!isEditing"
+                           variant="outlined"
+                           v-model="currentUser.userGivenName"
+                           label="Last Name"
+                        ></v-text-field>
+                     </v-col>
 
-      <section class="form-section">
-         <div class="form-card">
-            <h2 class="form-title">Basic Info</h2>
-            <div class="form-field">
-               <label>User ID:</label>
-               <span>{{ currentUser.userId }}</span>
+                     <v-col cols="12" md="4" class="d-flex justify-center">
+                        <v-img
+                           class="profile-picture"
+                           :src="
+                              currentUser.userProfilePictureUrl ||
+                              'https://via.placeholder.com/150'
+                           "
+                           alt="Profile Picture"
+                           max-width="200"
+                           max-height="200"
+                        ></v-img>
+                     </v-col>
+                  </v-row>
+               </v-card-text>
+
+               <v-card-text>
+                  <v-row>
+                     <v-col cols="12" v-if="!isEditing">
+                        <v-text-field
+                           readonly
+                           variant="outlined"
+                           v-model="currentUser.userGender"
+                           label="Gender"
+                        ></v-text-field>
+                     </v-col>
+
+                     <v-col cols="12" v-else>
+                        <v-radio-group
+                           v-model="currentUser.userGender"
+                           label="Gender"
+                        >
+                           <v-radio
+                              v-for="(g, i) in GENDER_LIST"
+                              :key="i"
+                              :label="g"
+                              :value="g"
+                           ></v-radio>
+                        </v-radio-group>
+                     </v-col>
+
+                     <v-col cols="12">
+                        <v-text-field
+                           disabled
+                           variant="outlined"
+                           v-model="currentUser.userIdentity"
+                           label="Identity"
+                        ></v-text-field>
+                     </v-col>
+                     <v-col cols="12">
+                        <v-text-field
+                           :disabled="isEditing"
+                           :readonly="!isEditing"
+                           variant="outlined"
+                           v-model="currentUser.createdAt"
+                           label="Created At"
+                        ></v-text-field>
+                     </v-col>
+                     <v-col cols="12">
+                        <v-text-field
+                           type="date"
+                           :readonly="!isEditing"
+                           variant="outlined"
+                           v-model="currentUser.userBirthday"
+                           label="Birth Date"
+                        ></v-text-field>
+                     </v-col>
+                  </v-row>
+               </v-card-text>
             </div>
 
-            <div class="form-field">
-               <label>First Name:</label>
-               <span v-if="!isEditing">{{ currentUser.userFamilyName }}</span>
-               <input v-if="isEditing" v-model="currentUser.userFamilyName" />
+            <div class="form-card">
+               <h2 class="form-title">Contact Info</h2>
+               <v-card-text>
+                  <v-row dense>
+                     <v-col cols="12">
+                        <v-text-field
+                           :clearable="isEditing"
+                           :readonly="!isEditing"
+                           variant="outlined"
+                           v-model="currentUser.userPhoneNumber"
+                           label="Phone Number"
+                        ></v-text-field>
+                     </v-col>
+                     <v-col cols="12">
+                        <v-text-field
+                           :clearable="isEditing"
+                           :readonly="!isEditing"
+                           variant="outlined"
+                           v-model="currentUser.userEmail"
+                           label="Email"
+                        ></v-text-field>
+                     </v-col>
+                  </v-row>
+               </v-card-text>
             </div>
 
-            <div class="form-field">
-               <label>Last Name:</label>
-               <span v-if="!isEditing">{{ currentUser.userGivenName }}</span>
-               <input v-if="isEditing" v-model="currentUser.userGivenName" />
-            </div>
-
-            <div class="form-field">
-               <label class="form-field label">Gender:</label>
-               <span class="form-item span" v-if="!isEditing">{{
-                  currentUser.userGender
-               }}</span>
-               <div class="form-field radiogroup" v-if="isEditing">
-                  <label v-for="(g, key) in GENDER_LIST" :key="key" :for="g">
-                     <input
-                        :id="g"
-                        type="radio"
-                        v-model="currentUser.userGender"
-                        :value="g"
-                     />
-                     {{ g }}
-                  </label>
-               </div>
-            </div>
-
-            <div class="form-field">
-               <label>Identity:</label>
-               <span>{{ currentUser.userIdentity }}</span>
-            </div>
-
-            <div class="form-field">
-               <label>Created Date:</label>
-               <span>{{ currentUser.createdAt }}</span>
-            </div>
-
-            <div class="form-field">
-               <label>Birth Date:</label>
-               <span v-if="!isEditing">{{ currentUser.userBirthday }}</span>
-               <input
-                  type="date"
-                  v-if="isEditing"
-                  v-model="currentUser.userBirthday"
-               />
-            </div>
-         </div>
-      </section>
-
-      <section class="form-section">
-         <div class="form-card">
-            <h2>Contact Info</h2>
-            <div class="form-field">
-               <label>Phone Number:</label>
-               <span v-if="!isEditing">{{ currentUser.userPhoneNumber }}</span>
-               <input v-if="isEditing" v-model="currentUser.userPhoneNumber" />
-            </div>
-
-            <div class="form-field">
-               <label>userEmail:</label>
-               <span v-if="!isEditing">{{ currentUser.userEmail }}</span>
-               <input v-if="isEditing" v-model="currentUser.userEmail" />
-            </div>
-         </div>
-      </section>
-
-      <section class="form-section">
-         <div class="form-card">
-            <h2>Addresses</h2>
-            <div
-               v-for="(address, index) in currentUser.userAddress"
-               :key="index"
-               class="form-field address-item"
-            >
-               <h3>Address {{ index + 1 }}</h3>
-               <div class="form-field">
-                  <label>Street:</label>
-                  <span v-if="!isEditing">{{ address.street }}</span>
-                  <input v-if="isEditing" v-model="address.street" />
-               </div>
-
-               <div class="form-field">
-                  <label>City:</label>
-                  <span v-if="!isEditing">{{ address.city }}</span>
-                  <input v-if="isEditing" v-model="address.city" />
-               </div>
-
-               <div class="form-field">
-                  <label>State:</label>
-                  <span v-if="!isEditing">{{ address.state }}</span>
-                  <input v-if="isEditing" v-model="address.state" />
-               </div>
-
-               <div class="form-field">
-                  <label>Country:</label>
-                  <span v-if="!isEditing">{{ address.country }}</span>
-                  <input v-if="isEditing" v-model="address.country" />
-               </div>
-
-               <div class="form-field">
-                  <label>Zip Code:</label>
-                  <span v-if="!isEditing">{{ address.zipCode }}</span>
-                  <input v-if="isEditing" v-model="address.zipCode" />
-               </div>
-               <div class="form-button-container" v-if="isEditing">
-                  <button class="form-button" @click="removeAddress(index)">
-                     Remove Address
-                  </button>
-                  <button class="form-button" @click="addAddress">
-                     Add Address
-                  </button>
-               </div>
-            </div>
-         </div>
-      </section>
-
-      <section class="form-section">
-         <div class="form-card">
-            <h2>Payment Methods</h2>
-            <div
-               v-for="(payment, index) in currentUser.paymentMethods"
-               :key="index"
-               class="form-field payment-method-item"
-            >
-               <h3>Payment Method {{ index + 1 }}</h3>
-               <div class="form-field">
-                  <label>Card Number:</label>
-                  <span v-if="!isEditing">{{ payment.cardNumber }}</span>
-                  <input v-if="isEditing" v-model="payment.cardNumber" />
-               </div>
-               <div class="form-field">
-                  <label>Card Holder Name:</label>
-                  <span v-if="!isEditing">{{ payment.cardHolderName }}</span>
-                  <input v-if="isEditing" v-model="payment.cardHolderName" />
-               </div>
-               <div class="form-field">
-                  <label>Expiration Date:</label>
-                  <span v-if="!isEditing">{{ payment.expirationDate }}</span>
-                  <input
-                     type="month"
-                     v-if="isEditing"
-                     v-model="payment.expirationDate"
-                  />
-               </div>
-               <div class="form-field">
-                  <label>CVV:</label>
-                  <span v-if="!isEditing">{{ payment.cvv }}</span>
-                  <input type="text" v-if="isEditing" v-model="payment.cvv" />
-               </div>
-               <div class="form-button-container" v-if="isEditing">
-                  <button
-                     class="form-button"
-                     @click="removePaymentMethod(index)"
+            <div class="form-card">
+               <h2 class="form-title">Address</h2>
+               <v-card-text>
+                  <div
+                     v-for="(address, index) in currentUser.userAddress"
+                     :key="index"
+                     class="mb-4"
                   >
-                     Remove Payment Method
-                  </button>
-                  <button class="form-button" @click="addPaymentMethod">
-                     Add Payment Method
-                  </button>
-               </div>
-            </div>
-         </div>
-      </section>
+                     <v-row dense>
+                        <!-- Country -->
+                        <v-col cols="12" md="6">
+                           <label>Country:</label>
+                           <div v-if="!isEditing">{{ address.country }}</div>
+                           <v-autocomplete
+                              v-else
+                              autocomplete="off"
+                              :items="countries"
+                              v-model="address.country"
+                              label="Country"
+                              variant="outlined"
+                           ></v-autocomplete>
+                        </v-col>
 
-      <div class="form-button-container">
-         <button class="form-button" @click="toggleEditMode">
-            {{ isEditing ? "Cancel" : "Edit" }}
-         </button>
-         <button
-            class="form-button"
-            v-if="isEditing"
-            @click="saveProfile"
-            :disabled="!hasChanges"
-         >
-            Save Profile
-         </button>
-         <button class="form-button" @click.prevent="logout">Logout</button>
-      </div>
+                        <!-- State -->
+                        <v-col cols="12" md="6">
+                           <label>State:</label>
+                           <div v-if="!isEditing">{{ address.state }}</div>
+                           <v-autocomplete
+                              v-else
+                              :items="states"
+                              v-model="address.state"
+                              label="State"
+                              variant="outlined"
+                              clearable
+                           ></v-autocomplete>
+                        </v-col>
+
+                        <!-- City -->
+                        <v-col cols="12" md="6">
+                           <label>City:</label>
+                           <div v-if="!isEditing">{{ address.city }}</div>
+                           <v-autocomplete
+                              v-else
+                              :items="getCityNames(address.state)"
+                              v-model="address.city"
+                              label="City"
+                              variant="outlined"
+                              clearable
+                           ></v-autocomplete>
+                        </v-col>
+
+                        <!-- Street -->
+                        <v-col cols="12" md="6">
+                           <label>Street:</label>
+                           <div v-if="!isEditing">{{ address.street }}</div>
+                           <v-text-field
+                              v-else
+                              variant="outlined"
+                              clearable
+                              v-model="address.street"
+                              label="Street"
+                           ></v-text-field>
+                        </v-col>
+
+                        <!-- Zip Code -->
+                        <v-col cols="12" md="6">
+                           <label>Zip Code:</label>
+                           <div v-if="!isEditing">{{ address.zipCode }}</div>
+                           <v-text-field
+                              v-else
+                              variant="outlined"
+                              clearable
+                              v-model="address.zipCode"
+                              label="Zip Code"
+                           ></v-text-field>
+                        </v-col>
+
+                        <v-col cols="12" v-if="isEditing">
+                           <button
+                              class="form-button"
+                              @click.prevent="removeAddress(index)"
+                           >
+                              Remove Address
+                           </button>
+                        </v-col>
+                     </v-row>
+                  </div>
+                  <div class="form-button-container" v-if="isEditing">
+                     <button class="form-button" @click.prevent="addAddress">
+                        Add Address
+                     </button>
+                  </div>
+               </v-card-text>
+            </div>
+
+            <div class="form-card">
+               <h2 class="form-title">Payment Methods</h2>
+               <v-card-text>
+                  <div
+                     v-for="(payment, index) in currentUser.userPayments"
+                     :key="index"
+                     class="mb-4"
+                  >
+                     <v-row dense>
+                        <v-col cols="12" md="6">
+                           <label>Card Number:</label>
+                           <div v-if="!isEditing">{{ payment.cardNumber }}</div>
+                           <v-text-field
+                              v-else
+                              clearable
+                              :readonly="!isEditing"
+                              variant="outlined"
+                              v-model="payment.cardNumber"
+                              hide-details="auto"
+                              label="Card Number"
+                           ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                           <label>Holder Name:</label>
+                           <div v-if="!isEditing">
+                              {{ payment.cardHolderName }}
+                           </div>
+                           <v-text-field
+                              v-else
+                              clearable
+                              :readonly="!isEditing"
+                              variant="outlined"
+                              v-model="payment.cardHolderName"
+                              hide-details="auto"
+                              label="Holder Name"
+                           ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                           <label>Expiration:</label>
+                           <div v-if="!isEditing">
+                              {{ payment.expirationDate }}
+                           </div>
+                           <v-text-field
+                              v-else
+                              clearable
+                              :readonly="!isEditing"
+                              variant="outlined"
+                              v-model="payment.expirationDate"
+                              hide-details="auto"
+                              label="Expiration"
+                              type="month"
+                           ></v-text-field>
+                        </v-col>
+                        <v-col cols="12" md="6">
+                           <label>CVV:</label>
+                           <div v-if="!isEditing">{{ payment.cvv }}</div>
+                           <v-text-field
+                              v-else
+                              clearable
+                              :readonly="!isEditing"
+                              variant="outlined"
+                              v-model="payment.cvv"
+                              hide-details="auto"
+                              label="CVV"
+                              type="text"
+                           ></v-text-field>
+                        </v-col>
+
+                        <div class="form-button-container" v-if="isEditing">
+                           <button
+                              class="form-button"
+                              @click.prevent="removePaymentMethod(index)"
+                           >
+                              Remove
+                           </button>
+                        </div>
+                     </v-row>
+                  </div>
+                  <div class="form-button-container" v-if="isEditing">
+                     <button
+                        class="form-button"
+                        @click.prevent="addPaymentMethod"
+                     >
+                        Add Payment Method
+                     </button>
+                  </div>
+               </v-card-text>
+
+               <!-- Buttons -->
+               <v-card-actions>
+                  <div class="form-button-container d-flex flex-row mt-2">
+                     <button
+                        class="form-button"
+                        @click.prevent="toggleEditMode"
+                     >
+                        {{ isEditing ? "Cancel" : "Edit" }}
+                     </button>
+                     <button
+                        class="form-button"
+                        v-if="isEditing"
+                        :disabled="!isModified"
+                        @click.prevent="saveProfile"
+                     >
+                        Save Profile
+                     </button>
+                     <button class="form-button" @click.prevent="logout">
+                        Logout
+                     </button>
+                  </div>
+               </v-card-actions>
+            </div>
+         </v-form>
+      </v-card>
    </div>
 </template>
 
 <style scoped>
 .form-title {
-   text-align: left;
+   text-align: center;
 }
 
-.profile-picture {
-   width: 100px;
-   height: 100px;
-   border-radius: 50%;
-   border: 2px solid var(--color-border);
+.form-container {
+   width: 48rem;
 }
 
 h1,
@@ -363,6 +564,10 @@ h2 {
    color: var(--color-heading); /* Use theme color */
 }
 
-span {
+.profile-picture {
+   border-radius: 100%;
+   border: 1px solid var(--vt-c-divider-dark-2);
+   margin-left: 1rem;
+   margin-bottom: 1rem;
 }
 </style>

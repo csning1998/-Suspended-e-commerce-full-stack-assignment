@@ -14,6 +14,43 @@ interface RegistrationFormData {
     confirmPassword: string;
 }
 
+interface UserProfileFormData {
+    id: number;
+    userId: string;
+    userFamilyName: string;
+    userGivenName: string;
+    userEmail: string;
+    userIdentity?: string;
+    userBirthday?: string;
+    userPhoneNumber?: string;
+    userProfilePicture?: string | null;
+    userProfilePictureUrl?: string | null;
+    userGender?: string;
+    userCurrency?: string | null;
+    userPermission?: string | null;
+    userAddress?: UserAddress[];
+    userPayments?: UserPayments[];
+    userOAuthToken?: string | null;
+    userOAuthProvider?: string | null;
+    createdAt: number | string;
+    updatedAt: number | string;
+}
+
+interface UserAddress {
+    street: string;
+    city: string;
+    state: StateName;
+    zipCode: string;
+    country: Country;
+}
+
+interface UserPayments {
+    cardNumber: string;
+    cardHolderName: string;
+    expirationDate: string;
+    cvv: number | string;
+}
+
 interface Products {
     _id?: string;
     id: number;

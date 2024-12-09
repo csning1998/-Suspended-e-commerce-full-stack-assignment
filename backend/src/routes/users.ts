@@ -1,5 +1,6 @@
 import express, { Router, Request, Response, NextFunction } from "express";
 import PGModels from "../postgres-models";
+import db from "../db";
 import bcrypt from "bcrypt";
 import { Model } from "sequelize";
 import * as JWT from "../lib/jsonWebToken";
@@ -159,26 +160,63 @@ router
     })
     .put(async (req: any, res: Response, next: NextFunction): Promise<any> => {
         // userId can not be changed
-        // delete req.body.user.userId;
-        //
-        // console.log("req.body.user", req.body.user);
-        //
-        req.currentUser.set({
-            ...req.body.user,
-        });
+        console.log("req.body.user", req.body.user);
+
+        // Transactions: https://sequelize.org/docs/v6/other-topics/transactions/
+
+        const t: any = await db.transaction();
+
+        console.log("Transaction t: \n", t);
 
         try {
             // Update basic data for current user
-            await req.currentUser.save();
+            await req.currentUser.set({ ...req.body.user });
+            await req.currentUser.save({ transaction: t });
 
             if (
                 req.body.user.userAddress &&
                 Array.isArray(req.body.user.userAddress)
             ) {
-                const existingAddress = await PGModels.Address.findOne({
+                await PGModels.Address.destroy({
                     where: { userId: req.currentUser.userId },
+                    transaction: t,
+                });
+
+                const addressData: any = req.body.user.userAddress.map(
+                    (addr: any) => ({
+                        ...addr,
+                        userId: req.currentUser.userId,
+                    }),
+                );
+
+                await PGModels.Address.bulkCreate(addressData, {
+                    transaction: t,
                 });
             }
+
+            if (
+                req.body.user.userPayments &&
+                Array.isArray(req.body.user.userPayments)
+            ) {
+                await PGModels.Payment.destroy({
+                    where: { userId: req.currentUser.userId },
+                    transaction: t,
+                });
+
+                const paymentData: any = req.body.user.userPayments.map(
+                    (pay: any) => ({
+                        ...pay,
+                        userId: req.currentUser.userId,
+                    }),
+                );
+
+                await PGModels.Payment.bulkCreate(paymentData, {
+                    transaction: t,
+                });
+            }
+
+            await t.commit();
+
             res.status(statusCodes.USER_UPDATE.SUCCESS.code).send({
                 ...statusCodes.USER_UPDATE.SUCCESS,
             });
@@ -186,6 +224,7 @@ router
             // To-do: Fetch the data or data in array from the db respectively
             // and then apply data update using .save().
         } catch (error: any) {
+            await t.rollback();
             error.status = 400;
             return next(error);
         }
