@@ -73,9 +73,11 @@ const colorHeaders = [
 
 function openDialog() {
    tempEditProduct.value = JSON.parse(JSON.stringify(currentEditProduct.value));
+   // @ts-ignore
    const sizeOpt = tempEditProduct.value.options.find(
       (opt) => opt.name === "Size",
    );
+   // @ts-ignore
    const colorOpt = tempEditProduct.value.options.find(
       (opt) => opt.name === "Color",
    );
@@ -103,7 +105,7 @@ function removeSizeOption(item: { value: number }) {
 }
 
 function addColorRow() {
-   tempColorOptions.value.push({ value: "", id: Date.now() });
+   tempColorOptions.value.push({ value: "" });
 }
 
 function removeColorOption(index: number) {
@@ -217,7 +219,7 @@ async function amendProduct() {
                      class="elevation-1"
                   >
                      <!-- Size Column -->
-                     <template v-slot:[`item.value`]="{ item, index }">
+                     <template v-slot:[`item.value`]="{ index }">
                         <v-text-field
                            class="field-input"
                            variant="outlined"
@@ -229,7 +231,7 @@ async function amendProduct() {
                      </template>
 
                      <!-- Price Adjustment Column -->
-                     <template v-slot:[`item.priceAdj`]="{ item, index }">
+                     <template v-slot:[`item.priceAdj`]="{ index }">
                         <v-text-field
                            class="field-input"
                            variant="outlined"
@@ -241,7 +243,7 @@ async function amendProduct() {
                      </template>
 
                      <!-- Actions Column -->
-                     <template v-slot:[`item.actions`]="{ item, index }">
+                     <template v-slot:[`item.actions`]="{ item }">
                         <div class="options-button-container">
                            <button
                               class="option-button"
@@ -264,7 +266,7 @@ async function amendProduct() {
                      dense
                      class="elevation-1"
                   >
-                     <template v-slot:[`item.value`]="{ item, index }">
+                     <template v-slot:[`item.value`]="{ index }">
                         <v-text-field
                            class="field-input"
                            variant="outlined"
@@ -275,7 +277,7 @@ async function amendProduct() {
                         ></v-text-field>
                      </template>
 
-                     <template v-slot:[`item.actions`]="{ item, index }">
+                     <template v-slot:[`item.actions`]="{ index }">
                         <div class="options-button-container">
                            <button
                               class="option-button"

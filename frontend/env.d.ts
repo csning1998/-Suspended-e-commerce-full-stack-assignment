@@ -38,3 +38,19 @@ interface ProductOption {
 interface CartItem extends Products {
     selectedOptions: Record<string, string | number>;
 }
+
+/* Declaration for SellerProductManagementView */
+
+interface SizeOption {
+    value: number;
+    priceAdj: number;
+}
+
+interface ColorOption {
+    value: string;
+}
+
+interface ProductOption {
+    name: "Size" | "Color";
+    values: SizeOption[] | ColorOption[];
+}
