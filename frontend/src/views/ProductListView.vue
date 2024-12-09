@@ -8,11 +8,11 @@ import { productCardButtonActions } from "@/components/product/productCardButton
 
 const userId = undefined; // if (!isLoggedIn) then make it undefined
 const { cart, favorites, addToCart, addToFavorites } =
-    productCardButtonActions(userId);
+   productCardButtonActions(userId);
 
 let products = ref([]);
 onMounted(async () => {
-    products.value = await request.get("/products");
+   products.value = await request.get("/products");
 });
 
 import overlayStore from "@/stores/overlay";
@@ -21,16 +21,14 @@ const overlay = computed(() => store.overlay);
 </script>
 
 <template>
-    <ProductCardHorizontal
-        v-if="products.length > 0"
-        :products="products"
-        @addToCart="addToCart"
-        @addToFavorites="addToFavorites"
-    />
+   <ProductCardHorizontal
+      v-if="products.length > 0"
+      :products="products"
+      @addToCart="addToCart"
+      @addToFavorites="addToFavorites"
+   />
 
-    <h1 v-if="!overlay && products.length === 0">
-        There is no product on sale
-    </h1>
+   <h1 v-if="!overlay && products.length === 0">There is no product on sale</h1>
 </template>
 
 <style scoped>
@@ -39,7 +37,7 @@ const overlay = computed(() => store.overlay);
   } */
 
 h1 {
-    text-align: center;
-    margin-top: 5em;
+   text-align: center;
+   margin-top: 5em;
 }
 </style>

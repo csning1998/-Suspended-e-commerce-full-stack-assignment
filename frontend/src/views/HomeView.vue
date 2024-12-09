@@ -6,21 +6,21 @@ import request from "../stores/request";
 
 let products = ref([]);
 onMounted(async () => {
-    products.value = await request.get("/products");
+   products.value = await request.get("/products");
 });
 </script>
 
 <template>
-    <div id="app">
-        <section class="hero-section">
-            <HeroSection />
-        </section>
+   <div id="app">
+      <section class="hero-section">
+         <HeroSection />
+      </section>
 
-        <!-- ProductCard Section -->
-        <section class="categories">
-            <ProductCardVertical :products="products" />
-        </section>
-    </div>
+      <!-- ProductCard Section -->
+      <section class="categories">
+         <ProductCardVertical :products="products" />
+      </section>
+   </div>
 </template>
 
 <style scoped></style>
