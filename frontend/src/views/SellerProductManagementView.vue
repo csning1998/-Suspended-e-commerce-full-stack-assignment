@@ -1,76 +1,306 @@
 <script setup lang="ts">
-import { defineProps, ref, onMounted } from "vue";
-import { productCardButtonActions } from "@/components/product/productCardButtonActions";
+import { defineProps, ref, onMounted, watch } from "vue";
 import { useProductOptions } from "@/components/product/useProductOptions";
 import request from "@/stores/request";
-// defineProps<{
-//    products: Products[];
-// }>();
+import store from "@/stores/user";
 
-const userId = undefined; // if (!isLoggedIn) then make it undefined
+defineProps<{
+   products: Products[];
+}>();
 
-const { cart, favorites, addToCart, addToFavorites } =
-   productCardButtonActions(userId);
+const currentUser = store.currentUser || { userPermission: "guest" };
+
+// const { cart, favorites, addToCart, addToFavorites } =
+//    productCardButtonActions(userId);
 
 const {
    selectedOptions,
-   updateSelectedOption,
+   // updateSelectedOption,
    calculateTotalPrice,
-   areAllOptionsSelected,
+   // areAllOptionsSelected,
 } = useProductOptions();
 
-const emit = defineEmits<{
-   (e: "addToCart", product: CartItem): void;
-   (e: "addToFavorites", product: CartItem): void;
-}>();
-
-let dialog = ref(false);
-
-let valid = ref(false);
-let currentEditProduct = ref({
+let currentEditProduct = ref<Products>({
    _id: "",
+   id: 0,
+   brand: "",
+   link2Pic: "",
+   basePrice: 0,
+   discountPrice: 0,
+   collection: "",
    title: "",
+   options: [],
 });
 
-let isEditModalVisible = ref;
+// ================================ //
+
+let dialog = ref(false);
+let valid = ref(false);
+
+const sizeOptions = ref<SizeOption[]>([]);
+const colorOptions = ref<ColorOption[]>([]);
+
+const tempEditProduct = ref<Products | null>(null);
+const tempSizeOptions = ref<SizeOption[]>([]);
+const tempColorOptions = ref<ColorOption[]>([]);
+
+watch(
+   () => currentEditProduct.value,
+   (newVal) => {
+      if (newVal) {
+         const sizeOpt = newVal.options.find((opt) => opt.name === "Size");
+         const colorOpt = newVal.options.find((opt) => opt.name === "Color");
+         sizeOptions.value = sizeOpt ? (sizeOpt.values as SizeOption[]) : [];
+         colorOptions.value = colorOpt
+            ? (colorOpt.values as ColorOption[])
+            : [];
+      }
+   },
+   { immediate: true },
+);
+
+// Headers
+const sizeHeaders = [
+   { title: "Size", key: "value" },
+   { title: "Price Adjustment", key: "priceAdj" },
+   { title: "Actions", key: "actions" },
+];
+
+const colorHeaders = [
+   { title: "Color", key: "value" },
+   { title: "Actions", key: "actions", sortable: false },
+];
+
+function openDialog() {
+   tempEditProduct.value = JSON.parse(JSON.stringify(currentEditProduct.value));
+   const sizeOpt = tempEditProduct.value.options.find(
+      (opt) => opt.name === "Size",
+   );
+   const colorOpt = tempEditProduct.value.options.find(
+      (opt) => opt.name === "Color",
+   );
+   console.log("tempEditProduct.value", tempEditProduct.value);
+   console.log("colorOpt", colorOpt);
+   console.log("sizeOpt", sizeOpt);
+   tempSizeOptions.value = sizeOpt
+      ? JSON.parse(JSON.stringify(sizeOpt.values))
+      : [];
+   tempColorOptions.value = colorOpt
+      ? JSON.parse(JSON.stringify(colorOpt.values))
+      : [];
+
+   dialog.value = true;
+}
+
+function addSizeRow() {
+   tempSizeOptions.value.push({ value: 0, priceAdj: 0 });
+}
+
+function removeSizeOption(item: { value: number }) {
+   tempSizeOptions.value = tempSizeOptions.value.filter(
+      (s) => s.value !== item.value,
+   );
+}
+
+function addColorRow() {
+   tempColorOptions.value.push({ value: "", id: Date.now() });
+}
+
+function removeColorOption(index: number) {
+   tempColorOptions.value.splice(index, 1);
+}
+
 let products: any = ref([]);
 onMounted(async () => {
    products.value = await request.get("/admin/products");
 });
 
+function overwritingData() {
+   currentEditProduct.value = {
+      ...currentEditProduct.value,
+      ...tempEditProduct.value,
+      options: [
+         { name: "Size", values: tempSizeOptions.value },
+         { name: "Color", values: tempColorOptions.value },
+      ],
+   };
+}
+
 async function amendProduct() {
+   if (!tempEditProduct.value) return;
+   overwritingData();
+
    await request.put("/admin/products/" + currentEditProduct.value._id, {
       ...currentEditProduct.value,
    });
-   alert("Successfully amended ");
+
+   alert("Successfully amended");
+   dialog.value = false;
+
+   const index = products.value.findIndex(
+      (p: Products) => p._id === currentEditProduct.value._id,
+   );
+   if (index !== -1) {
+      products.value[index] = { ...currentEditProduct.value };
+   }
 }
-import store from "@/stores/user";
-let currentUser = store.currentUser;
 </script>
 
 <template>
    <!-- <pre>
   {{ currentUser }}
   </pre> -->
-   <v-dialog v-model="dialog" width="768">
-      <v-card
-         class="vuerify-card"
-         max-width="768"
-         prepend-icon="mdi-update"
-         text="Your application will relaunch automatically after the update is complete."
-         title="Update in progress"
-      >
+   <v-dialog v-model="dialog" width="1000">
+      <v-card class="vuerify-card" max-width="1000" title="Editing Product">
          <v-form v-model="valid">
-            <v-text-field
-               v-model="currentEditProduct.title"
-               label="Product Title"
-            ></v-text-field>
+            <v-row dense v-if="tempEditProduct">
+               <!-- Product Title -->
+               <v-col cols="12" md="6">
+                  <v-text-field
+                     clearable
+                     variant="outlined"
+                     v-model="tempEditProduct.title"
+                     label="Product Title*"
+                     required
+                  ></v-text-field>
+               </v-col>
+
+               <!-- Product Collection -->
+               <v-col cols="12" sm="6">
+                  <v-autocomplete
+                     :items="[
+                        'Mobile Phones',
+                        'Tablets',
+                        'Accessories',
+                        'Desktops',
+                        'Home Devices',
+                        'Wearables',
+                        'Audios',
+                        'Displays',
+                        '*Miscellaneous',
+                     ]"
+                     v-model="tempEditProduct.collection"
+                     label="Collection"
+                     auto-select-first
+                  ></v-autocomplete>
+               </v-col>
+
+               <!-- Base Price -->
+               <v-col cols="12" md="6">
+                  <v-text-field
+                     clearable
+                     variant="outlined"
+                     v-model.number="tempEditProduct.basePrice"
+                     label="Base Price (USD)*"
+                     required
+                  ></v-text-field>
+               </v-col>
+
+               <!-- Discount Price -->
+               <v-col cols="12" md="6">
+                  <v-text-field
+                     clearable
+                     variant="outlined"
+                     v-model.number="tempEditProduct.discountPrice"
+                     label="Discount Price (USD)"
+                  ></v-text-field>
+               </v-col>
+
+               <!-- Size Management -->
+               <v-col cols="12" md="6">
+                  <span class="form-field label">Size Options</span>
+                  <v-data-table
+                     :headers="sizeHeaders"
+                     :items="tempSizeOptions"
+                     item-key="id"
+                     item-value="value"
+                     dense
+                     class="elevation-1"
+                  >
+                     <template v-slot:[`item.value`]="{ item, index }">
+                        <v-responsive class="mx-auto" min-width="80">
+                           <v-text-field
+                              variant="outlined"
+                              v-model.number="tempSizeOptions[index].value"
+                              label="Size"
+                              type="text"
+                           ></v-text-field
+                        ></v-responsive>
+                     </template>
+
+                     <template v-slot:[`item.priceAdj`]="{ item, index }">
+                        <v-responsive class="mx-auto" min-width="200">
+                           <v-text-field
+                              variant="outlined"
+                              v-model.number="tempSizeOptions[index].priceAdj"
+                              label="Price Adjustment"
+                              type="number"
+                           ></v-text-field>
+                        </v-responsive>
+                     </template>
+
+                     <template v-slot:[`item.actions`]="{ item, index }">
+                        <div class="options-button-container">
+                           <button
+                              class="option-button"
+                              @click="removeSizeOption(item)"
+                           >
+                              Delete
+                           </button>
+                        </div>
+                     </template>
+                  </v-data-table>
+               </v-col>
+
+               <!-- Color Management -->
+               <v-col cols="12" md="6">
+                  <span class="text-subtitle-1">Color Options</span>
+                  <v-data-table
+                     :headers="colorHeaders"
+                     :items="tempColorOptions"
+                     item-value="value"
+                     dense
+                     class="elevation-1"
+                  >
+                     <template v-slot:[`item.value`]="{ item, index }">
+                        <v-responsive class="mx-auto" min-width="20">
+                           <v-text-field
+                              variant="outlined"
+                              v-model="tempColorOptions[index].value"
+                              label="Color"
+                              type="text"
+                           ></v-text-field>
+                        </v-responsive>
+                     </template>
+
+                     <template v-slot:[`item.actions`]="{ item, index }">
+                        <div class="options-button-container">
+                           <button
+                              class="option-button"
+                              @click="removeColorOption(index)"
+                           >
+                              Delete
+                           </button>
+                        </div>
+                     </template>
+                  </v-data-table>
+               </v-col>
+            </v-row>
          </v-form>
+
          <template v-slot:actions>
             <div class="form-button-container">
-               <button class="form-button" @click="dialog = false">OK</button>
-               <button class="form-button" @click="amendProduct()">
-                  Amend
+               <button class="form-button" @click.prevent="dialog = false">
+                  Cancel
+               </button>
+               <button class="form-button" type="button" @click="addSizeRow">
+                  Add Size
+               </button>
+               <button class="form-button" type="button" @click="addColorRow">
+                  Add Color
+               </button>
+               <button class="form-button" @click.prevent="amendProduct()">
+                  Save
                </button>
             </div>
          </template>
@@ -144,8 +374,8 @@ let currentUser = store.currentUser;
                   id="edit-button"
                   class="action-button"
                   @click="
-                     dialog = true;
                      currentEditProduct = item;
+                     openDialog(); // 呼叫 openDialog() 而不是直接對 dialog 賦值
                   "
                >
                   <fa :icon="['fas', 'pen-to-square']" />Edit Product
@@ -155,8 +385,8 @@ let currentUser = store.currentUser;
                   class="action-button"
                   v-if="currentUser.userPermission === 'admin'"
                   @click="
-                     dialog = true;
                      currentEditProduct = item;
+                     openDialog();
                   "
                >
                   <fa :icon="['fas', 'trash']" />Delete Product
@@ -325,6 +555,7 @@ ul li.bg:hover {
 }
 
 .vuerify-card {
+   padding: 1rem;
    background-color: var(--vt-c-black-soft);
    color: white;
 }

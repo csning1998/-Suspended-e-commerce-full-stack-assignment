@@ -15,6 +15,7 @@ interface RegistrationFormData {
 }
 
 interface Products {
+    _id?: string;
     id: number;
     brand: string;
     link2Pic: string;

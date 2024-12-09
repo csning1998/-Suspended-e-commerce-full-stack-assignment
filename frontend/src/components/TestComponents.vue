@@ -1,37 +1,14 @@
 <script setup lang="ts">
-import SearchBar from "@/components/common/SearchBar.vue";
-import CartView from "@/views/CartView.vue";
-// import SellerProductManagementView from "@/views/SellerProductManagementView.vue";
+const items = [
+   {
+      name: "African Elephant",
+      species: "Loxodonta africana",
+      diet: "Herbivore",
+      habitat: "Savanna, Forests",
+   },
+];
 </script>
 
 <template>
-    <h1>Seller Product MAangement View</h1>
-    <p>
-        ------------------------------------------------------------------------------------------------------
-    </p>
-    <SellerProductManagementView />
-
-    <h1>Cart View</h1>
-    <p>
-        ------------------------------------------------------------------------------------------------------
-    </p>
-    <CartView />
-
-    <!--    <h1>Testing Searchbar</h1>-->
-    <!--    <p>-->
-    <!--      &#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;-->
-    <!--    </p>-->
-    <!--  <SearchBar />-->
+   <v-data-table :items="items"> </v-data-table>
 </template>
-
-<style scoped>
-h1 {
-    text-align: center;
-    margin-top: 30px;
-}
-
-p {
-    text-align: center;
-    margin: 6px;
-}
-</style>
