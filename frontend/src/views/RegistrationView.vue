@@ -5,12 +5,12 @@ import { useRouter } from "vue-router";
 import RegisterForm from "@/components/auth/RegisterForm.vue";
 
 const registrationFormData = ref<RegistrationFormData>({
-   userId: "root",
-   userEmail: "nephew.UncleRoger@noreply.gmail.com",
-   userFamilyName: "Uncle",
-   userGivenName: "Roger",
-   userPassword: "root",
-   confirmPassword: "root",
+   userId: "",
+   userEmail: "",
+   userFamilyName: "",
+   userGivenName: "",
+   userPassword: "",
+   confirmPassword: "",
 });
 
 const router = useRouter();

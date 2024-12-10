@@ -58,11 +58,11 @@ User.init(
         },
         userFamilyName: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         userGivenName: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         userPhoneNumber: {
             type: DataTypes.INTEGER,

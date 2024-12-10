@@ -16,6 +16,7 @@ import configureGoogleOAuth from "./lib/oauth-google";
 import sequelize from "./db";
 
 import User from "./postgres-models/user";
+import configureGithubOAuth from "./lib/oauth-github";
 // import { ResolvePathType } from "mongoose/types/inferschematype";
 
 const app: Express = express();
@@ -71,6 +72,7 @@ if (secret) {
 
     // Only Use passport when PASSPORT_LONG_SECRET is defined
     configureGoogleOAuth(app, passport);
+    configureGithubOAuth(app, passport);
 
     // https://www.passportjs.org/tutorials/google/session/
     passport.serializeUser(function (user: any, cb: Function) {

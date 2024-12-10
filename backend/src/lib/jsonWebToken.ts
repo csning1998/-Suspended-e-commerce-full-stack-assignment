@@ -39,7 +39,9 @@ export const verity: any = async (
         const token = req.headers.token as string | undefined;
 
         if (!token) {
-            return next(new Error(statusCodes.AUTHENTICATION.NO_TOKEN_PROVIDED.message))
+            return next(
+                new Error(statusCodes.AUTHENTICATION.NO_TOKEN_PROVIDED.message),
+            );
         }
 
         const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
@@ -56,18 +58,26 @@ export const verity: any = async (
                 req.currentUser = currentUser;
                 return next();
             } else {
-                return next(new Error(statusCodes.AUTHENTICATION.USER_NOT_FOUND.message))
+                return next(
+                    new Error(
+                        statusCodes.AUTHENTICATION.USER_NOT_FOUND.message,
+                    ),
+                );
             }
         } else {
-            return next(new Error(statusCodes.AUTHENTICATION.INVALID_TOKEN.message))
+            return next(
+                new Error(statusCodes.AUTHENTICATION.INVALID_TOKEN.message),
+            );
         }
     } catch (error) {
         console.error("JWT verification failed:", error);
-        return next(new Error(statusCodes.AUTHENTICATION.JWT_VERIFICATION_FAILED.message))
+        return next(
+            new Error(
+                statusCodes.AUTHENTICATION.JWT_VERIFICATION_FAILED.message,
+            ),
+        );
     }
 };
-
-// export verity
 
 export const create: (payload: any) => String = function (
     payload: any,

@@ -7,12 +7,12 @@ defineProps<{
 }>();
 
 const registrationFormData = ref<RegistrationFormData>({
-   userId: "",
-   userEmail: "",
-   userPassword: "",
-   confirmPassword: "",
-   userFamilyName: "",
-   userGivenName: "",
+   userId: "root",
+   userEmail: "nephew.UncleRoger@noreply.gmail.com",
+   userFamilyName: "Uncle",
+   userGivenName: "Roger",
+   userPassword: "Root001@admin",
+   confirmPassword: "Root001@admin",
 });
 
 const isVisible = ref(false);
@@ -54,6 +54,10 @@ const confirmPasswordRules = [requiredRule, confirmPasswordRule];
 
 function googleOAuth() {
    window.location.href = "http://localhost:3000/auth/google";
+}
+
+function githubOAuth() {
+   window.location.href = "http://localhost:3000/auth/github";
 }
 </script>
 
@@ -160,14 +164,14 @@ function googleOAuth() {
                         class="form-button"
                         @click="googleOAuth"
                      >
-                        <fa :icon="['fab', 'google']" />Sign in with Google
+                        <fa :icon="['fab', 'google']" />Sign up with Google
                      </button>
                      <button
                         type="button"
                         class="form-button"
-                        @click="googleOAuth"
+                        @click="githubOAuth"
                      >
-                        <fa :icon="['fab', 'github']" />Sign in with GitHub
+                        <fa :icon="['fab', 'github']" />Sign up with GitHub
                      </button>
                   </div>
                </div>

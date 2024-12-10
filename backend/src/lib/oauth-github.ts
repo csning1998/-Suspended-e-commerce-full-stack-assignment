@@ -2,28 +2,28 @@ import passport from "passport"; //https://www.npmjs.com/package/@types/passport
 import * as JWT from "./jsonWebToken";
 import express, { Response } from "express";
 import User from "../postgres-models/user";
-const GoogleStrategy: any = require("passport-google-oauth20").Strategy;
+const GitHubStrategy: any = require("passport-github2").Strategy;
 
 const BACK_END_BASE_URL: string =
     process.env.BACK_END_BASE_URL || "http://localhost:3000";
 const FRONT_END_BASE_URL: string =
     process.env.FRONT_END_BASE_URL || "http://localhost:5173";
 
-export default function configureGoogleOAuth(
+export default function configureGithubOAuth(
     app: express.Express,
     passport: passport.PassportStatic,
 ): void {
-    if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
+    if (!process.env.GITHUB_CLIENT_ID || !process.env.GITHUB_CLIENT_SECRET) {
         return;
     }
 
-    // https://www.passportjs.org/packages/passport-google-oauth20/
+    // https://www.passportjs.org/packages/passport-github2/
     passport.use(
-        new GoogleStrategy(
+        new GitHubStrategy(
             {
-                clientID: process.env.GOOGLE_CLIENT_ID,
-                clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                callbackURL: BACK_END_BASE_URL + "/auth/google/secrets",
+                clientID: process.env.GITHUB_CLIENT_ID,
+                clientSecret: process.env.GITHUB_CLIENT_SECRET,
+                callbackURL: BACK_END_BASE_URL + "/auth/github/secrets",
             },
 
             async function (
@@ -35,23 +35,23 @@ export default function configureGoogleOAuth(
                 try {
                     const user: [User, boolean] = await User.findOrCreate({
                         where: {
-                            userId: profile._json.sub,
+                            userId: profile._json.login,
                             // userOAuthToken: accessToken,
-                            userOAuthProvider: "google",
+                            userOAuthProvider: "github",
                         },
                         defaults: {
                             userPassword: accessToken,
-                            userEmail: profile._json.email,
-                            userFamilyName: profile._json.family_name,
-                            userGivenName: profile._json.given_name,
-                            userProfilePictureUrl: profile._json.picture,
+                            userEmail: profile._json.html_url,
+                            userFamilyName: profile._json.name,
+                            userGivenName: profile._json.name,
+                            userProfilePictureUrl: profile._json.avatar_url,
                             userPermission: "user",
                         },
                     });
 
                     if (user) {
                         cb(null, {
-                            userId: profile._json.sub,
+                            userId: profile._json.login,
                         });
                     } else {
                         cb(user, null);
@@ -62,16 +62,16 @@ export default function configureGoogleOAuth(
             },
         ),
     );
-
     app.get(
-        "/auth/google",
-        passport.authenticate("google", { scope: ["profile", "email"] }),
+        "/auth/github",
+        passport.authenticate("github", { scope: ["profile", "email"] }),
     );
 
     app.get(
-        "/auth/google/secrets",
-        passport.authenticate("google", { failureRedirect: "/login" }),
+        "/auth/github/secrets",
+        passport.authenticate("github", { failureRedirect: "/login" }),
         function (req: any, res: Response): void {
+            console.log("req.user.userId", req.user.userId);
             const jwt: String = JWT.create({
                 userId: req.user.userId,
             });

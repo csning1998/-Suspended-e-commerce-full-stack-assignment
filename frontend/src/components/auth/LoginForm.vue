@@ -6,6 +6,11 @@ defineProps<{
    onSubmit: () => void;
 }>();
 
+const loginFormData = ref<LoginFormData>({
+   userId: "nephew.UncleRoger@noreply.gmail.com",
+   userPassword: "Root001@admin",
+});
+
 const isVisible = ref(false);
 
 // Function to toggle visibility
@@ -14,8 +19,16 @@ const toggleVisibility = (): void => {
    console.log("isVisible.value", isVisible.value);
 };
 
+const requiredRule = (value: string): true | string => {
+   return !!value || "Required.";
+};
+
 function googleOAuth() {
    window.location.href = "http://localhost:3000/auth/google";
+}
+
+function githubOAuth() {
+   window.location.href = "http://localhost:3000/auth/github";
 }
 </script>
 
@@ -28,8 +41,10 @@ function googleOAuth() {
                <v-col cols="12">
                   <v-text-field
                      clearable
+                     v-model="loginFormData.userId"
                      variant="outlined"
                      label="Enter your Email or user ID"
+                     :rules="[requiredRule]"
                   >
                      <template #prepend-inner>
                         <fa class="icon" :icon="['fas', 'envelope']" />
@@ -40,7 +55,9 @@ function googleOAuth() {
                   <v-text-field
                      clearable
                      variant="outlined"
+                     v-model="loginFormData.userPassword"
                      :type="isVisible ? 'text' : 'password'"
+                     :rules="[requiredRule]"
                      label="Enter your password"
                   >
                      <template #prepend-inner>
@@ -84,7 +101,7 @@ function googleOAuth() {
                      <button
                         type="button"
                         class="form-button"
-                        @click="googleOAuth"
+                        @click="githubOAuth"
                      >
                         <fa :icon="['fab', 'github']" />Sign in with GitHub
                      </button>

@@ -5,8 +5,8 @@ import { useRouter, useRoute } from "vue-router";
 import LoginForm from "@/components/auth/LoginForm.vue";
 
 const loginFormData = ref<LoginFormData>({
-   userId: "nephew.UncleRoger@noreply.gmail.com",
-   userPassword: "root",
+   userId: "",
+   userPassword: "",
 });
 
 const router = useRouter();
