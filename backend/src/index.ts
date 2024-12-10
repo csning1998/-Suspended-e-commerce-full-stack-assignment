@@ -19,7 +19,7 @@ import Product from "./mongo-models/product";
 import sequelize from "./db";
 
 import User from "./postgres-models/user";
-import { ResolvePathType } from "mongoose/types/inferschematype";
+// import { ResolvePathType } from "mongoose/types/inferschematype";
 
 const app: Express = express();
 const port: string | 3000 = process.env.PORT || 3000;
@@ -31,7 +31,7 @@ const MONGO_URI: string = process.env.MONGO_URI || "mongodb://mongo:27017/test";
 app.use(
     cors({
         origin: "*",
-    }),
+    })
 );
 
 // for JsnWebToken Secret
@@ -43,114 +43,50 @@ app.use(bodyParser.json());
 
 // SET UP SESSION for OAuth ------below code comes from express-session
 
-try {
-    let secret: string | undefined = process.env.PASSPORT_LONG_SECRET;
-    if (secret || !(secret === undefined)) {
-        app.use(
-            session({
-                secret:
-                    process.env.PASSPORT_LONG_SECRET || "Our little secret.",
-                resave: false,
-                saveUninitialized: false,
-            }),
-        );
-    }
-} catch (err) {
-    console.error("You have to provide secret.");
-}
+// try {
+//     let secret: string | undefined = process.env.PASSPORT_LONG_SECRET;
+//     if (secret || !(secret === undefined)) {
+//         app.use(
+//             session({
+//                 secret:
+//                     process.env.PASSPORT_LONG_SECRET || "Our little secret.",
+//                 resave: false,
+//                 saveUninitialized: false,
+//             }),
+//         );
+//     }
+// } catch (err) {
+//     console.error("You have to provide secret.");
+// }
 
-// Initialize and use passport.
-app.use(passport.initialize());
-app.use(passport.session());
+// Only Use passport when PASSPORT_LONG_SECRET is defined
+let secret: string | undefined = process.env.PASSPORT_LONG_SECRET;
+if (secret) {
+    app.use(
+        session({
+            secret: process.env.PASSPORT_LONG_SECRET || "Our little secret.",
+            resave: false,
+            saveUninitialized: false,
+        })
+    );
+    // Initialize and use passport.
+    app.use(passport.initialize());
+    app.use(passport.session());
+    require("@/lib/oauth-google")(app, passport);
 
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const GitHubStrategy = require("passport-github").Strategy;
-
-// https://www.passportjs.org/packages/passport-google-oauth20/
-passport.use(
-    new GoogleStrategy(
-        {
-            clientID: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-            callbackURL: "http://localhost:3000/auth/google/secrets",
-        },
-
-        /* To-do: Rewrite in TypeScript */
-        async function (
-            accessToken: any,
-            refreshToken: any,
-            profile: any,
-            cb: Function,
-        ): Promise<void> {
-            console.log("accessToken", accessToken);
-            console.log("refreshToken", refreshToken);
-            console.log("profile", profile);
-            // profile._raw
-            try {
-                const user = await User.findOrCreate({
-                    where: {
-                        userId: profile._json.sub,
-                        // userOAuthToken: accessToken,
-                        userOAuthProvider: "google",
-                    },
-                    defaults: {
-                        userPassword: accessToken,
-                        userEmail: profile._json.email,
-                        userFamilyName: profile._json.family_name,
-                        userGivenName: profile._json.given_name,
-                        userProfilePictureUrl: profile._json.picture,
-                        userPermission: "user",
-                    },
-                });
-                console.log("!!!!!!!!!!!!!!!!!!!!!!!!");
-                console.log("user");
-                console.log("!!!!!!!!!!!!!!!!!!!!!!!!");
-
-                if (user) {
-                    cb(null, {
-                        userId: profile._json.sub,
-                    });
-                } else {
-                    cb(user, null);
-                }
-            } catch (error) {
-                cb(error, null);
-            }
-        },
-    ),
-);
-
-// https://www.passportjs.org/tutorials/google/session/
-passport.serializeUser(function (user: any, cb) {
-    process.nextTick(function () {
-        cb(null, { user: user });
-    });
-});
-
-passport.deserializeUser(function (user: any, cb) {
-    process.nextTick(function () {
-        return cb(null, user);
-    });
-});
-
-app.get(
-    "/auth/google",
-    passport.authenticate("google", { scope: ["profile", "email"] }),
-);
-
-app.get(
-    "/auth/google/secrets",
-    passport.authenticate("google", { failureRedirect: "/login" }),
-    function (req: Request, res: Response): void {
-        const jwt: String = JWT.create({
-            // @ts-ignore
-            userId: req.user.userId,
+    // https://www.passportjs.org/tutorials/google/session/
+    passport.serializeUser(function (user: any, cb: Function) {
+        process.nextTick(function () {
+            cb(null, { user: user });
         });
+    });
 
-        res.cookie("token", jwt);
-        res.redirect(`http://localhost:5173/oauth`);
-    },
-);
+    passport.deserializeUser(function (user: any, cb: Function) {
+        process.nextTick(function () {
+            return cb(null, user);
+        });
+    });
+}
 
 /*
 const [user, created] = await User.findOrCreate({
@@ -199,13 +135,13 @@ app.use("/admin", function (req: any, res: Response, next: NextFunction): void {
     // @ts-ignore
     console.log(
         "req.currentUser.userPermission",
-        req.currentUser.userPermission,
+        req.currentUser.userPermission
     );
     console.log("allowManagementRoles", allowManagementRoles);
     // @ts-ignore
     if (!allowManagementRoles.includes(req.currentUser.userPermission)) {
         return next(
-            new Error(`You must be one of ${allowManagementRoles.join(", ")}`),
+            new Error(`You must be one of ${allowManagementRoles.join(", ")}`)
         );
     }
 
@@ -270,6 +206,23 @@ require("./lib/errorHandler")(app);
     } catch (err) {
         console.error("error", err);
     }
+
+    // default root account
+    await User.findOrCreate({
+        where: {
+            userId: 'root',
+            // userOAuthToken: accessToken,
+            // userOAuthProvider: "google",
+        },
+        defaults: {
+            userPassword: '1qazXSW@',
+            userEmail: 'root@example.com',
+            userFamilyName: 'root',
+            userGivenName: 'root',
+            // userProfilePictureUrl: profile._json.picture,
+            userPermission: "admin",
+        },
+    });
 
     // Start the application, listening on the specified port
     app.listen(port, (): void => {
