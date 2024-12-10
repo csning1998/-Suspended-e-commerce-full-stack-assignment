@@ -1,17 +1,19 @@
 import passport from "passport"; //https://www.npmjs.com/package/@types/passport
-import * as JWT from "@/lib/jsonWebToken";
-import express, { Request, Response, Express, NextFunction } from "express";
-import User from "@/postgres-models/user";
-const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const GitHubStrategy = require("passport-github").Strategy;
+import * as JWT from "./jsonWebToken";
+import express, { Response } from "express";
+import User from "../postgres-models/user";
+const GoogleStrategy: any = require("passport-google-oauth20").Strategy;
+const GitHubStrategy: any = require("passport-github").Strategy;
 
-const BACK_END_BASE_URL = process.env.BACK_END_BASE_URL || 'http://localhost:3000'
-const FRONT_END_BASE_URL = process.env.FRONT_END_BASE_URL || 'http://localhost:5173'
+const BACK_END_BASE_URL: string =
+    process.env.BACK_END_BASE_URL || "http://localhost:3000";
+const FRONT_END_BASE_URL: string =
+    process.env.FRONT_END_BASE_URL || "http://localhost:5173";
 
-module.exports = function (
+export default function configureGoogleOAuth(
     app: express.Express,
-    passport: passport.PassportStatic
-) {
+    passport: passport.PassportStatic,
+): void {
     if (!process.env.GOOGLE_CLIENT_ID || !process.env.GOOGLE_CLIENT_SECRET) {
         return;
     }
@@ -25,19 +27,18 @@ module.exports = function (
                 callbackURL: BACK_END_BASE_URL + "/auth/google/secrets",
             },
 
-            /* To-do: Rewrite in TypeScript */
             async function (
                 accessToken: string,
                 refreshToken: any,
                 profile: any,
-                cb: Function
+                cb: Function,
             ): Promise<void> {
                 console.log("accessToken", accessToken);
                 console.log("refreshToken", refreshToken);
                 console.log("profile", profile);
                 // profile._raw
                 try {
-                    const user = await User.findOrCreate({
+                    const user: [User, boolean] = await User.findOrCreate({
                         where: {
                             userId: profile._json.sub,
                             // userOAuthToken: accessToken,
@@ -66,26 +67,25 @@ module.exports = function (
                 } catch (error) {
                     cb(error, null);
                 }
-            }
-        )
+            },
+        ),
     );
 
     app.get(
         "/auth/google",
-        passport.authenticate("google", { scope: ["profile", "email"] })
+        passport.authenticate("google", { scope: ["profile", "email"] }),
     );
 
     app.get(
         "/auth/google/secrets",
         passport.authenticate("google", { failureRedirect: "/login" }),
-        function (req: Request, res: Response): void {
+        function (req: any, res: Response): void {
             const jwt: String = JWT.create({
-                // @ts-ignore
                 userId: req.user.userId,
             });
 
             res.cookie("token", jwt);
             res.redirect(`${FRONT_END_BASE_URL}/oauth`);
-        }
+        },
     );
-};
+}

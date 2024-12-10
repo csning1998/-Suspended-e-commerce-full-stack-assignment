@@ -9,11 +9,8 @@ import adminProduct from "./routes/admin/product";
 import { connect } from "mongoose";
 import session from "express-session"; //https://www.npmjs.com/package/@types/express-session
 import passport from "passport"; //https://www.npmjs.com/package/@types/passport
-
-// npm i @types/express-session --save
-// npm i @types/passport --save
-
-import Product from "./mongo-models/product";
+import configureGoogleOAuth from "./lib/oauth-google";
+// TypeScript: use `npm i @types/express-session @types/passport --save`
 
 // Initialize database connection
 import sequelize from "./db";
@@ -31,7 +28,7 @@ const MONGO_URI: string = process.env.MONGO_URI || "mongodb://mongo:27017/test";
 app.use(
     cors({
         origin: "*",
-    })
+    }),
 );
 
 // for JsnWebToken Secret
@@ -59,7 +56,6 @@ app.use(bodyParser.json());
 //     console.error("You have to provide secret.");
 // }
 
-// Only Use passport when PASSPORT_LONG_SECRET is defined
 let secret: string | undefined = process.env.PASSPORT_LONG_SECRET;
 if (secret) {
     app.use(
@@ -67,12 +63,14 @@ if (secret) {
             secret: process.env.PASSPORT_LONG_SECRET || "Our little secret.",
             resave: false,
             saveUninitialized: false,
-        })
+        }),
     );
     // Initialize and use passport.
     app.use(passport.initialize());
     app.use(passport.session());
-    require("@/lib/oauth-google")(app, passport);
+
+    // Only Use passport when PASSPORT_LONG_SECRET is defined
+    configureGoogleOAuth(app, passport);
 
     // https://www.passportjs.org/tutorials/google/session/
     passport.serializeUser(function (user: any, cb: Function) {
@@ -132,16 +130,14 @@ app.get("/", (req: Request, res: Response): void => {
 const allowManagementRoles = ["admin", "supplier"];
 app.use("/admin", JWT.verity);
 app.use("/admin", function (req: any, res: Response, next: NextFunction): void {
-    // @ts-ignore
     console.log(
         "req.currentUser.userPermission",
-        req.currentUser.userPermission
+        req.currentUser.userPermission,
     );
     console.log("allowManagementRoles", allowManagementRoles);
-    // @ts-ignore
     if (!allowManagementRoles.includes(req.currentUser.userPermission)) {
         return next(
-            new Error(`You must be one of ${allowManagementRoles.join(", ")}`)
+            new Error(`You must be one of ${allowManagementRoles.join(", ")}`),
         );
     }
 
@@ -210,15 +206,15 @@ require("./lib/errorHandler")(app);
     // default root account
     await User.findOrCreate({
         where: {
-            userId: 'root',
+            userId: "root",
             // userOAuthToken: accessToken,
             // userOAuthProvider: "google",
         },
         defaults: {
-            userPassword: '1qazXSW@',
-            userEmail: 'root@example.com',
-            userFamilyName: 'root',
-            userGivenName: 'root',
+            userPassword: "1qazXSW@",
+            userEmail: "root@example.com",
+            userFamilyName: "root",
+            userGivenName: "root",
             // userProfilePictureUrl: profile._json.picture,
             userPermission: "admin",
         },
