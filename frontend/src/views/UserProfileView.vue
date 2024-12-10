@@ -350,7 +350,6 @@ onMounted(() => {
                      <v-row dense>
                         <!-- Country -->
                         <v-col cols="12" md="6">
-                           <label>Country:</label>
                            <div v-if="!isEditing">{{ address.country }}</div>
                            <v-autocomplete
                               v-else
@@ -364,7 +363,6 @@ onMounted(() => {
 
                         <!-- State -->
                         <v-col cols="12" md="6">
-                           <label>State:</label>
                            <div v-if="!isEditing">{{ address.state }}</div>
                            <v-autocomplete
                               v-else
@@ -378,7 +376,6 @@ onMounted(() => {
 
                         <!-- City -->
                         <v-col cols="12" md="6">
-                           <label>City:</label>
                            <div v-if="!isEditing">{{ address.city }}</div>
                            <v-autocomplete
                               v-else
@@ -392,7 +389,6 @@ onMounted(() => {
 
                         <!-- Street -->
                         <v-col cols="12" md="6">
-                           <label>Street:</label>
                            <div v-if="!isEditing">{{ address.street }}</div>
                            <v-text-field
                               v-else
@@ -405,7 +401,6 @@ onMounted(() => {
 
                         <!-- Zip Code -->
                         <v-col cols="12" md="6">
-                           <label>Zip Code:</label>
                            <div v-if="!isEditing">{{ address.zipCode }}</div>
                            <v-text-field
                               v-else
@@ -416,7 +411,7 @@ onMounted(() => {
                            ></v-text-field>
                         </v-col>
 
-                        <v-col cols="12" v-if="isEditing">
+                        <v-col cols="12" md="6" v-if="isEditing">
                            <button
                               class="form-button"
                               @click.prevent="removeAddress(index)"
@@ -444,7 +439,6 @@ onMounted(() => {
                   >
                      <v-row dense>
                         <v-col cols="12" md="6">
-                           <label>Card Number:</label>
                            <div v-if="!isEditing">{{ payment.cardNumber }}</div>
                            <v-text-field
                               v-else
@@ -457,7 +451,6 @@ onMounted(() => {
                            ></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6">
-                           <label>Holder Name:</label>
                            <div v-if="!isEditing">
                               {{ payment.cardHolderName }}
                            </div>
@@ -472,7 +465,6 @@ onMounted(() => {
                            ></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6">
-                           <label>Expiration:</label>
                            <div v-if="!isEditing">
                               {{ payment.expirationDate }}
                            </div>
@@ -488,7 +480,6 @@ onMounted(() => {
                            ></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6">
-                           <label>CVV:</label>
                            <div v-if="!isEditing">{{ payment.cvv }}</div>
                            <v-text-field
                               v-else
@@ -509,16 +500,14 @@ onMounted(() => {
                            >
                               Remove
                            </button>
+                           <button
+                              class="form-button"
+                              @click.prevent="addPaymentMethod"
+                           >
+                              Add Payment Method
+                           </button>
                         </div>
                      </v-row>
-                  </div>
-                  <div class="form-button-container" v-if="isEditing">
-                     <button
-                        class="form-button"
-                        @click.prevent="addPaymentMethod"
-                     >
-                        Add Payment Method
-                     </button>
                   </div>
                </v-card-text>
 

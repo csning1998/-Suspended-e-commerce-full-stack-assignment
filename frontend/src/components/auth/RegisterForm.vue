@@ -1,81 +1,184 @@
 <script setup lang="ts">
-import { defineProps } from "vue";
+import { defineProps, ref } from "vue";
+
 defineProps<{
    registrationFormData: RegistrationFormData;
    onSubmit: () => void;
 }>();
 
+const registrationFormData = ref<RegistrationFormData>({
+   userId: "",
+   userEmail: "",
+   userPassword: "",
+   confirmPassword: "",
+   userFamilyName: "",
+   userGivenName: "",
+});
+
+const isVisible = ref(false);
+const toggleVisibility = () => {
+   isVisible.value = !isVisible.value;
+};
+
+const requiredRule = (value: string): true | string => {
+   return !!value || "Required.";
+};
+
+const emailRule = (value: string): true | string => {
+   const pattern = /^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/;
+   return (
+      pattern.test(value) ||
+      "You may evaluate if your input matches the email pattern."
+   );
+};
+
+const passwordRule = (value: string): true | string => {
+   const pattern =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
+   return (
+      pattern.test(value) ||
+      "Min. 8 chars with at least one uppercase, one number, and one special character."
+   );
+};
+
+const confirmPasswordRule = (value: string): boolean | string => {
+   return (
+      value === registrationFormData.value.userPassword ||
+      "Passwords do not match."
+   );
+};
+
+const userEmailRules = [requiredRule, emailRule];
+const userPasswordRules = [requiredRule, passwordRule];
+const confirmPasswordRules = [requiredRule, confirmPasswordRule];
+
 function googleOAuth() {
-   const url = "http://localhost:3000/auth/google";
-   window.location.href = url;
+   window.location.href = "http://localhost:3000/auth/google";
 }
 </script>
 
 <template>
    <div class="form-container">
-      <div class="form-card">
-         <h2 class="form-title">Registration</h2>
+      <v-card class="vuerify-card" max-width="1000">
+         <v-form>
+            <div class="form-card">
+               <h2 class="form-title">Registration</h2>
+               <v-col cols="12">
+                  <v-text-field
+                     clearable
+                     variant="outlined"
+                     label="Setting your User ID"
+                     :rules="[requiredRule]"
+                     maxlength="20"
+                     counter
+                     v-model="registrationFormData.userId"
+                  >
+                     <template #prepend-inner>
+                        <fa class="icon" :icon="['fas', 'user']" />
+                     </template>
+                  </v-text-field>
+               </v-col>
+               <v-col cols="12">
+                  <v-text-field
+                     clearable
+                     variant="outlined"
+                     label="Enter your Email"
+                     v-model="registrationFormData.userEmail"
+                     :rules="userEmailRules"
+                  >
+                     <template #prepend-inner>
+                        <fa class="icon" :icon="['fas', 'envelope']" />
+                     </template>
+                  </v-text-field>
+               </v-col>
+               <v-col cols="12">
+                  <v-text-field
+                     clearable
+                     counter
+                     variant="outlined"
+                     :type="isVisible ? 'text' : 'password'"
+                     v-model="registrationFormData.userPassword"
+                     label="Enter your password"
+                     :rules="userPasswordRules"
+                  >
+                     <template #prepend-inner>
+                        <fa class="icon" :icon="['fas', 'lock']" />
+                     </template>
+                     <template #append-inner>
+                        <v-btn icon @click="toggleVisibility">
+                           <v-icon>
+                              <i
+                                 :class="
+                                    isVisible
+                                       ? 'far fa-eye-slash'
+                                       : 'far fa-eye'
+                                 "
+                              ></i>
+                           </v-icon>
+                        </v-btn>
+                     </template>
+                  </v-text-field>
+               </v-col>
+               <v-col cols="12">
+                  <v-text-field
+                     clearable
+                     variant="outlined"
+                     :type="isVisible ? 'text' : 'password'"
+                     minlength="8"
+                     counter
+                     v-model="registrationFormData.confirmPassword"
+                     label="Confirm your password"
+                     :rules="confirmPasswordRules"
+                  >
+                     <template #prepend-inner>
+                        <fa class="icon" :icon="['fas', 'lock']" />
+                     </template>
+                     <template #append-inner>
+                        <v-btn icon @click="toggleVisibility">
+                           <v-icon>
+                              <i
+                                 :class="
+                                    isVisible
+                                       ? 'far fa-eye-slash'
+                                       : 'far fa-eye'
+                                 "
+                              ></i>
+                           </v-icon>
+                        </v-btn>
+                     </template>
+                  </v-text-field>
+               </v-col>
+               <div class="form-body" @submit.prevent="onSubmit">
+                  <div class="form-button-container">
+                     <button class="form-button" type="submit">
+                        <fa :icon="['fas', 'user-plus']" />Register
+                     </button>
+                  </div>
+                  <div class="form-button-container">
+                     <button
+                        type="button"
+                        class="form-button"
+                        @click="googleOAuth"
+                     >
+                        <fa :icon="['fab', 'google']" />Sign in with Google
+                     </button>
+                     <button
+                        type="button"
+                        class="form-button"
+                        @click="googleOAuth"
+                     >
+                        <fa :icon="['fab', 'github']" />Sign in with GitHub
+                     </button>
+                  </div>
+               </div>
 
-         <form class="form-body" @submit.prevent="onSubmit">
-            <div class="form-field">
-               <label for="userId">User ID</label>
-               <input
-                  id="userId"
-                  type="text"
-                  v-model="registrationFormData.userId"
-                  required
-               />
+               <p class="signup-link">
+                  Already Registered？
+                  <router-link to="/login">Login</router-link>
+               </p>
             </div>
-            <div class="form-field">
-               <label for="userEmail">Email</label>
-               <input
-                  id="userEmail"
-                  type="email"
-                  v-model="registrationFormData.userEmail"
-                  required
-               />
-            </div>
-            <div class="form-field">
-               <label for="userPassword">Password</label>
-               <input
-                  id="userPassword"
-                  type="password"
-                  v-model="registrationFormData.userPassword"
-                  required
-               />
-            </div>
-            <div class="form-field">
-               <label class="label" for="confirmPassword"
-                  >Confirm Password</label
-               >
-               <input
-                  id="confirmPassword"
-                  type="password"
-                  v-model="registrationFormData.confirmPassword"
-                  required
-               />
-            </div>
-
-            <div class="form-button-container">
-               <button class="form-button" type="submit">
-                  <fa :icon="['fas', 'user-plus']" />Register
-               </button>
-            </div>
-
-            <div class="form-button-container">
-               <button type="button" class="form-button" @click="googleOAuth">
-                  <fa :icon="['fab', 'google']" />Sign in with Google
-               </button>
-               <button type="button" class="form-button" @click="googleOAuth">
-                  <fa :icon="['fab', 'github']" />Sign in with GitHub
-               </button>
-            </div>
-         </form>
-         <p class="signup-link">
-            Already Registered？
-            <router-link to="/login">Login</router-link>
-         </p>
-      </div>
+         </v-form>
+      </v-card>
    </div>
 </template>
 
