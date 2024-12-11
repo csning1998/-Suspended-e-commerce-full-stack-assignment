@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import { onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import request from "@/stores/request";
 const router = useRouter();
@@ -35,9 +35,9 @@ onMounted(async () => {
 
          if (route.query && route.query.redirectTo) {
             // @ts-ignore
-            router.push(route.query.redirectTo);
+            await router.push(route.query.redirectTo);
          } else {
-            router.push("/");
+            await router.push("/");
          }
       } catch (error) {
          alert(error);
@@ -50,3 +50,5 @@ onMounted(async () => {
 <template>
    <h1>Login in process......</h1>
 </template>
+
+<style scoped></style>

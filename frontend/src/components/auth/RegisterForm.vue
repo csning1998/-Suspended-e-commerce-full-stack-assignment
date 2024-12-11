@@ -1,70 +1,27 @@
 <script setup lang="ts">
-import { defineProps, ref } from "vue";
+import { defineProps } from "vue";
 
 defineProps<{
    registrationFormData: RegistrationFormData;
+   isVisible: boolean;
+   onToggleVisibility: () => void;
    onSubmit: () => void;
+   onGoogleOAuth: () => void;
+   onGithubOAuth: () => void;
+   userEmailRules: ((value: string) => true | string)[];
+   userPasswordRules: ((value: string) => true | string)[];
+   confirmPasswordRules: ((value: string) => boolean | string)[];
 }>();
-
-const registrationFormData = ref<RegistrationFormData>({
-   userId: "root",
-   userEmail: "nephew.UncleRoger@noreply.gmail.com",
-   userFamilyName: "Uncle",
-   userGivenName: "Roger",
-   userPassword: "Root001@admin",
-   confirmPassword: "Root001@admin",
-});
-
-const isVisible = ref(false);
-const toggleVisibility = () => {
-   isVisible.value = !isVisible.value;
-};
 
 const requiredRule = (value: string): true | string => {
    return !!value || "Required.";
 };
-
-const emailRule = (value: string): true | string => {
-   const pattern = /^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/;
-   return (
-      pattern.test(value) ||
-      "You may evaluate if your input matches the email pattern."
-   );
-};
-
-const passwordRule = (value: string): true | string => {
-   const pattern =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})/;
-   return (
-      pattern.test(value) ||
-      "Min. 8 chars with at least one uppercase, one number, and one special character."
-   );
-};
-
-const confirmPasswordRule = (value: string): boolean | string => {
-   return (
-      value === registrationFormData.value.userPassword ||
-      "Passwords do not match."
-   );
-};
-
-const userEmailRules = [requiredRule, emailRule];
-const userPasswordRules = [requiredRule, passwordRule];
-const confirmPasswordRules = [requiredRule, confirmPasswordRule];
-
-function googleOAuth() {
-   window.location.href = "http://localhost:3000/auth/google";
-}
-
-function githubOAuth() {
-   window.location.href = "http://localhost:3000/auth/github";
-}
 </script>
 
 <template>
    <div class="form-container">
       <v-card class="vuerify-card" max-width="1000">
-         <v-form>
+         <v-form @submit.prevent="onSubmit">
             <div class="form-card">
                <h2 class="form-title">Registration</h2>
                <v-col cols="12">
@@ -109,7 +66,7 @@ function githubOAuth() {
                         <fa class="icon" :icon="['fas', 'lock']" />
                      </template>
                      <template #append-inner>
-                        <v-btn icon @click="toggleVisibility">
+                        <v-btn icon @click="onToggleVisibility">
                            <v-icon>
                               <i
                                  :class="
@@ -138,7 +95,7 @@ function githubOAuth() {
                         <fa class="icon" :icon="['fas', 'lock']" />
                      </template>
                      <template #append-inner>
-                        <v-btn icon @click="toggleVisibility">
+                        <v-btn icon @click="onToggleVisibility">
                            <v-icon>
                               <i
                                  :class="
@@ -152,9 +109,13 @@ function githubOAuth() {
                      </template>
                   </v-text-field>
                </v-col>
-               <div class="form-body" @submit.prevent="onSubmit">
+               <div class="form-body">
                   <div class="form-button-container">
-                     <button class="form-button" type="submit">
+                     <button
+                        class="form-button"
+                        type="submit"
+                        @submit="onSubmit"
+                     >
                         <fa :icon="['fas', 'user-plus']" />Register
                      </button>
                   </div>
@@ -162,14 +123,14 @@ function githubOAuth() {
                      <button
                         type="button"
                         class="form-button"
-                        @click="googleOAuth"
+                        @click="onGoogleOAuth"
                      >
                         <fa :icon="['fab', 'google']" />Sign up with Google
                      </button>
                      <button
                         type="button"
                         class="form-button"
-                        @click="githubOAuth"
+                        @click="onGithubOAuth"
                      >
                         <fa :icon="['fab', 'github']" />Sign up with GitHub
                      </button>

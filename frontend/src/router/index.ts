@@ -1,4 +1,11 @@
 import { createRouter, createWebHistory } from "vue-router";
+import type { Router } from "vue-router";
+import type {
+    NavigationGuardNext,
+    RouteLocationNormalizedGeneric,
+    RouteLocationNormalizedLoadedGeneric,
+} from "vue-router";
+
 import HomeView from "@/views/HomeView.vue";
 import LoginView from "@/views/LoginView.vue";
 import RegistrationView from "@/views/RegistrationView.vue";
@@ -11,7 +18,7 @@ import OauthLoginView from "@/components/auth/OAuthLogin.vue";
 import TestComponents from "@/components/TestComponents.vue";
 import SellerProductManagementView from "@/views/SellerProductManagementView.vue";
 
-const router = createRouter({
+const router: Router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes: [
         {
@@ -88,57 +95,60 @@ const router = createRouter({
     ],
 });
 
-/**
- * We
- */
-
 import request from "@/stores/request";
 
 import store from "@/stores/user";
+import type { AxiosResponse } from "axios";
 
-router.beforeEach(async (to, from, next) => {
-    console.log("from: ", from);
-    console.log("to: ", to);
+router.beforeEach(
+    async (
+        to: RouteLocationNormalizedGeneric,
+        from: RouteLocationNormalizedLoadedGeneric,
+        next: NavigationGuardNext,
+    ): Promise<any> => {
+        console.log("from: ", from);
+        console.log("to: ", to);
 
-    const token = localStorage.getItem("token");
+        const token: string | null = localStorage.getItem("token");
 
-    if (to.name == "login" && token) {
-        console.log("!!!!!!!!!!!!!!!!!!!!!");
-        console.log("HAVEN BEEN LOGGED IN");
-        return next({ name: "home" });
-    }
-
-    if (token && store.currentUser == null) {
-        try {
-            const user = await request.get("/users/current");
-            store.currentUser = user.data;
-        } catch (error) {
-            alert(error);
-            localStorage.removeItem("token");
-            store.currentUser = null;
-            return next({ name: "login" });
+        if (to.name == "login" && token) {
+            console.log("!!!!!!!!!!!!!!!!!!!!!");
+            console.log("HAVEN BEEN LOGGED IN");
+            return next({ name: "home" });
         }
-    }
 
-    if (to.meta && to.meta.require_login === true) {
-        const currentUser = store.currentUser;
-        if (
-            currentUser &&
-            // @ts-ignore
-            to.meta.allowRoles.includes(currentUser.userPermission)
-        ) {
-            return next();
-        } else {
-            return next({
-                name: "login",
-                query: {
-                    redirectTo: to.fullPath,
-                },
-            });
+        if (token && store.currentUser == null) {
+            try {
+                const user: AxiosResponse = await request.get("/users/current");
+                store.currentUser = user.data;
+            } catch (error) {
+                alert(error);
+                localStorage.removeItem("token");
+                store.currentUser = null;
+                return next({ name: "login" });
+            }
         }
-    }
 
-    return next();
-});
+        if (to.meta && to.meta.require_login === true) {
+            const currentUser: null = store.currentUser;
+            if (
+                currentUser &&
+                // @ts-ignore
+                to.meta.allowRoles.includes(currentUser.userPermission)
+            ) {
+                return next();
+            } else {
+                return next({
+                    name: "login",
+                    query: {
+                        redirectTo: to.fullPath,
+                    },
+                });
+            }
+        }
+
+        return next();
+    },
+);
 
 export default router;

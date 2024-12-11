@@ -4,13 +4,21 @@ import { ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import LoginForm from "@/components/auth/LoginForm.vue";
 
-const loginFormData = ref<LoginFormData>({
-   userId: "",
-   userPassword: "",
-});
-
 const router = useRouter();
 const route = useRoute();
+
+const isVisible = ref(false);
+
+// Function to toggle visibility
+const toggleVisibility = (): void => {
+   isVisible.value = !isVisible.value;
+   console.log("isVisible.value", isVisible.value);
+};
+
+const loginFormData = ref<LoginFormData>({
+   userId: "nephew.UncleRoger@noreply.gmail.com",
+   userPassword: "1qazXSW@",
+});
 
 const ajaxErrorHandler = (error: any) => {
    if (error.response && error.response.data && error.response.data.message) {
@@ -48,10 +56,25 @@ async function login(): Promise<void> {
       ajaxErrorHandler(error);
    }
 }
+
+function googleOAuth() {
+   window.location.href = "http://localhost:3000/auth/google";
+}
+
+function githubOAuth() {
+   window.location.href = "http://localhost:3000/auth/github";
+}
 </script>
 
 <template>
-   <LoginForm :loginFormData="loginFormData" :onSubmit="login" />
+   <LoginForm
+      :loginFormData="loginFormData"
+      :isVisible="isVisible"
+      :onToggleVisibility="toggleVisibility"
+      :onGoogleOAuth="googleOAuth"
+      :onGithubOAuth="githubOAuth"
+      :onSubmit="login"
+   />
 </template>
 
 <style scoped></style>

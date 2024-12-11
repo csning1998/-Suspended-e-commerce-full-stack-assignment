@@ -7,8 +7,6 @@ interface LoginFormData {
 
 interface RegistrationFormData {
     userId: string;
-    userFamilyName: string;
-    userGivenName: string;
     userEmail: string;
     userPassword: string;
     confirmPassword: string;

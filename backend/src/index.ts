@@ -1,5 +1,5 @@
 import * as JWT from "./lib/jsonWebToken";
-import express, { Request, Response, Express, NextFunction } from "express";
+import express, { Response, Express, NextFunction } from "express";
 import "dotenv/config"; // https://www.npmjs.com/package/dotenv
 import cors from "cors"; // Enable Cross-Origin Resource Sharing
 import bodyParser from "body-parser"; // Parse incoming request bodies
@@ -17,7 +17,7 @@ import sequelize from "./db";
 
 import User from "./postgres-models/user";
 import configureGithubOAuth from "./lib/oauth-github";
-// import { ResolvePathType } from "mongoose/types/inferschematype";
+import bcrypt from "bcrypt";
 
 const app: Express = express();
 const port: string | 3000 = process.env.PORT || 3000;
@@ -75,14 +75,14 @@ if (secret) {
     configureGithubOAuth(app, passport);
 
     // https://www.passportjs.org/tutorials/google/session/
-    passport.serializeUser(function (user: any, cb: Function) {
-        process.nextTick(function () {
+    passport.serializeUser(function (user: any, cb: Function): void {
+        process.nextTick(function (): void {
             cb(null, { user: user });
         });
     });
 
-    passport.deserializeUser(function (user: any, cb: Function) {
-        process.nextTick(function () {
+    passport.deserializeUser(function (user: any, cb: Function): void {
+        process.nextTick(function (): any {
             return cb(null, user);
         });
     });
@@ -125,11 +125,11 @@ app.use("/users", userRoutes);
 app.use("/products", productQuery);
 
 // Root route for basic health check
-app.get("/", (req: Request, res: Response): void => {
+app.get("/", (res: Response): void => {
     res.send("Hello World!");
 });
 
-const allowManagementRoles = ["admin", "supplier"];
+const allowManagementRoles: string[] = ["admin", "supplier"];
 app.use("/admin", JWT.verity);
 app.use("/admin", function (req: any, res: Response, next: NextFunction): void {
     console.log(
@@ -205,19 +205,23 @@ require("./lib/errorHandler")(app);
         console.error("error", err);
     }
 
+    const saltRounds: number = 10;
+    const defaultPassword: string = "1qazXSW@";
+    const hashedPassword: string = await bcrypt.hash(
+        defaultPassword,
+        saltRounds,
+    );
+
     // default root account
     await User.findOrCreate({
         where: {
             userId: "root",
-            // userOAuthToken: accessToken,
-            // userOAuthProvider: "google",
         },
         defaults: {
-            userPassword: "1qazXSW@",
-            userEmail: "root@example.com",
+            userPassword: hashedPassword,
+            userEmail: "nephew.UncleRoger@noreply.gmail.com",
             userFamilyName: "root",
             userGivenName: "root",
-            // userProfilePictureUrl: profile._json.picture,
             userPermission: "admin",
         },
     });

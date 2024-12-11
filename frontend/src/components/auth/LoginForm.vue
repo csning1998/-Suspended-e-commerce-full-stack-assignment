@@ -1,41 +1,24 @@
 <script setup lang="ts">
-import { defineProps, ref } from "vue";
+import { defineProps } from "vue";
 
 defineProps<{
    loginFormData: LoginFormData;
+   isVisible: boolean;
+   onToggleVisibility: () => void;
+   onGoogleOAuth: () => void;
+   onGithubOAuth: () => void;
    onSubmit: () => void;
 }>();
-
-const loginFormData = ref<LoginFormData>({
-   userId: "nephew.UncleRoger@noreply.gmail.com",
-   userPassword: "Root001@admin",
-});
-
-const isVisible = ref(false);
-
-// Function to toggle visibility
-const toggleVisibility = (): void => {
-   isVisible.value = !isVisible.value;
-   console.log("isVisible.value", isVisible.value);
-};
 
 const requiredRule = (value: string): true | string => {
    return !!value || "Required.";
 };
-
-function googleOAuth() {
-   window.location.href = "http://localhost:3000/auth/google";
-}
-
-function githubOAuth() {
-   window.location.href = "http://localhost:3000/auth/github";
-}
 </script>
 
 <template>
    <div class="form-container">
       <v-card class="vuerify-card" max-width="1000">
-         <v-form>
+         <v-form @submit.prevent="onSubmit">
             <div class="form-card">
                <h2 class="form-title">Login</h2>
                <v-col cols="12">
@@ -64,7 +47,7 @@ function githubOAuth() {
                         <fa class="icon" :icon="['fas', 'lock']" />
                      </template>
                      <template #append-inner>
-                        <v-btn icon @click="toggleVisibility">
+                        <v-btn icon @click="onToggleVisibility">
                            <v-icon>
                               <i
                                  :class="
@@ -84,9 +67,13 @@ function githubOAuth() {
                   must login now, you can also click "Forgot login password?"
                   below to reset the login password.
                </v-card-text>
-               <div class="form-body" @submit.prevent="onSubmit">
+               <div class="form-body">
                   <div class="form-button-container">
-                     <button class="form-button" type="submit">
+                     <button
+                        class="form-button"
+                        type="submit"
+                        @submit="onSubmit"
+                     >
                         <fa :icon="['fas', 'right-to-bracket']" />Login
                      </button>
                   </div>
@@ -94,14 +81,14 @@ function githubOAuth() {
                      <button
                         type="button"
                         class="form-button"
-                        @click="googleOAuth"
+                        @click="onGoogleOAuth"
                      >
                         <fa :icon="['fab', 'google']" />Sign in with Google
                      </button>
                      <button
                         type="button"
                         class="form-button"
-                        @click="githubOAuth"
+                        @click="onGithubOAuth"
                      >
                         <fa :icon="['fab', 'github']" />Sign in with GitHub
                      </button>
