@@ -152,6 +152,7 @@ async function amendProduct() {
    <!-- <pre>
   {{ currentUser }}
   </pre> -->
+
    <v-dialog v-model="dialog" width="1000">
       <v-card class="vuerify-card" max-width="1000" title="Editing Product">
          <v-form v-model="valid">

@@ -8,6 +8,7 @@ interface NavLink {
 }
 
 const navLinks = ref<NavLink[]>([
+   { text: "Test", href: "./testComponents" },
    { text: "Management", href: "./seller-product-management" },
    { text: "Products", href: "./Products" },
    { text: "Favourites", href: "#" },

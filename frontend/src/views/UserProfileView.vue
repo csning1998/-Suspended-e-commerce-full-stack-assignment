@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import request from "@/stores/request";
 import store from "@/stores/user";
@@ -13,6 +13,14 @@ const toggleEditMode = (): void => {
    if (!isEditing.value) {
       Object.assign(currentUser, originalUser);
    }
+};
+
+const date = shallowRef();
+
+const isDatePickerVisible = ref(false);
+
+const toggleDatePicker = () => {
+   isDatePickerVisible.value = !isDatePickerVisible;
 };
 
 const GENDER_LIST = ["Male", "Female", "Apache", "non-Binary"];
@@ -287,7 +295,7 @@ onMounted(() => {
                         <v-text-field
                            disabled
                            variant="outlined"
-                           v-model="currentUser.userIdentity"
+                           v-model="currentUser.userPermission"
                            label="Identity"
                         ></v-text-field>
                      </v-col>
@@ -308,6 +316,46 @@ onMounted(() => {
                            v-model="currentUser.userBirthday"
                            label="Birth Date"
                         ></v-text-field>
+                     </v-col>
+
+                     <!-- To-fix: The date picker isn't shown properly. -->
+                     <v-col cols="12">
+                        <v-menu
+                           v-model="isDatePickerVisible"
+                           activator="parent"
+                           transition="scale-transition"
+                           min-width="290"
+                        >
+                           <template #activator="{ props }">
+                              <v-text-field
+                                 :readonly="!isEditing"
+                                 v-bind="props"
+                                 v-model="date"
+                                 variant="outlined"
+                                 label="Birth Date"
+                                 @click="toggleDatePicker"
+                              >
+                                 <template #append-inner>
+                                    <v-btn icon @click.stop="toggleDatePicker">
+                                       <v-icon>mdi-calendar</v-icon>
+                                    </v-btn>
+                                 </template>
+                              </v-text-field>
+                           </template>
+                           <v-date-picker
+                              v-model="date"
+                              @update:modelValue="toggleDatePicker"
+                           >
+                              <template #actions>
+                                 <v-btn
+                                    color="primary"
+                                    @click="toggleDatePicker"
+                                 >
+                                    OK
+                                 </v-btn>
+                              </template>
+                           </v-date-picker>
+                        </v-menu>
                      </v-col>
                   </v-row>
                </v-card-text>
