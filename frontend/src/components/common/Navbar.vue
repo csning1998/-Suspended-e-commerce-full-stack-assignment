@@ -13,7 +13,6 @@ const navLinks = ref<NavLink[]>([
    { text: "Products", href: "./Products" },
    { text: "Favourites", href: "#" },
    { text: "Shopping Cart", href: "#" },
-   { text: "Ships to", href: "#" },
    { text: "Notifications", href: "#" },
 ]);
 
@@ -41,6 +40,11 @@ function navLinkHandler(link: NavLink) {
    <header class="navbar">
       <div class="navbar_logo">
          <button class="navbar_logo-button" @click.prevent="router.push('/')">
+            <img
+               class="logo"
+               src="@/assets/e-commerce-logo.png"
+               alt="E-Commerce WebApp"
+            />
             E-Commerce WebApp
          </button>
       </div>
@@ -76,6 +80,13 @@ function navLinkHandler(link: NavLink) {
 </template>
 
 <style scoped>
+.logo {
+   height: 2vmin;
+   width: 2vmin;
+   margin-right: 0.5rem;
+   vertical-align: middle;
+}
+
 .navbar {
    display: flex;
    align-items: center;
