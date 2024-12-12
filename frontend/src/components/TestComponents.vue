@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { defineProps, ref, onMounted, watch } from "vue";
-import { useProductOptions } from "@/components/product/useProductOptions";
+import { useProductOptions } from "@/lib/useProductOptions";
 import request from "@/stores/request";
 import store from "@/stores/user";
 

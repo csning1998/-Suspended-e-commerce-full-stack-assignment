@@ -3,6 +3,12 @@ import { onMounted, reactive, ref, watch, shallowRef } from "vue";
 import { useRouter } from "vue-router";
 import request from "@/stores/request";
 import store from "@/stores/user";
+import {
+   countries,
+   cities,
+   onCountryChange,
+   dynamicFieldsFor,
+} from "@/lib/addressData";
 
 const router = useRouter();
 const isEditing = ref(false);
@@ -10,6 +16,7 @@ const isModified = ref(false);
 
 const toggleEditMode = (): void => {
    isEditing.value = !isEditing.value;
+   console.log("isEditing.value", isEditing.value);
    if (!isEditing.value) {
       Object.assign(currentUser, originalUser);
    }
@@ -38,10 +45,11 @@ const currentUser = reactive<UserProfileFormData>({
    userProfilePictureUrl: "",
    userAddress: [
       {
-         country: "Taiwan",
-         state: "Taiwan",
-         city: "Taipei",
+         country: "",
+         state: "",
+         city: "",
          street: "",
+         district: "",
          zipCode: "",
       },
    ],
@@ -91,6 +99,7 @@ const addAddress = () => {
          country: "",
          state: "",
          city: "",
+         district: "",
          street: "",
          zipCode: "",
       });
@@ -145,53 +154,6 @@ async function fetchUserInfo() {
    }
 }
 
-type Country = "Taiwan" | "United States";
-type StateName = "California" | "Taiwan";
-
-const countries: Country[] = ["Taiwan", "United States"];
-const states: StateName[] = ["California", "Taiwan"];
-const cities: Record<StateName, { name: string; zipCode: string }[]> = {
-   California: [
-      { name: "Los Angeles", zipCode: "90001" },
-      { name: "San Francisco", zipCode: "94101" },
-      { name: "San Diego", zipCode: "92101" },
-      { name: "San Jose", zipCode: "95101" },
-      { name: "Sacramento", zipCode: "95814" },
-      { name: "Fresno", zipCode: "93701" },
-      { name: "Oakland", zipCode: "94601" },
-      { name: "Bakersfield", zipCode: "93301" },
-      { name: "Long Beach", zipCode: "90802" },
-      { name: "Santa Ana", zipCode: "92701" },
-      { name: "Anaheim", zipCode: "92801" },
-      { name: "Irvine", zipCode: "92602" },
-      { name: "Riverside", zipCode: "92501" },
-      { name: "Stockton", zipCode: "95201" },
-      { name: "Chula Vista", zipCode: "91910" },
-      { name: "Santa Clara", zipCode: "95050" },
-      { name: "Huntington Beach", zipCode: "92646" },
-      { name: "Glendale", zipCode: "91201" },
-      { name: "Fremont", zipCode: "94536" },
-      { name: "Modesto", zipCode: "95350" },
-   ],
-   Taiwan: [
-      { name: "Taipei", zipCode: "100" },
-      { name: "Taichung", zipCode: "400" },
-      { name: "Kaohsiung", zipCode: "800" },
-      { name: "Tainan", zipCode: "700" },
-      { name: "Hsinchu", zipCode: "300" },
-      { name: "Taoyuan", zipCode: "330" },
-      { name: "Keelung", zipCode: "200" },
-      { name: "Chiayi", zipCode: "600" },
-      { name: "Hualien", zipCode: "970" },
-      { name: "Taitung", zipCode: "950" },
-   ],
-};
-
-function getCityNames(state: StateName): string[] {
-   if (!state || !cities[state]) return [];
-   return cities[state].map((city) => city.name);
-}
-
 watch(
    () => currentUser.userAddress,
    (newVal) => {
@@ -210,6 +172,25 @@ watch(
       });
    },
    { deep: true },
+);
+
+const address = reactive({
+   country: "",
+   state: "",
+   city: "",
+   district: "",
+   street: "",
+   zipCode: "",
+});
+
+watch(
+   () => address.state,
+   (newState, oldState) => {
+      if (newState !== oldState) {
+         address.city = "";
+         address.district = "";
+      }
+   },
 );
 
 // To-fix: Render the page immediately after "Save Profile" is clicked.
@@ -398,81 +379,63 @@ onMounted(() => {
                      <v-row dense>
                         <!-- Country -->
                         <v-col cols="12" md="6">
-                           <div v-if="!isEditing">{{ address.country }}</div>
                            <v-autocomplete
-                              v-else
-                              autocomplete="off"
                               :items="countries"
                               v-model="address.country"
                               label="Country"
                               variant="outlined"
+                              @update:modelValue="
+                                 (val) => onCountryChange(val, address)
+                              "
+                              autocomplete="off"
+                              :disabled="!isEditing"
                            ></v-autocomplete>
                         </v-col>
 
-                        <!-- State -->
-                        <v-col cols="12" md="6">
-                           <div v-if="!isEditing">{{ address.state }}</div>
-                           <v-autocomplete
-                              v-else
-                              :items="states"
-                              v-model="address.state"
-                              label="State"
-                              variant="outlined"
-                              clearable
-                           ></v-autocomplete>
-                        </v-col>
+                        <template
+                           v-for="field in dynamicFieldsFor(address)"
+                           :key="field.key"
+                        >
+                           <v-col cols="12" md="6">
+                              <v-text-field
+                                 v-if="field.type === 'text'"
+                                 :label="field.label"
+                                 v-model="address[field.key]"
+                                 variant="outlined"
+                                 clearable
+                                 :autocomplete="
+                                    field.key === 'street' ? 'on' : 'off'
+                                 "
+                                 :disabled="!isEditing"
+                              ></v-text-field>
 
-                        <!-- City -->
-                        <v-col cols="12" md="6">
-                           <div v-if="!isEditing">{{ address.city }}</div>
-                           <v-autocomplete
-                              v-else
-                              :items="getCityNames(address.state)"
-                              v-model="address.city"
-                              label="City"
-                              variant="outlined"
-                              clearable
-                           ></v-autocomplete>
-                        </v-col>
-
-                        <!-- Street -->
-                        <v-col cols="12" md="6">
-                           <div v-if="!isEditing">{{ address.street }}</div>
-                           <v-text-field
-                              v-else
-                              variant="outlined"
-                              clearable
-                              v-model="address.street"
-                              label="Street"
-                           ></v-text-field>
-                        </v-col>
-
-                        <!-- Zip Code -->
-                        <v-col cols="12" md="6">
-                           <div v-if="!isEditing">{{ address.zipCode }}</div>
-                           <v-text-field
-                              v-else
-                              variant="outlined"
-                              clearable
-                              v-model="address.zipCode"
-                              label="Zip Code"
-                           ></v-text-field>
-                        </v-col>
-
-                        <v-col cols="12" md="6" v-if="isEditing">
-                           <button
-                              class="form-button"
-                              @click.prevent="removeAddress(index)"
-                           >
-                              Remove Address
-                           </button>
-                        </v-col>
+                              <v-combobox
+                                 v-else-if="field.type === 'select-box'"
+                                 :label="field.label"
+                                 :items="field.items"
+                                 v-model="address[field.key]"
+                                 variant="outlined"
+                                 clearable
+                                 :autocomplete="
+                                    field.key === 'street' ? 'on' : 'off'
+                                 "
+                                 :disabled="!isEditing"
+                              ></v-combobox>
+                           </v-col>
+                        </template>
                      </v-row>
-                  </div>
-                  <div class="form-button-container" v-if="isEditing">
-                     <button class="form-button" @click.prevent="addAddress">
-                        Add Address
-                     </button>
+                     <div class="form-button-container" v-if="isEditing">
+                        <button
+                           v-if="isEditing"
+                           class="form-button"
+                           @click.prevent="removeAddress(index)"
+                        >
+                           Remove Address
+                        </button>
+                        <button class="form-button" @click.prevent="addAddress">
+                           Add Address
+                        </button>
+                     </div>
                   </div>
                </v-card-text>
             </div>
