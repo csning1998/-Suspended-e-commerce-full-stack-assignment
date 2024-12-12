@@ -4,7 +4,7 @@ import ProductCardHorizontal from "@/components/product/ProductCardHorizontal.vu
 import request from "../stores/request";
 
 // import { products } from "@/components/product/mockProducts";
-import { productCardButtonActions } from "@/components/product/productCardButtonActions";
+import { productCardButtonActions } from "@/lib/productCardButtonActions";
 
 const userId = undefined; // if (!isLoggedIn) then make it undefined
 const { cart, favorites, addToCart, addToFavorites } =

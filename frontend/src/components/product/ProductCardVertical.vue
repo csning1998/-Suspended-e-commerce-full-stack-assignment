@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { defineProps } from "vue";
-import { productCardButtonActions } from "@/components/product/productCardButtonActions";
-import { useProductOptions } from "./useProductOptions";
+import { productCardButtonActions } from "@/lib/productCardButtonActions";
+import { useProductOptions } from "@/lib/useProductOptions";
 
 defineProps<{
    products: Products[];

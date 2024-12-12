@@ -38,6 +38,7 @@ interface UserAddress {
     street: string;
     city: string;
     state: StateName;
+    district: string;
     zipCode: string;
     country: Country;
 }

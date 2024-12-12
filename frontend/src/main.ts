@@ -13,10 +13,10 @@ import "./assets/button.css";
 import "vue-final-modal/style.css";
 
 // Import Vuetify
-import { vuetifyConfig } from "@/components/common/VuerifyConfig";
+import { vuetifyConfig } from "@/lib/VuerifyConfig";
 
 // Import FontAwesome Icon Component
-import FontAwesomeIcon from "./components/common/FortAwesomeIcon";
+import FontAwesomeIcon from "@/lib/FortAwesomeIcon";
 
 const app = createApp(AppComponent);
 
