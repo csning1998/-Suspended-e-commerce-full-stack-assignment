@@ -10,12 +10,13 @@ import { connect } from "mongoose";
 import session from "express-session"; //https://www.npmjs.com/package/@types/express-session
 import passport from "passport"; //https://www.npmjs.com/package/@types/passport
 import configureGoogleOAuth from "./lib/oauth-google";
+import DBSeed from './db-seed'
 // TypeScript: use `npm i @types/express-session @types/passport --save`
 
 // Initialize database connection
 import sequelize from "./db";
 
-import User from "./postgres-models/user";
+
 import configureGithubOAuth from "./lib/oauth-github";
 
 const app: Express = express();
@@ -204,19 +205,9 @@ require("./lib/errorHandler")(app);
         console.error("error", err);
     }
 
-    // default root account
-    await User.findOrCreate({
-        where: {
-            userId: "root",
-        },
-        defaults: {
-            userPassword: '1qazXSW@',
-            userEmail: "nephew.UncleRoger@noreply.gmail.com",
-            userFamilyName: "root",
-            userGivenName: "root",
-            userPermission: "admin",
-        },
-    });
+    
+    await DBSeed()
+
 
     // Start the application, listening on the specified port
     app.listen(port, (): void => {
