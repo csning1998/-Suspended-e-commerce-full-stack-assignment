@@ -1,7 +1,6 @@
 import express, { Router, Request, Response, NextFunction } from "express";
 import PGModels from "../postgres-models";
 import db from "../db";
-import bcrypt from "bcrypt";
 import { Model } from "sequelize";
 import * as JWT from "../lib/jsonWebToken";
 import "dotenv/config";
@@ -10,8 +9,7 @@ import Address from "../postgres-models/address";
 import Payment from "../postgres-models/payment";
 
 const router: Router = express.Router();
-// For Security
-const saltRounds: number = 10;
+
 
 router.post("/register", async (req: Request, res: Response): Promise<any> => {
     // const isExistingUser: boolean = false
@@ -44,17 +42,12 @@ router.post("/register", async (req: Request, res: Response): Promise<any> => {
             return;
         }
 
-        const hashedPassword: string = await bcrypt.hash(
-            userPassword,
-            saltRounds,
-        );
-
         const newUser = {
             ...req.body,
             // userId: userId,
             // userName: userName,
             // userEmail: userEmail,
-            userPassword: hashedPassword,
+            userPassword: userPassword,
         };
 
         const users: Model = await PGModels.User.create(newUser);
@@ -87,7 +80,7 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
         // Check if the input is an email or a userId
         const isEmail: boolean = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userId);
 
-        const user: Model | null = await PGModels.User.findOne({
+        const user = await PGModels.User.findOne({
             where: isEmail ? { userEmail: userId } : { userId: userId },
         });
 
@@ -98,11 +91,7 @@ router.post("/login", async (req: Request, res: Response): Promise<any> => {
             return;
         }
 
-        const hashedPassword: string = user.get("userPassword") as string;
-        const isPasswordValid: boolean = await bcrypt.compare(
-            userPassword,
-            hashedPassword,
-        );
+        const isPasswordValid = user.isPasswordValid(userPassword)
 
         if (!isPasswordValid) {
             return res.status(statusCodes.LOGIN.INVALID_CREDENTIALS.code).send({

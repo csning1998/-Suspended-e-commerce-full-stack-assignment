@@ -17,7 +17,6 @@ import sequelize from "./db";
 
 import User from "./postgres-models/user";
 import configureGithubOAuth from "./lib/oauth-github";
-import bcrypt from "bcrypt";
 
 const app: Express = express();
 const port: string | 3000 = process.env.PORT || 3000;
@@ -205,20 +204,13 @@ require("./lib/errorHandler")(app);
         console.error("error", err);
     }
 
-    const saltRounds: number = 10;
-    const defaultPassword: string = "1qazXSW@";
-    const hashedPassword: string = await bcrypt.hash(
-        defaultPassword,
-        saltRounds,
-    );
-
     // default root account
     await User.findOrCreate({
         where: {
             userId: "root",
         },
         defaults: {
-            userPassword: hashedPassword,
+            userPassword: '1qazXSW@',
             userEmail: "nephew.UncleRoger@noreply.gmail.com",
             userFamilyName: "root",
             userGivenName: "root",

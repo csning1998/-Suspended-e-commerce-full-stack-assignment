@@ -24,6 +24,10 @@ import {
 
 import sequelize from "../db";
 import Address from "./address";
+import bcrypt from "bcrypt";
+
+// For Security
+const saltRounds: number = 10;
 
 class User extends Model {
     // https://stackoverflow.com/questions/27972271/sequelize-dont-return-password
@@ -31,6 +35,13 @@ class User extends Model {
         let values = Object.assign({}, this.get());
         delete values.userPassword;
         return values;
+    }
+    isPasswordValid(inputPassword: string): boolean {
+        const isPasswordValid: boolean = bcrypt.compareSync(
+            inputPassword,
+            this.getDataValue("userPassword")
+        );
+        return isPasswordValid;
     }
 }
 
@@ -50,6 +61,17 @@ User.init(
         userPassword: {
             type: DataTypes.STRING,
             allowNull: false,
+            // Getter and Setter https://sequelize.org/docs/v6/core-concepts/getters-setters-virtuals/
+            // get() {
+            //     const rawValue = this.getDataValue("userPassword");
+            //     return rawValue ? rawValue.toUpperCase() : null;
+            // },
+            set(value: string) {
+                // Storing passwords in plaintext in the database is terrible.
+                // Hashing the value with an appropriate cryptographic hash function is better.
+                const hashedPassword = bcrypt.hashSync(value, saltRounds);
+                this.setDataValue("userPassword", hashedPassword);
+            },
         },
         userEmail: {
             type: DataTypes.STRING,
@@ -99,7 +121,7 @@ User.init(
         modelName: "User",
         tableName: "Users",
         timestamps: true,
-    },
+    }
 );
 // https://stackoverflow.com/questions/34258938/sequelize-classmethods-vs-instancemethods
 
