@@ -1,29 +1,6 @@
-import {
-    //   // Association,
-    DataTypes,
-    //   // HasManyAddAssociationMixin,
-    //   // HasManyCountAssociationsMixin,
-    //   // HasManyCreateAssociationMixin,
-    //   // HasManyGetAssociationsMixin,
-    //   // HasManyHasAssociationMixin,
-    //   // HasManySetAssociationsMixin,
-    //   // HasManyAddAssociationsMixin,
-    //   // HasManyHasAssociationsMixin,
-    //   // HasManyRemoveAssociationMixin,
-    //   // HasManyRemoveAssociationsMixin,
-    Model,
-    //   // ModelDefined,
-    //   // Optional,
-    //   Sequelize,
-    //   // InferAttributes,
-    //   // InferCreationAttributes,
-    //   // CreationOptional,
-    //   // NonAttribute,
-    //   // ForeignKey,
-} from "sequelize";
+import { DataTypes, Model } from "sequelize";
 
 import sequelize from "../db";
-import Address from "./address";
 import bcrypt from "bcrypt";
 
 // For Security
@@ -37,11 +14,10 @@ class User extends Model {
         return values;
     }
     isPasswordValid(inputPassword: string): boolean {
-        const isPasswordValid: boolean = bcrypt.compareSync(
+        return bcrypt.compareSync(
             inputPassword,
-            this.getDataValue("userPassword")
+            this.getDataValue("userPassword"),
         );
-        return isPasswordValid;
     }
 }
 
@@ -121,7 +97,7 @@ User.init(
         modelName: "User",
         tableName: "Users",
         timestamps: true,
-    }
+    },
 );
 // https://stackoverflow.com/questions/34258938/sequelize-classmethods-vs-instancemethods
 

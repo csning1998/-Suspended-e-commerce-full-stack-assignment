@@ -2,6 +2,7 @@
 import { defineProps } from "vue";
 import { productCardButtonActions } from "@/lib/productCardButtonActions";
 import { useProductOptions } from "@/lib/useProductOptions";
+import QuantitySelector from "@/components/cart/QuantitySelector.vue";
 
 defineProps<{
    products: Products[];
@@ -9,20 +10,49 @@ defineProps<{
 
 const userId = undefined; // if (!isLoggedIn) then make it undefined
 
-const { cart, favorites, addToCart, addToFavorites } =
+const { quantities, addToCart, addToFavorites } =
    productCardButtonActions(userId);
 
-const {
-   selectedOptions,
-   updateSelectedOption,
-   calculateTotalPrice,
-   areAllOptionsSelected,
-} = useProductOptions();
+const { selectedOptions, calculateTotalPrice, areAllOptionsSelected } =
+   useProductOptions();
 
-const emit = defineEmits<{
-   (e: "addToCart", product: CartItem): void;
-   (e: "addToFavorites", product: CartItem): void;
-}>();
+const addToCartHandler = async (item: Products): Promise<void> => {
+   const productId = item.id;
+   console.log("productId", productId);
+   const quantity: number = quantities.value[productId];
+   console.log("quantity", quantity);
+   const options: Record<string, string | number> =
+      selectedOptions.value[productId];
+   console.log("options", options);
+
+   if (!item._id) {
+      alert("Product ID is missing.");
+      return;
+   }
+
+   const bestPrice = calculateTotalPrice(item).bestPrice;
+   console.log("bestPrice", bestPrice);
+
+   const color = options.Color;
+   const size = options.Size;
+
+   console.log(`(color: ${color}, size: ${size}, quantity: ${quantity})`);
+
+   if (!color || !size) {
+      alert("Please select color and size.");
+      return;
+   }
+
+   const params = {
+      productId: productId,
+      amount: quantity,
+      price: bestPrice,
+      color: color,
+      size: size,
+   };
+
+   await addToCart(params);
+};
 </script>
 
 <template>
@@ -88,17 +118,16 @@ const emit = defineEmits<{
                      </div>
                   </div>
                </div>
+
                <div class="action-button-container">
+                  <QuantitySelector v-model="quantities[item.id]" />
                   <button
                      class="action-button"
                      :class="{ disabled: !areAllOptionsSelected(item) }"
                      @click="
                         () => {
                            if (areAllOptionsSelected(item)) {
-                              emit('addToCart', {
-                                 ...item,
-                                 selectedOptions: selectedOptions[item.id],
-                              });
+                              addToCartHandler(item);
                            }
                         }
                      "
@@ -110,12 +139,7 @@ const emit = defineEmits<{
                   </button>
                   <button
                      class="action-button"
-                     @click="
-                        emit('addToFavorites', {
-                           ...item,
-                           selectedOptions: selectedOptions[item.id],
-                        })
-                     "
+                     @onClick.prevent="addToFavorites"
                   >
                      <span class="icon" id="addToFavorites">
                         <fa icon="heart" />
@@ -131,15 +155,15 @@ const emit = defineEmits<{
 
 <style scoped>
 .form-container {
-   width: 800px;
+   width: 50rem;
 }
 .card {
    display: flex;
    justify-content: space-between;
    width: 100%;
    max-width: 60rem;
-   margin: 20px auto;
-   border-radius: 16px;
+   margin: 1.25rem auto;
+   border-radius: 1rem;
    position: relative;
    overflow: hidden;
    box-sizing: border-box;
@@ -149,8 +173,8 @@ const emit = defineEmits<{
 }
 
 .card:hover {
-   transform: translateY(-5px);
-   box-shadow: 0 8px 18px var(--color-border-hover);
+   transform: translateY(-0.3125rem);
+   box-shadow: 0 0.5rem 1.125rem var(--color-border-hover);
 }
 
 .left {
@@ -167,14 +191,14 @@ const emit = defineEmits<{
    max-width: 95%;
    max-height: 95%;
    object-fit: contain;
-   border-radius: 12px;
+   border-radius: 0.75rem;
 }
 
 .right {
    flex: 1 1 60%;
    display: inline-grid;
    height: 100%;
-   padding: 20px;
+   padding: 1.25rem;
    background-color: var(--color-background-soft);
    overflow: hidden;
 }
@@ -188,15 +212,15 @@ const emit = defineEmits<{
    display: flex;
    align-items: center;
    justify-content: space-between;
-   gap: 8px;
-   font-size: 18px;
+   gap: 0.5rem;
+   font-size: 1.125rem;
    font-family: "Muli", Ubuntu, sans-serif;
    color: var(--color-heading);
 }
 
 .icon {
-   margin-left: 2px;
-   margin-right: 6px;
+   margin-left: 0.125rem;
+   margin-right: 0.375rem;
    color: var(--color-text);
    transition:
       color 0.3s ease,
@@ -209,35 +233,35 @@ const emit = defineEmits<{
 }
 
 .details {
-   font-size: 14px;
-   margin: 5px 0;
+   font-size: 0.875rem;
+   margin: 0.3125rem 0;
    color: var(--color-text);
    font-family: "Muli", Ubuntu, sans-serif;
 }
 
 .label {
-   margin-top: 8px;
+   margin-top: 0.5rem;
 }
 
 h1 {
-   font-size: 20px;
+   font-size: 1.25rem;
    font-family: "Muli", Ubuntu, sans-serif;
 }
 
 h2 {
-   font-size: 24px;
+   font-size: 1.5rem;
    font-weight: bold;
    font-family: "Muli", Ubuntu, sans-serif;
 }
 
 h3 {
-   font-size: 14px;
+   font-size: 0.875rem;
    font-family: "Muli", Ubuntu, sans-serif;
 }
 
 .details {
-   margin-top: 6px;
-   margin-bottom: 6px;
+   margin-top: 0.375rem;
+   margin-bottom: 0.375rem;
    font-weight: normal;
    font-family: "Muli", Ubuntu, sans-serif;
 }
@@ -245,35 +269,35 @@ h3 {
 .price-container {
    display: flex;
    align-items: center;
-   gap: 30px;
+   gap: 2rem;
 }
 
 .original-price {
-   font-size: 16px;
+   font-size: 1rem;
    font-weight: normal;
    text-decoration: line-through;
    color: var(--vt-c-divider-dark-1);
 }
 
 .discount {
-   font-size: 24px;
+   font-size: 1.5rem;
    font-weight: bold;
    color: var(--vt-c-indigo);
-   gap: 4px;
+   gap: 0.25rem;
 }
 
 ul {
    display: flex;
-   gap: 16px;
+   gap: 1rem;
    list-style: none;
-   margin: 8px 0;
+   margin: 0.5rem 0;
    padding: 0;
 }
 
 ul li {
-   padding: 4px 8px;
-   border-radius: 4px;
-   font-size: 12px;
+   padding: 0.25rem 0.5rem;
+   border-radius: 0.25rem;
+   font-size: 0.75rem;
    font-weight: 500;
    text-align: center;
    background-color: var(--color-border);
@@ -286,7 +310,7 @@ ul li.bg:hover {
    color: var(--color-background);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 850px) {
    .form-container {
       width: 90%;
       margin: 0 auto;
@@ -294,17 +318,17 @@ ul li.bg:hover {
 
    .card {
       flex-direction: column;
-      padding: 16px;
+      padding: 1rem;
       width: 100%;
-      height: auto;
-      border-radius: 12px;
-      margin: 16px auto;
+      height: 60rem;
+      border-radius: 0.75rem;
+      margin: 1rem auto;
    }
 
    .left {
       width: 100%;
-      height: 200px;
-      border-radius: 12px 12px 0 0;
+      height: 12.5rem;
+      border-radius: 0.75rem 0.75rem 0 0;
       justify-content: center;
       align-items: center;
    }
@@ -312,12 +336,12 @@ ul li.bg:hover {
    .left img {
       max-width: 90%;
       max-height: 100%;
-      border-radius: 12px;
+      border-radius: 0.75rem;
    }
 
    .right {
       width: 100%;
-      padding: 12px;
+      padding: 0.75rem;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -327,18 +351,18 @@ ul li.bg:hover {
       flex-direction: column;
       align-items: center;
       text-align: center;
-      gap: 8px;
-      font-size: 16px;
+      gap: 0.5rem;
+      font-size: 1rem;
    }
 
    .details {
       text-align: center;
-      font-size: 14px;
+      font-size: 0.875rem;
    }
 
    .price-container {
       flex-direction: column;
-      gap: 8px;
+      gap: 0.5rem;
       align-items: center;
    }
 
@@ -346,13 +370,13 @@ ul li.bg:hover {
       flex-direction: column;
       align-items: center;
       width: 100%;
-      margin: 16px 0;
-      gap: 12px;
+      margin: 1rem 0;
+      gap: 0.75rem;
    }
 
    .option-button {
-      min-width: 70px;
-      margin: 4px;
+      min-width: 4.375rem;
+      margin: 0.25rem;
    }
 }
 </style>

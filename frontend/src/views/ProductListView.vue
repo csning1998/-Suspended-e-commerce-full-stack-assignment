@@ -1,12 +1,7 @@
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, reactive, computed } from "vue";
+import { onMounted, ref, computed } from "vue";
 import ProductCardHorizontal from "@/components/product/ProductCardHorizontal.vue";
 import request from "../stores/request";
-
-// import { products } from "@/components/product/mockProducts";
-import { productCardButtonActions } from "@/lib/productCardButtonActions";
-
-const userId = undefined; // if (!isLoggedIn) then make it undefined
 
 let products = ref([]);
 onMounted(async () => {
@@ -19,10 +14,7 @@ const overlay = computed(() => store.overlay);
 </script>
 
 <template>
-   <ProductCardHorizontal
-      v-if="products.length > 0"
-      :products="products"
-   />
+   <ProductCardHorizontal v-if="products.length > 0" :products="products" />
 
    <h1 v-if="!overlay && products.length === 0">There is no product on sale</h1>
 </template>

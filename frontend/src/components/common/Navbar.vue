@@ -12,7 +12,7 @@ const navLinks = ref<NavLink[]>([
    { text: "Management", href: "./seller-product-management" },
    { text: "Products", href: "./Products" },
    { text: "Favourites", href: "#" },
-   { text: "Shopping Cart", href: "#" },
+   { text: "Shopping Cart", href: "./cart" },
    { text: "Notifications", href: "#" },
 ]);
 

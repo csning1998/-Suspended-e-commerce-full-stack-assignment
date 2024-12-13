@@ -1,8 +1,7 @@
-import express, { Router, Request, Response, NextFunction } from "express";
-import { statusCodes, errorCreator, responseCreator } from "../lib/statusCodes";
+import express, { NextFunction, Response, Router } from "express";
+import { errorCreator, statusCodes } from "../lib/statusCodes";
 import PGModels from "../postgres-models";
 import CartItems from "@/postgres-models/cart-items";
-import { HTTPJsonResponse } from "../lib/errorHandler";
 
 /*
  * User can view and search products without login.
@@ -10,27 +9,52 @@ import { HTTPJsonResponse } from "../lib/errorHandler";
  * Assume the only query strings we would receive is "Keyword"
  * */
 
-function buildCart(cartItems: CartItems[]) {
-    let baseAmount = 0;
-    let discount = 0;
+function establishingCart(cartItems: CartItems[]): {
+    items: {
+        productId: any;
+        color: string;
+        size: string;
+        price: any;
+        amount: any;
+        subtotal: number;
+    }[];
+    baseAmount: number;
+    discount: number;
+    totalAmount: number;
+} {
+    let baseAmount: number = 0;
+    let discount: number = 0;
 
-    const cart = {
-        items: cartItems.map((_) => {
-            const subtotal = _.price * _.amount;
-            baseAmount += subtotal;
-            return {
-                productId: _.productId,
-                price: _.price,
-                amount: _.amount,
-                subtotal,
-            };
-        }),
+    // The price calculation feature is retained to allow for future implementation of discounts or promotional offers.
+
+    return {
+        items: cartItems.map(
+            (
+                item: CartItems,
+            ): {
+                productId: any;
+                color: string;
+                size: string;
+                price: any;
+                amount: any;
+                subtotal: number;
+            } => {
+                const subtotal: number = item.price * item.amount;
+                baseAmount += subtotal;
+                return {
+                    productId: item.productId,
+                    color: item.color,
+                    size: item.size,
+                    price: item.price,
+                    amount: item.amount,
+                    subtotal,
+                };
+            },
+        ),
         baseAmount,
         discount,
         totalAmount: baseAmount * (1 - discount),
     };
-
-    return cart;
 }
 
 const router: Router = express.Router();
@@ -38,11 +62,25 @@ router.get(
     "/",
     async (req: any, res: Response, next: NextFunction): Promise<void> => {
         try {
-            const cartItems = await PGModels.CartItems.findAll({
+            const cartItems: CartItems[] = await PGModels.CartItems.findAll({
                 where: { userId: req.currentUser.userId },
             });
 
-            const cart = buildCart(cartItems);
+            console.log("cartItems", cartItems);
+
+            const cart: {
+                items: {
+                    productId: any;
+                    price: any;
+                    amount: any;
+                    subtotal: number;
+                }[];
+                baseAmount: number;
+                discount: number;
+                totalAmount: number;
+            } = establishingCart(cartItems);
+
+            console.log("cart", cart);
 
             res.json({
                 payload: cart,
@@ -51,41 +89,133 @@ router.get(
             console.error(err);
             return next(errorCreator(statusCodes.BACKEND_LOGIC));
         }
-    }
+    },
 );
+
 router.put(
     "/",
     async (req: any, res: Response, next: NextFunction): Promise<any> => {
         try {
-            const promises: any = [];
+            if (!req.body.cartItems || !Array.isArray(req.body.cartItems)) {
+                return res
+                    .status(400)
+                    .json({ error: "Missing or invalid cartItems" });
+            }
 
-            req.body.cartItems.forEach((_: any) => {
-                const { id, productId, amount, price } = _;
-                promises.push(
-                    PGModels.CartItems.findOrCreate({
-                        where: {
-                            id: id,
-                            productId: productId,
-                            userId: req.currentUser.userId,
-                        },
-                        defaults: {
-                            amount: amount,
+            console.log("cartItems", req.body);
+
+            const promises: Promise<CartItems>[] = req.body.cartItems.map(
+                async (item: any): Promise<CartItems> => {
+                    const { productId, amount, price, color, size } = item;
+
+                    if (!productId || !amount || !price || !color || !size) {
+                        return Promise.reject(
+                            new Error("Missing required fields in cartItem"),
+                        );
+                    }
+
+                    const [instance, created] =
+                        await PGModels.CartItems.findOrCreate({
+                            where: {
+                                productId: productId,
+                                userId: req.currentUser.userId,
+                                color: color,
+                                size: size,
+                            },
+                            defaults: {
+                                productId: productId,
+                                amount: amount,
+                                price: price, // 使用計算好的總價
+                                color: color,
+                                size: size,
+                                userId: req.currentUser.userId,
+                            },
+                        });
+                    if (!created) {
+                        const newAmount = instance.amount + amount;
+                        await instance.update({
+                            amount: newAmount,
                             price: price,
-                        },
-                    })
-                );
-            });
+                        });
+                    }
+                    return await instance;
+                },
+            );
 
-            const cartItems = await Promise.all(promises);
-            const cart = buildCart(cartItems);
+            const updatedItems: CartItems[] = await Promise.all(promises);
+
+            const cart = establishingCart(updatedItems);
 
             res.json({
                 payload: cart,
             });
         } catch (error) {
+            console.error(error);
             return next(errorCreator(statusCodes.BACKEND_LOGIC));
         }
-    }
+    },
+);
+
+router.put(
+    "/:id",
+    async (req: any, res: Response, next: NextFunction): Promise<any> => {
+        try {
+            const cartItemId: any = req.params.id;
+            const { productId, amount, price } = req.body;
+
+            // Validate input data
+            if (!productId || !amount || !price) {
+                return res
+                    .status(400)
+                    .json({ error: "Missing required fields" });
+            }
+
+            // Find the cart item by ID
+            const cartItem: CartItems | null = await PGModels.CartItems.findOne(
+                {
+                    where: {
+                        id: cartItemId,
+                        userId: req.currentUser.userId,
+                    },
+                },
+            );
+
+            if (!cartItem) {
+                return res.status(404).json({ error: "Cart item not found" });
+            }
+
+            // Update the cart item with new data
+            await cartItem.update({
+                productId,
+                amount,
+                price,
+            });
+
+            // Recalculate the cart
+            const cartItems: CartItems[] = await PGModels.CartItems.findAll({
+                where: { userId: req.currentUser.userId },
+            });
+
+            const cart: {
+                items: {
+                    productId: any;
+                    price: any;
+                    amount: any;
+                    subtotal: number;
+                }[];
+                baseAmount: number;
+                discount: number;
+                totalAmount: number;
+            } = establishingCart(cartItems);
+
+            res.json({
+                payload: cart,
+            });
+        } catch (error) {
+            console.error(error);
+            return next(errorCreator(statusCodes.BACKEND_LOGIC));
+        }
+    },
 );
 
 export default router;
