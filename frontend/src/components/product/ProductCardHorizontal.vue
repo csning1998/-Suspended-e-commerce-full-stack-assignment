@@ -26,101 +26,103 @@ const emit = defineEmits<{
 </script>
 
 <template>
-   <div class="form-container">
-      <form class="form-body">
-         <div class="form-field">
-            <input type="text" placeholder="Search" />
-         </div>
-      </form>
-   </div>
-   <div class="product-container">
-      <div v-for="item in products" :key="item.id" class="card">
-         <div class="left">
-            <img :src="item.link2Pic" alt="Product Image" />
-         </div>
-         <div class="right">
-            <div class="product-info">
-               <div class="product-brand">
-                  {{ item.brand }}
-                  <div class="price-container">
-                     <span class="discount">
-                        <fa icon="dollar-sign" />
-                        {{ calculateTotalPrice(item).bestPrice }}
-                     </span>
-                     <span class="original-price">
-                        <fa icon="dollar-sign" />
-                        {{ calculateTotalPrice(item).discountPrice }}
-                     </span>
+   <div>
+      <div class="form-container">
+         <form class="form-body">
+            <div class="form-field">
+               <input type="text" placeholder="Search" />
+            </div>
+         </form>
+      </div>
+      <div class="product-container">
+         <div v-for="item in products" :key="item.id" class="card">
+            <div class="left">
+               <img :src="item.link2Pic" alt="Product Image" />
+            </div>
+            <div class="right">
+               <div class="product-info">
+                  <div class="product-brand">
+                     {{ item.brand }}
+                     <div class="price-container">
+                        <span class="discount">
+                           <fa icon="dollar-sign" />
+                           {{ calculateTotalPrice(item).bestPrice }}
+                        </span>
+                        <span class="original-price">
+                           <fa icon="dollar-sign" />
+                           {{ calculateTotalPrice(item).discountPrice }}
+                        </span>
+                     </div>
                   </div>
                </div>
-            </div>
-            <div class="details">
-               <h3>{{ item.collection }}</h3>
-               <h2>{{ item.title }}</h2>
+               <div class="details">
+                  <h3>{{ item.collection }}</h3>
+                  <h2>{{ item.title }}</h2>
 
-               <div v-for="option in item.options" :key="option.name">
-                  <p class="label">
-                     {{ option.name.toUpperCase() }}
-                  </p>
-                  <div class="options-button-container">
-                     <button
-                        v-for="value in option.values"
-                        :key="value.value"
-                        class="option-button"
-                        :class="{
-                           selected:
-                              selectedOptions[item.id]?.[option.name] ===
-                              value.value,
-                        }"
-                        @click="
-                           () => {
-                              if (!selectedOptions[item.id]) {
-                                 selectedOptions[item.id] = {};
+                  <div v-for="option in item.options" :key="option.name">
+                     <p class="label">
+                        {{ option.name.toUpperCase() }}
+                     </p>
+                     <div class="options-button-container">
+                        <button
+                           v-for="value in option.values"
+                           :key="value.value"
+                           class="option-button"
+                           :class="{
+                              selected:
+                                 selectedOptions[item.id]?.[option.name] ===
+                                 value.value,
+                           }"
+                           @click="
+                              () => {
+                                 if (!selectedOptions[item.id]) {
+                                    selectedOptions[item.id] = {};
+                                 }
+                                 selectedOptions[item.id][option.name] =
+                                    value.value;
                               }
-                              selectedOptions[item.id][option.name] =
-                                 value.value;
-                           }
-                        "
-                     >
-                        {{ value.value }}
-                     </button>
+                           "
+                        >
+                           {{ value.value }}
+                        </button>
+                     </div>
                   </div>
                </div>
-            </div>
-            <div class="action-button-container">
-               <button
-                  class="action-button"
-                  :class="{ disabled: !areAllOptionsSelected(item) }"
-                  @click="
-                     () => {
-                        if (areAllOptionsSelected(item)) {
-                           emit('addToCart', {
-                              ...item,
-                              selectedOptions: selectedOptions[item.id],
-                           });
+               <div class="action-button-container">
+                  <button
+                     class="action-button"
+                     :class="{ disabled: !areAllOptionsSelected(item) }"
+                     @click="
+                        () => {
+                           if (areAllOptionsSelected(item)) {
+                              emit('addToCart', {
+                                 ...item,
+                                 selectedOptions: selectedOptions[item.id],
+                              });
+                           }
                         }
-                     }
-                  "
-               >
-                  <span class="icon">
-                     <fa icon="cart-arrow-down" id="addToCart" />
-                  </span>
-                  Add to Cart
-               </button>
-               <button
-                  class="action-button"
-                  @click="
-                     emit('addToFavorites', {
-                        ...item,
-                        selectedOptions: selectedOptions[item.id],
-                     })
-                  "
-               >
-                  <span class="icon" id="addToFavorites">
-                     <fa icon="heart" />
-                  </span>
-                  Add to Favorites
-               </button>
+                     "
+                  >
+                     <span class="icon">
+                        <fa icon="cart-arrow-down" id="addToCart" />
+                     </span>
+                     Add to Cart
+                  </button>
+                  <button
+                     class="action-button"
+                     @click="
+                        emit('addToFavorites', {
+                           ...item,
+                           selectedOptions: selectedOptions[item.id],
+                        })
+                     "
+                  >
+                     <span class="icon" id="addToFavorites">
+                        <fa icon="heart" />
+                     </span>
+                     Add to Favorites
+                  </button>
+               </div>
             </div>
          </div>
       </div>

@@ -1,5 +1,5 @@
 /*
-import { User } from "./src/postgres-models/user";
+
 import { Model } from "sequelize";
 
 declare global {
@@ -25,3 +25,31 @@ export class User extends Model<UserAttributes> implements UserAttributes {
 }
 
  */
+
+
+// declare global {
+//     namespace Express {
+//         interface FuckUpRequest {
+//             currentUser?: User;
+//         }
+//     }
+// }
+
+// declare namespace Express {
+//     export interface Request {
+//         currentUser?: User
+//     }
+//  }
+// import { User } from "./src/postgres-models/user";
+
+interface User {
+    userId: string;
+}
+
+// interface AuthenticatedRequest extends Express.Request {
+//     currentUser: User;
+// }
+
+interface AuthenticatedRequest{
+    currentUser: User;
+}

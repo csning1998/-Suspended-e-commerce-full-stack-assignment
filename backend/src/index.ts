@@ -4,18 +4,18 @@ import "dotenv/config"; // https://www.npmjs.com/package/dotenv
 import cors from "cors"; // Enable Cross-Origin Resource Sharing
 import bodyParser from "body-parser"; // Parse incoming request bodies
 import userRoutes from "./routes/users";
+import cartRoutes from "./routes/cart";
 import productQuery from "./routes/product";
 import adminProduct from "./routes/admin/product";
 import { connect } from "mongoose";
 import session from "express-session"; //https://www.npmjs.com/package/@types/express-session
 import passport from "passport"; //https://www.npmjs.com/package/@types/passport
 import configureGoogleOAuth from "./lib/oauth-google";
-import DBSeed from './db-seed'
+import DBSeed from "./db-seed";
 // TypeScript: use `npm i @types/express-session @types/passport --save`
 
 // Initialize database connection
 import sequelize from "./db";
-
 
 import configureGithubOAuth from "./lib/oauth-github";
 
@@ -29,7 +29,7 @@ const MONGO_URI: string = process.env.MONGO_URI || "mongodb://mongo:27017/test";
 app.use(
     cors({
         origin: "*",
-    }),
+    })
 );
 
 // for JsnWebToken Secret
@@ -64,7 +64,7 @@ if (secret) {
             secret: process.env.PASSPORT_LONG_SECRET || "Our little secret.",
             resave: false,
             saveUninitialized: false,
-        }),
+        })
     );
     // Initialize and use passport.
     app.use(passport.initialize());
@@ -124,6 +124,9 @@ if (created) {
 app.use("/users", userRoutes);
 app.use("/products", productQuery);
 
+app.use("/carts", JWT.verity);
+app.use("/carts", cartRoutes);
+
 // Root route for basic health check
 app.get("/", (res: Response): void => {
     res.send("Hello World!");
@@ -134,12 +137,12 @@ app.use("/admin", JWT.verity);
 app.use("/admin", function (req: any, res: Response, next: NextFunction): void {
     console.log(
         "req.currentUser.userPermission",
-        req.currentUser.userPermission,
+        req.currentUser.userPermission
     );
     console.log("allowManagementRoles", allowManagementRoles);
     if (!allowManagementRoles.includes(req.currentUser.userPermission)) {
         return next(
-            new Error(`You must be one of ${allowManagementRoles.join(", ")}`),
+            new Error(`You must be one of ${allowManagementRoles.join(", ")}`)
         );
     }
 
@@ -205,9 +208,7 @@ require("./lib/errorHandler")(app);
         console.error("error", err);
     }
 
-    
-    await DBSeed()
-
+    await DBSeed();
 
     // Start the application, listening on the specified port
     app.listen(port, (): void => {

@@ -1,5 +1,23 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted, ref } from "vue";
+import request from "../stores/request";
 
-<template></template>
+let cart = ref({})
+
+onMounted(async () => {
+  try {
+    cart = await request.get('/carts')
+    
+  } catch (error) {
+    
+  }
+})
+</script>
+
+<template>
+  <pre>
+    {{ cart }}
+  </pre>
+</template>
 
 <style scoped></style>

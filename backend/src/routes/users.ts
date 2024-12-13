@@ -9,7 +9,13 @@ import Address from "../postgres-models/address";
 import Payment from "../postgres-models/payment";
 
 const router: Router = express.Router();
-
+declare global {
+    namespace Express {
+        interface Request {
+            currentUser?: User;
+        }
+    }
+}
 
 router.post("/register", async (req: Request, res: Response, next: NextFunction): Promise<any> => {
     // const isExistingUser: boolean = false

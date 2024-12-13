@@ -16,6 +16,7 @@ import ProductListView from "@/views/ProductListView.vue";
 import ProductDetailView from "@/views/ProductDetailView.vue";
 import OauthLoginView from "@/components/auth/OAuthLogin.vue";
 import TestComponents from "@/components/TestComponents.vue";
+import CartView from "@/views/CartView.vue";
 import SellerProductManagementView from "@/views/SellerProductManagementView.vue";
 
 const router: Router = createRouter({
@@ -68,6 +69,15 @@ const router: Router = createRouter({
             name: "ProductDetailView",
             component: ProductDetailView,
             props: true,
+        },
+        {
+            path: "/cart",
+            name: "cart",
+            component: CartView,
+            meta: {
+                require_login: true,
+                allowRoles: ["admin", "supplier", "user"],
+            },
         },
         {
             path: "/profile",

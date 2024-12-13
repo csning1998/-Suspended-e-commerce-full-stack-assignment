@@ -7,8 +7,6 @@ import request from "../stores/request";
 import { productCardButtonActions } from "@/lib/productCardButtonActions";
 
 const userId = undefined; // if (!isLoggedIn) then make it undefined
-const { cart, favorites, addToCart, addToFavorites } =
-   productCardButtonActions(userId);
 
 let products = ref([]);
 onMounted(async () => {
@@ -24,8 +22,6 @@ const overlay = computed(() => store.overlay);
    <ProductCardHorizontal
       v-if="products.length > 0"
       :products="products"
-      @addToCart="addToCart"
-      @addToFavorites="addToFavorites"
    />
 
    <h1 v-if="!overlay && products.length === 0">There is no product on sale</h1>
