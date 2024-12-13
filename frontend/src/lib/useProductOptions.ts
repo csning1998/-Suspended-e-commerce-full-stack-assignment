@@ -3,11 +3,6 @@ import type { Ref } from "vue";
 
 export function useProductOptions(): {
     selectedOptions: Ref<Record<number, Record<string, string | number>>>;
-    updateSelectedOption: (
-        productId: number,
-        optionName: string,
-        optionValue: string | number,
-    ) => void;
     calculateTotalPrice: (product: Products) => {
         bestPrice: number;
         discountPrice: number;
@@ -52,20 +47,8 @@ export function useProductOptions(): {
         );
     };
 
-    const updateSelectedOption = (
-        productId: number,
-        optionName: string,
-        optionValue: string | number,
-    ): void => {
-        if (!selectedOptions.value[productId]) {
-            selectedOptions.value[productId] = {};
-        }
-        selectedOptions.value[productId][optionName] = optionValue;
-    };
-
     return {
         selectedOptions,
-        updateSelectedOption,
         calculateTotalPrice,
         areAllOptionsSelected,
     };

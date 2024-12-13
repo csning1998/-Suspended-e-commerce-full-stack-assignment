@@ -125,7 +125,7 @@ router.put(
                             defaults: {
                                 productId: productId,
                                 amount: amount,
-                                price: price, // 使用計算好的總價
+                                price: price,
                                 color: color,
                                 size: size,
                                 userId: req.currentUser.userId,
