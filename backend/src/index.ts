@@ -1,5 +1,5 @@
 import * as JWT from "./lib/jsonWebToken";
-import express, { Response, Express, NextFunction } from "express";
+import express, { Response, Express, NextFunction, Request } from "express";
 import "dotenv/config"; // https://www.npmjs.com/package/dotenv
 import cors from "cors"; // Enable Cross-Origin Resource Sharing
 import bodyParser from "body-parser"; // Parse incoming request bodies
@@ -128,7 +128,7 @@ app.use("/carts", JWT.verity);
 app.use("/carts", cartRoutes);
 
 // Root route for basic health check
-app.get("/", (res: Response): void => {
+app.get("/", (req: Request, res: Response): void => {
     res.send("Hello World!");
 });
 

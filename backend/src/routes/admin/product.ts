@@ -103,16 +103,20 @@ router.put(
         try {
             const updates: any = req.body;
             const { id } = req.params;
+            console.log("===============================");
+            console.log("id", id);
             if (!id) {
                 return res.json({ message: "Product name is required" });
             }
 
             const updatedProduct: any = await Product.updateOne(
                 { _id: id },
-                // { $set: { ...updates } },
                 updates,
                 { new: true },
             );
+
+            console.log("===============================");
+            console.log("updatedProduct", updatedProduct);
 
             // await updatedProduct?.save()
 

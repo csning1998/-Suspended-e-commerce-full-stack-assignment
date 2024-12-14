@@ -57,12 +57,14 @@ async function login(): Promise<void> {
    }
 }
 
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
+
 function googleOAuth() {
-   window.location.href = "http://localhost:3000/auth/google";
+   window.location.href = BASE_URL +  "auth/google";
 }
 
 function githubOAuth() {
-   window.location.href = "http://localhost:3000/auth/github";
+   window.location.href = BASE_URL + "auth/github";
 }
 </script>
 
