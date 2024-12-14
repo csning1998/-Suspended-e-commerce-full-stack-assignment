@@ -5,9 +5,9 @@ import mongoose from "mongoose";
 import mockProducts from "./mockProducts.json";
 
 const ObjectId = mongoose.Types.ObjectId;
-const mock = [...mockProducts];
+const mock: any[] = [...mockProducts];
 
-export default async function seed() {
+export default async function seed(): Promise<void> {
     try {
         console.log("I am seed");
         // default root account
@@ -54,7 +54,7 @@ export default async function seed() {
             },
         });
         // Function to convert string IDs to ObjectId recursively
-        const convertIds = (obj: any): any => {
+        const convertIds: (obj: any) => any = (obj: any): any => {
             if (Array.isArray(obj)) {
                 return obj.map(convertIds);
             } else if (obj && typeof obj === "object") {
@@ -72,11 +72,13 @@ export default async function seed() {
         };
 
         // Convert all IDs in mock data
-        const convertedMock = convertIds(mock);
+        const convertedMock: any = convertIds(mock);
 
         // Iterate over each product and insert if it doesn't exist
         for (const product of convertedMock) {
-            const existingProduct = await ProductModel.findById(product._id);
+            const existingProduct: any = await ProductModel.findById(
+                product._id,
+            );
             if (!existingProduct) {
                 await ProductModel.create(product);
                 console.log(`Created product with ID ${product._id}`);

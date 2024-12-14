@@ -14,7 +14,8 @@ onMounted(async () => {
 <template>
    <pre>
     {{ cart }}
-  </pre>
+  </pre
+   >
 </template>
 
 <style scoped></style>
