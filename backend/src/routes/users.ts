@@ -17,89 +17,108 @@ declare global {
     }
 }
 
-router.post("/register", async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-    // const isExistingUser: boolean = false
-    try {
-        const { userId, userEmail, userPassword, confirmPassword } = req.body;
-        console.log("Body: \n", req.body);
+router.post(
+    "/register",
+    async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+        // const isExistingUser: boolean = false
+        try {
+            const { userId, userEmail, userPassword, confirmPassword } =
+                req.body;
+            console.log("Body: \n", req.body);
 
-        if (!userId || !userPassword) {
-            return next(errorCreator(statusCodes.LOGIN.USERNAME_OR_PASSWORD_NULL))
+            if (!userId || !userPassword) {
+                return next(
+                    errorCreator(statusCodes.LOGIN.USERNAME_OR_PASSWORD_NULL),
+                );
+            }
+
+            if (userPassword != confirmPassword) {
+                return next(
+                    errorCreator(statusCodes.REGISTRATION.PASSWORD_MISMATCH),
+                );
+            }
+
+            const isExistingUser: Model | null = await PGModels.User.findOne({
+                where: { userEmail: userEmail },
+            });
+
+            if (isExistingUser) {
+                return next(
+                    errorCreator(
+                        statusCodes.REGISTRATION.EMAIL_ALREADY_REGISTERED,
+                    ),
+                );
+            }
+
+            const newUser = {
+                ...req.body,
+                // userId: userId,
+                // userName: userName,
+                // userEmail: userEmail,
+                userPassword: userPassword,
+            };
+
+            const users: Model = await PGModels.User.create(newUser);
+
+            return responseCreator(res, statusCodes.REGISTRATION.SUCCESS, {
+                users: users,
+            });
+        } catch (err) {
+            console.error("Error during registration:", err);
+            return next(errorCreator(statusCodes.BACKEND_LOGIC));
         }
+    },
+);
 
-        if (userPassword != confirmPassword) {
-            return next(errorCreator(statusCodes.REGISTRATION.PASSWORD_MISMATCH))
+router.post(
+    "/login",
+    async (req: Request, res: Response, next: NextFunction): Promise<any> => {
+        const { userId, userPassword } = req.body;
+        console.log("userId||userEmail in req.Body: \n", req.body.userId);
+        console.log("userPassword in req.Body: \n", req.body.userPassword);
+
+        try {
+            if (!userId || !userPassword) {
+                return next(
+                    errorCreator(statusCodes.LOGIN.USERNAME_OR_PASSWORD_NULL),
+                );
+            }
+
+            // Check if the input is an email or a userId
+            const isEmail: boolean = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userId);
+
+            const user = await PGModels.User.findOne({
+                where: isEmail ? { userEmail: userId } : { userId: userId },
+            });
+
+            if (!user) {
+                return next(errorCreator(statusCodes.LOGIN.USER_NOT_FOUND));
+            }
+
+            const isPasswordValid: boolean = user.isPasswordValid(userPassword);
+
+            if (!isPasswordValid) {
+                return next(
+                    errorCreator(statusCodes.LOGIN.INVALID_CREDENTIALS),
+                );
+            }
+
+            const actualUserId: string = isEmail
+                ? (user.get("userId") as string)
+                : userId;
+
+            const token: String = JWT.create({ userId: actualUserId });
+
+            return responseCreator(res, statusCodes.LOGIN.SUCCESS, {
+                token,
+                user,
+            });
+        } catch (err) {
+            console.error(err);
+            return next(errorCreator(statusCodes.BACKEND_LOGIC));
         }
-
-        const isExistingUser: Model | null = await PGModels.User.findOne({
-            where: { userEmail: userEmail },
-        });
-
-        if (isExistingUser) {
-            return next(errorCreator(statusCodes.REGISTRATION.EMAIL_ALREADY_REGISTERED))
-        }
-
-        const newUser = {
-            ...req.body,
-            // userId: userId,
-            // userName: userName,
-            // userEmail: userEmail,
-            userPassword: userPassword,
-        };
-
-        const users: Model = await PGModels.User.create(newUser);
-        
-        return responseCreator(res, statusCodes.REGISTRATION.SUCCESS, {
-            users: users
-        })
-    } catch (err) {
-        console.error("Error during registration:", err);
-        return next(errorCreator(statusCodes.BACKEND_LOGIC))
-    }
-});
-
-router.post("/login", async (req: Request, res: Response, next: NextFunction): Promise<any> => {
-    const { userId, userPassword } = req.body;
-    console.log("userId||userEmail in req.Body: \n", req.body.userId);
-    console.log("userPassword in req.Body: \n", req.body.userPassword);
-
-    try {
-        if (!userId || !userPassword) {
-            return next(errorCreator(statusCodes.LOGIN.USERNAME_OR_PASSWORD_NULL))
-        }
-
-        // Check if the input is an email or a userId
-        const isEmail: boolean = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(userId);
-
-        const user = await PGModels.User.findOne({
-            where: isEmail ? { userEmail: userId } : { userId: userId },
-        });
-
-        if (!user) {
-            return next(errorCreator(statusCodes.LOGIN.USER_NOT_FOUND))
-        }
-
-        const isPasswordValid = user.isPasswordValid(userPassword)
-
-        if (!isPasswordValid) {
-            return next(errorCreator(statusCodes.LOGIN.INVALID_CREDENTIALS))
-        }
-
-        const actualUserId: string = isEmail
-            ? (user.get("userId") as string)
-            : userId;
-
-        const token: String = JWT.create({ userId: actualUserId });
-
-        return responseCreator(res, statusCodes.LOGIN.SUCCESS, {
-            token,
-            user
-        })
-    } catch (err) {
-        console.error(err);
-        return next(errorCreator(statusCodes.BACKEND_LOGIC))
-    }
-});
+    },
+);
 
 router
     .use([JWT.verity])
@@ -125,7 +144,7 @@ router
             });
         } catch (error) {
             console.error("Error while processing session route:", error);
-            return next(errorCreator(statusCodes.BACKEND_LOGIC))
+            return next(errorCreator(statusCodes.BACKEND_LOGIC));
         }
     })
     .put(async (req: any, res: Response, next: NextFunction): Promise<any> => {

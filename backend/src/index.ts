@@ -29,7 +29,7 @@ const MONGO_URI: string = process.env.MONGO_URI || "mongodb://mongo:27017/test";
 app.use(
     cors({
         origin: "*",
-    })
+    }),
 );
 
 // for JsnWebToken Secret
@@ -64,7 +64,7 @@ if (secret) {
             secret: process.env.PASSPORT_LONG_SECRET || "Our little secret.",
             resave: false,
             saveUninitialized: false,
-        })
+        }),
     );
     // Initialize and use passport.
     app.use(passport.initialize());
@@ -137,12 +137,12 @@ app.use("/admin", JWT.verity);
 app.use("/admin", function (req: any, res: Response, next: NextFunction): void {
     console.log(
         "req.currentUser.userPermission",
-        req.currentUser.userPermission
+        req.currentUser.userPermission,
     );
     console.log("allowManagementRoles", allowManagementRoles);
     if (!allowManagementRoles.includes(req.currentUser.userPermission)) {
         return next(
-            new Error(`You must be one of ${allowManagementRoles.join(", ")}`)
+            new Error(`You must be one of ${allowManagementRoles.join(", ")}`),
         );
     }
 

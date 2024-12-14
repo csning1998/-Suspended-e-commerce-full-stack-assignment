@@ -69,6 +69,8 @@ const currentUser = reactive<UserProfileFormData>({
    updatedAt: 0,
 });
 
+console.log("currentUser", currentUser);
+
 const originalUser = reactive<UserProfileFormData>({ ...currentUser });
 
 const saveProfile = async () => {
@@ -424,18 +426,18 @@ onMounted(() => {
                            </v-col>
                         </template>
                      </v-row>
-                     <div class="form-button-container" v-if="isEditing">
-                        <button
-                           v-if="isEditing"
-                           class="form-button"
-                           @click.prevent="removeAddress(index)"
-                        >
-                           Remove Address
-                        </button>
-                        <button class="form-button" @click.prevent="addAddress">
-                           Add Address
-                        </button>
-                     </div>
+                  </div>
+                  <div class="form-button-container" v-if="isEditing">
+                     <button
+                        v-if="isEditing"
+                        class="form-button"
+                        @click.prevent="removeAddress(index)"
+                     >
+                        Remove Address
+                     </button>
+                     <button class="form-button" @click.prevent="addAddress">
+                        Add Address
+                     </button>
                   </div>
                </v-card-text>
             </div>
@@ -503,22 +505,21 @@ onMounted(() => {
                               type="text"
                            ></v-text-field>
                         </v-col>
-
-                        <div class="form-button-container" v-if="isEditing">
-                           <button
-                              class="form-button"
-                              @click.prevent="removePaymentMethod(index)"
-                           >
-                              Remove
-                           </button>
-                           <button
-                              class="form-button"
-                              @click.prevent="addPaymentMethod"
-                           >
-                              Add Payment Method
-                           </button>
-                        </div>
                      </v-row>
+                  </div>
+                  <div class="form-button-container" v-if="isEditing">
+                     <button
+                        class="form-button"
+                        @click.prevent="removePaymentMethod(index)"
+                     >
+                        Remove
+                     </button>
+                     <button
+                        class="form-button"
+                        @click.prevent="addPaymentMethod"
+                     >
+                        Add Payment Method
+                     </button>
                   </div>
                </v-card-text>
 

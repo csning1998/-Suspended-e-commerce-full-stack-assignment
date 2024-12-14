@@ -38,6 +38,8 @@ export const verity: any = async (
         // const { userId, userName } = req.body;
         const token = req.headers.token as string | undefined;
 
+        console.log("token", token);
+
         if (!token) {
             return next(
                 new Error(statusCodes.AUTHENTICATION.NO_TOKEN_PROVIDED.message),
@@ -46,11 +48,12 @@ export const verity: any = async (
 
         const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
 
+        console.log("decoded.userId", decoded.userId);
+
         if (decoded.userId) {
             const currentUser: User | null = await PGModels.User.findOne({
                 where: {
                     userId: decoded.userId,
-                    // userName: decoded.userName
                 },
             });
 

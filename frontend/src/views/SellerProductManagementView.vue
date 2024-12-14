@@ -429,6 +429,7 @@ async function amendProduct() {
 .left {
    flex: 1 1 40%;
    display: flex;
+   background-color: #fff;
    justify-content: center;
    align-items: center;
    position: relative;

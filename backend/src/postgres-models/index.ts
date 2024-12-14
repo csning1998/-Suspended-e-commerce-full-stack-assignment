@@ -7,5 +7,5 @@ export default {
     User,
     Address,
     Payment,
-    CartItems
+    CartItems,
 };

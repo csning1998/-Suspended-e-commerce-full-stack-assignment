@@ -63,7 +63,7 @@ User.init(
             allowNull: true,
         },
         userPhoneNumber: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.STRING,
             allowNull: true,
         },
         userProfilePicture: {

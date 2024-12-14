@@ -2,27 +2,57 @@
 import { defineProps } from "vue";
 import { productCardButtonActions } from "@/lib/productCardButtonActions";
 import { useProductOptions } from "@/lib/useProductOptions";
+import QuantitySelector from "@/components/cart/QuantitySelector.vue";
 
 defineProps<{
    products: Products[];
 }>();
 
-const userId = undefined; // if (!isLoggedIn) then make it undefined
+const userId = undefined;
 
-const { cart, favorites, addToCart, addToFavorites } =
+const { quantities, addToCart, addToFavorites } =
    productCardButtonActions(userId);
 
-const {
-   selectedOptions,
-   updateSelectedOption,
-   calculateTotalPrice,
-   areAllOptionsSelected,
-} = useProductOptions();
+const { selectedOptions, calculateTotalPrice, areAllOptionsSelected } =
+   useProductOptions();
 
-const emit = defineEmits<{
-   (e: "addToCart", product: CartItem): void;
-   (e: "addToFavorites", product: CartItem): void;
-}>();
+const addToCartHandler = async (item: Products): Promise<void> => {
+   const productId = item.id;
+   console.log("productId", productId);
+   const quantity: number = quantities.value[productId];
+   console.log("quantity", quantity);
+   const options: Record<string, string | number> =
+      selectedOptions.value[productId];
+   console.log("options", options);
+
+   if (!item._id) {
+      alert("Product ID is missing.");
+      return;
+   }
+
+   const bestPrice = calculateTotalPrice(item).bestPrice;
+   console.log("bestPrice", bestPrice);
+
+   const color = options.Color;
+   const size = options.Size;
+
+   console.log(`(color: ${color}, size: ${size}, quantity: ${quantity})`);
+
+   if (!color || !size) {
+      alert("Please select color and size.");
+      return;
+   }
+
+   const params = {
+      productId: productId,
+      amount: quantity,
+      price: bestPrice,
+      color: color,
+      size: size,
+   };
+
+   await addToCart(params);
+};
 </script>
 
 <template>
@@ -46,8 +76,15 @@ const emit = defineEmits<{
                </div>
             </div>
             <div class="details">
-               <h3>{{ item.collection }}</h3>
-               <h2>{{ item.title }}</h2>
+               <div class="container">
+                  <div class="left">
+                     <h3>{{ item.collection }}</h3>
+                     <h2>{{ item.title }}</h2>
+                  </div>
+                  <div class="right">
+                     <QuantitySelector v-model="quantities[item.id]" />
+                  </div>
+               </div>
 
                <div v-for="option in item.options" :key="option.name">
                   <p class="label">
@@ -85,10 +122,7 @@ const emit = defineEmits<{
                   @click="
                      () => {
                         if (areAllOptionsSelected(item)) {
-                           emit('addToCart', {
-                              ...item,
-                              selectedOptions: selectedOptions[item.id],
-                           });
+                           addToCartHandler(item);
                         }
                      }
                   "
@@ -98,15 +132,7 @@ const emit = defineEmits<{
                   </span>
                   Add to Cart
                </button>
-               <button
-                  class="action-button"
-                  @click="
-                     emit('addToFavorites', {
-                        ...item,
-                        selectedOptions: selectedOptions[item.id],
-                     })
-                  "
-               >
+               <button class="action-button" @onClick.prevent="addToFavorites">
                   <span class="icon" id="addToFavorites">
                      <fa icon="heart" />
                   </span>
@@ -144,18 +170,19 @@ const emit = defineEmits<{
 
 .image-container {
    width: 100%;
-   max-height: 200px;
-   min-height: 200px;
+   max-height: 24rem;
+   min-height: 20rem;
    overflow: hidden;
    display: flex;
    justify-content: center;
    align-items: center;
+   background-color: #fff;
 }
 
 .image-container img {
    width: 100%;
    height: auto;
-   object-fit: cover;
+   object-fit: scale-down;
 }
 
 .content-container {
@@ -175,6 +202,21 @@ const emit = defineEmits<{
    font-size: 18px;
    font-family: "Muli", Ubuntu, sans-serif;
    color: var(--color-heading);
+}
+
+.container {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+}
+
+.left {
+   flex: 1;
+}
+
+.right {
+   flex-shrink: 0;
+   margin-left: 20px;
 }
 
 .details {

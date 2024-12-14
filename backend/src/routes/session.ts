@@ -13,6 +13,4 @@ const app: Express = express();
 //   }
 // });
 
-
-
-export default router
+export default router;

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-// @ts-nocheck
 import Navbar from "@/components/common/Navbar.vue";
 import Footer from "@/components/common/Footer.vue";
 import { computed } from "vue";
@@ -11,8 +10,6 @@ const overlay = computed(() => store.overlay);
 
 <template>
    <div>
-      <!--        <div v-html="view"></div>-->
-
       <!-- Navbar Component -->
       <Navbar />
 

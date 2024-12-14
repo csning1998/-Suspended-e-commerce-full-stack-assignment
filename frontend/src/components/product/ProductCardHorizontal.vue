@@ -187,6 +187,7 @@ const addToCartHandler = async (item: Products): Promise<void> => {
    position: relative;
    overflow: hidden;
    aspect-ratio: 4 / 3;
+   background-color: #fff;
 }
 
 .left img {

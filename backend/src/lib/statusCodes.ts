@@ -156,28 +156,26 @@ export const statusCodes = {
     },
 };
 
-
 export function errorCreator(error: any) {
-    const err: any = new Error(error.message)
-    err.status = error.code
-    return err
+    const err: any = new Error(error.message);
+    err.status = error.code;
+    return err;
 }
 
-export function responseCreator (
+export function responseCreator(
     res: Response,
     response: any,
     payload: any,
 ): Response<any, Record<string, any>> {
-
     const output = {
-        ...payload
-    }
+        ...payload,
+    };
 
-    if(!output.message && response.message) {
-        output.message = response.message
+    if (!output.message && response.message) {
+        output.message = response.message;
     }
     return res.status(response.code).json(output);
-};
+}
 /*
  * status code using OOP method. error code case
  * may consider refine it to be compatible with all status codes.

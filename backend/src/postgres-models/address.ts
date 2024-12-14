@@ -17,11 +17,15 @@ Address.init(
         },
         state: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
         },
         city: {
             type: DataTypes.STRING,
             allowNull: false,
+        },
+        district: {
+            type: DataTypes.STRING,
+            allowNull: true,
         },
         street: {
             type: DataTypes.STRING,

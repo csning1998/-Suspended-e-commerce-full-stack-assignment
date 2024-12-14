@@ -21,12 +21,11 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
         //     : { state: true };
         // const products: any = await ProductModel.find(query);
 
-
         const products = await ProductModel.find();
 
         res.json({
-            payload: products
-        })
+            payload: products,
+        });
 
         // HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_BULK.code, {
         //     products,
