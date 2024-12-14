@@ -136,3 +136,6 @@ mongo
 
 frontend/vite.config.ts*
 .idea
+
+
+deploy*.sh
