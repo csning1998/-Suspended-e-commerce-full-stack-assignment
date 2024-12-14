@@ -1,271 +1,92 @@
 import User from "./postgres-models/user";
 import ProductModel from "./mongo-models/product";
 // import mock from '../../mock/products'
+import mongoose from "mongoose";
+import mockProducts from "./mockProducts.json";
 
-const mock = [
-    {
-        id: 1,
-        brand: "Google LLC",
-        link2Pic:
-            "https://m.media-amazon.com/images/I/61vp97LSYFL._AC_SL1500_.jpg",
-        basePrice: 995.0,
-        discountPrice: 1005.0,
-        collection: "Mobile Phone",
-        title: "Pixel 9 Series",
-        options: [
-            {
-                name: "Size",
-                values: [
-                    { value: 128, priceAdj: 0 },
-                    { value: 256, priceAdj: 100 },
-                    { value: 512, priceAdj: 200 },
-                    { value: 1024, priceAdj: 400 },
-                ],
-            },
-            {
-                name: "Color",
-                values: [
-                    { value: "Porcelain" },
-                    { value: "Hazel" },
-                    { value: "Obsidian" },
-                    { value: "Rose Quartz" },
-                ],
-            },
-        ],
-    },
-    {
-        id: 2,
-        brand: "Google LLC",
-        link2Pic:
-            "https://m.media-amazon.com/images/I/81JV1TrIGlL._AC_SL1500_.jpg",
-        basePrice: 574,
-        discountPrice: 459,
-        collection: "Tablets",
-        title: "Pixel Tablet with Speaker Dock",
-        options: [
-            {
-                name: "Size",
-                values: [
-                    { value: 128, priceAdj: 0 },
-                    { value: 256, priceAdj: 100 },
-                ],
-            },
-            {
-                name: "Color",
-                values: [
-                    { value: "Porcelain" },
-                    { value: "Hazel" },
-                    { value: "Rose" },
-                ],
-            },
-        ],
-    },
-    {
-        id: 3,
-        brand: "Google LLC",
-        link2Pic:
-            "https://m.media-amazon.com/images/I/61iVGS1pGIL._AC_SL1500_.jpg",
-        basePrice: 349,
-        discountPrice: 299,
-        collection: "Wearables",
-        title: "Pixel Watch 2",
-        options: [
-            {
-                name: "Size",
-                values: [
-                    { value: "L", priceAdj: 0 },
-                    { value: "XL", priceAdj: 50 },
-                ],
-            },
-            {
-                name: "Color",
-                values: [
-                    { value: "Matte Black" },
-                    { value: "Polished Silver" },
-                    { value: "Champagne Gold" },
-                ],
-            },
-        ],
-    },
-    {
-        id: 4,
-        brand: "Google LLC",
-        link2Pic:
-            "https://m.media-amazon.com/images/I/610C3ekZPTL._AC_SL1500_.jpg",
-        basePrice: 199,
-        discountPrice: 179,
-        collection: "Home Devices",
-        title: "Nest Hub Max",
-        options: [
-            {
-                name: "Color",
-                values: [{ value: "Chalk" }, { value: "Charcoal" }],
-            },
-        ],
-    },
-    {
-        id: 5,
-        brand: "Google LLC",
-        link2Pic:
-            "https://m.media-amazon.com/images/I/71YtvwJl+2L._AC_SL1500_.jpg",
-        basePrice: 129,
-        discountPrice: 109,
-        collection: "Audio",
-        title: "Nest Audio",
-        options: [
-            {
-                name: "Color",
-                values: [
-                    { value: "Sand" },
-                    { value: "Sky" },
-                    { value: "Charcoal" },
-                    { value: "Chalk" },
-                ],
-            },
-        ],
-    },
-    {
-        id: 6,
-        brand: "Microsoft Corporation",
-        link2Pic:
-            "https://m.media-amazon.com/images/I/51h5pB5k3LL._AC_SL1280_.jpg",
-        basePrice: 1399,
-        discountPrice: 627,
-        collection: "Laptops",
-        title: "Surface Laptop 5",
-        options: [
-            {
-                name: "Size",
-                values: [
-                    { value: 256, priceAdj: 0 },
-                    { value: 512, priceAdj: 200 },
-                ],
-            },
-            {
-                name: "Color",
-                values: [
-                    { value: "Platinum" },
-                    { value: "Matte Black" },
-                    { value: "Sandstone" },
-                ],
-            },
-        ],
-    },
-    {
-        id: 7,
-        brand: "Microsoft Corporation",
-        link2Pic:
-            "https://m.media-amazon.com/images/I/51BN5o0rkwL._AC_SL1000_.jpg",
-        basePrice: 1599,
-        discountPrice: 1499,
-        collection: "Tablets",
-        title: "Surface Pro 9",
-        options: [
-            {
-                name: "Size",
-                values: [
-                    { value: 128, priceAdj: 0 },
-                    { value: 256, priceAdj: 100 },
-                    { value: 512, priceAdj: 200 },
-                    { value: 1024, priceAdj: 400 },
-                ],
-            },
-            {
-                name: "Color",
-                values: [
-                    { value: "Platinum" },
-                    { value: "Sapphire" },
-                    { value: "Forest" },
-                    { value: "Graphite" },
-                ],
-            },
-        ],
-    },
-    {
-        id: 8,
-        brand: "Microsoft Corporation",
-        link2Pic:
-            "https://m.media-amazon.com/images/I/61e71pD8y6L._AC_SL1500_.jpg",
-        basePrice: 129,
-        discountPrice: 117,
-        collection: "Accessories",
-        title: "Surface Slim Pen 2",
-        options: [
-            {
-                name: "Color",
-                values: [{ value: "Black" }, { value: "Silver" }],
-            },
-        ],
-    },
-    {
-        id: 9,
-        brand: "Google LLC",
-        link2Pic:
-            "https://m.media-amazon.com/images/I/71NwcH4sdYL._AC_SL1500_.jpg",
-        basePrice: 59,
-        discountPrice: 49,
-        collection: "Audio",
-        title: "Chromecast with Google TV",
-        options: [
-            {
-                name: "Color",
-                values: [
-                    { value: "Snow" },
-                    { value: "Sunrise" },
-                    { value: "Sky" },
-                ],
-            },
-        ],
-    },
-    {
-        id: 10,
-        brand: "Microsoft Corporation",
-        link2Pic:
-            "https://m.media-amazon.com/images/I/41tdV+LJ4uL._AC_SL1000_.jpg",
-        basePrice: 49,
-        discountPrice: 39,
-        collection: "Accessories",
-        title: "Modern Mobile Mouse",
-        options: [
-            {
-                name: "Color",
-                values: [
-                    { value: "Black" },
-                    { value: "White" },
-                    { value: "Blue" },
-                    { value: "Peach" },
-                ],
-            },
-        ],
-    },
-];
+const ObjectId = mongoose.Types.ObjectId;
+const mock = [...mockProducts];
 
 export default async function seed() {
-    console.log("I am seed");
-    // default root account
-    await User.findOrCreate({
-        where: {
-            userId: "root",
-        },
-        defaults: {
-            userPassword: "1qazXSW@",
-            userEmail: "nephew.UncleRoger@noreply.gmail.com",
-            userFamilyName: "root",
-            userGivenName: "root",
-            userPermission: "admin",
-        },
-    });
+    try {
+        console.log("I am seed");
+        // default root account
+        await User.findOrCreate({
+            where: {
+                userId: "GoogleLLC1998",
+            },
+            defaults: {
+                userPassword: "GoogleLLC1998@supplier",
+                userEmail: "Google.LLC@noreply.gmail.com",
+                userFamilyName: "Alphabet",
+                userGivenName: "Google",
+                userPermission: "supplier",
+                userProfilePictureUrl:
+                    "https://cdn1.iconfinder.com/data/icons/google-s-logo/150/Google_Icons-09-512.png",
+            },
+        });
+        await User.findOrCreate({
+            where: {
+                userId: "MicrosoftCop1975",
+            },
+            defaults: {
+                userPassword: "MicrosoftCop1975@supplier",
+                userEmail: "Microsoft.Cop@noreply.gmail.com",
+                userFamilyName: "Microsoft",
+                userGivenName: "Corporation",
+                userPermission: "supplier",
+                userProfilePictureUrl:
+                    "https://pngimg.com/uploads/microsoft/microsoft_PNG5.png",
+            },
+        });
+        await User.findOrCreate({
+            where: {
+                userId: "root",
+            },
+            defaults: {
+                userPassword: "1qazXSW@",
+                userEmail: "nephew.UncleRoger@noreply.gmail.com",
+                userFamilyName: "Uncle",
+                userGivenName: "Roger",
+                userPermission: "admin",
+                userProfilePictureUrl:
+                    "https://yt3.googleusercontent.com/eLCADxKBRj3JGsifnxitZwfsbeV3DDlS3r8SzN5QPT2juw0fTV34T09vIZWfEF3D4JmV2z6hZA=s900-c-k-c0x00ffffff-no-rj",
+            },
+        });
+        // Function to convert string IDs to ObjectId recursively
+        const convertIds = (obj: any): any => {
+            if (Array.isArray(obj)) {
+                return obj.map(convertIds);
+            } else if (obj && typeof obj === "object") {
+                const newObj: any = {};
+                for (const key in obj) {
+                    if (key === "_id" && typeof obj[key] === "string") {
+                        newObj[key] = new ObjectId(obj[key]);
+                    } else {
+                        newObj[key] = convertIds(obj[key]);
+                    }
+                }
+                return newObj;
+            }
+            return obj;
+        };
 
-    // default products
-    // const testProduct = {
-    //   title: 'test product',
-    //   basePrice: 100
-    // }
+        // Convert all IDs in mock data
+        const convertedMock = convertIds(mock);
 
-    mock.forEach(async (_: any) => {
-        const test1 = await ProductModel.find(_);
-        if (test1.length == 0) {
-            await ProductModel.create(test1);
+        // Iterate over each product and insert if it doesn't exist
+        for (const product of convertedMock) {
+            const existingProduct = await ProductModel.findById(product._id);
+            if (!existingProduct) {
+                await ProductModel.create(product);
+                console.log(`Created product with ID ${product._id}`);
+            } else {
+                console.log(`Product with ID ${product._id} already exists.`);
+            }
         }
-    });
+
+        console.log("Seeding completed successfully.");
+    } catch (error) {
+        console.error("Error during seeding:", error);
+    }
 }

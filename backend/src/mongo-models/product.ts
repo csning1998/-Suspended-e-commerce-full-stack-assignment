@@ -3,15 +3,18 @@ import mongoose, { Schema, Document } from "mongoose";
 interface IOptionValue {
     value: number | string;
     priceAdj: number;
+    _id?: string;
 }
 
 interface IProductOptions {
     name: string;
     values: IOptionValue[];
+    _id?: string;
 }
 
 interface IProduct extends Document {
-    supplierId: number;
+    _id: string;
+    supplierID: number | string;
     brand: string;
     link2Pic: string;
     basePrice: number;
@@ -22,7 +25,7 @@ interface IProduct extends Document {
 }
 // https://mongoosejs.com/docs/schematypes.html#:~:text=Buffer%22%2C%22data%22%3A%5B1%2C2%2C3%5D%7D-,Mixed,-An%20%22anything%20goes
 const productSchema: Schema = new Schema<IProduct>({
-    supplierId: { Number },
+    supplierID: { type: Schema.Types.Mixed },
     brand: { type: String },
     link2Pic: { type: String },
     basePrice: { type: Number },
@@ -39,6 +42,7 @@ const productSchema: Schema = new Schema<IProduct>({
                     priceAdj: { type: Number },
                 },
             ],
+            _id: { type: String },
         },
     ],
 });

@@ -1,653 +1,992 @@
-[
-  {
-    "id": 1,
-    "brand": "Google LLC",
-    "supplierID": "",
-    "link2Pic": "https://m.media-amazon.com/images/I/61vp97LSYFL._AC_SL1500_.jpg",
-    "basePrice": 995.0,
-    "discountPrice": 1005.0,
-    "collection": "Mobile Phone",
-    "title": "Pixel 9 Series",
-    "options": [
-      {
-        "name": "Size",
-        "values": [
-          { "value": 128, "priceAdj": 0 },
-          { "value": 256, "priceAdj": 100 },
-          { "value": 512, "priceAdj": 200 },
-          { "value": 1024, "priceAdj": 400 }
-        ]
-      },
-      {
-        "name": "Color",
-        "values": [
-          { "value": "Porcelain" },
-          { "value": "Hazel" },
-          { "value": "Obsidian" },
-          { "value": "Rose Quartz" }
-        ]
-      }
-    ]
+[{
+  "_id": {
+    "$oid": "675d4e57fe39796c1e35092c"
   },
-  {
-    "id": 2,
-    "brand": "Google LLC",
-    "supplierID": "",
-    "link2Pic": "https://m.media-amazon.com/images/I/81JV1TrIGlL._AC_SL1500_.jpg",
-    "basePrice": 574,
-    "discountPrice": 459,
-    "collection": "Tablets",
-    "title": "Pixel Tablet with Speaker Dock",
-    "options": [
-      {
-        "name": "Size",
-        "values": [
-          { "value": 128, "priceAdj": 0 },
-          { "value": 256, "priceAdj": 100 }
-        ]
-      },
-      {
-        "name": "Color",
-        "values": [
-          { "value": "Porcelain" },
-          { "value": "Hazel" },
-          { "value": "Rose" }
-        ]
+  "brand": "Google LLC",
+  "supplierID": 3,
+  "link2Pic": "https://m.media-amazon.com/images/I/61vp97LSYFL._AC_SL1500_.jpg",
+  "basePrice": 990,
+  "discountPrice": 10000,
+  "collection": "Mobile Phone",
+  "title": "Pixel 9 Series 123",
+  "options": [
+    {
+      "name": "Size",
+      "values": [
+        {
+          "value": 128,
+          "priceAdj": 0,
+          "_id": {
+            "$oid": "675d7c8e8394016b0719419e"
+          }
+        },
+        {
+          "value": 256,
+          "priceAdj": 300,
+          "_id": {
+            "$oid": "675d7c8e8394016b0719419f"
+          }
+        },
+        {
+          "value": 512,
+          "priceAdj": 600,
+          "_id": {
+            "$oid": "675d7c8e8394016b071941a0"
+          }
+        },
+        {
+          "value": 1024,
+          "priceAdj": 1234,
+          "_id": {
+            "$oid": "675d7e882adba3df2ac6e6bf"
+          }
+        }
+      ],
+      "_id": {
+        "$oid": "675d80cf32f45ea21224f1e3"
       }
-    ]
+    },
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Porcelain",
+          "_id": {
+            "$oid": "675d7c8e8394016b071941a3"
+          }
+        },
+        {
+          "value": "Hazel",
+          "_id": {
+            "$oid": "675d7c8e8394016b071941a4"
+          }
+        },
+        {
+          "value": "Obsidian",
+          "_id": {
+            "$oid": "675d7c8e8394016b071941a5"
+          }
+        }
+      ],
+      "_id": {
+        "$oid": "675d80cf32f45ea21224f1e8"
+      }
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d4e57fe39796c1e35092d"
   },
-  {
-    "id": 3,
-    "brand": "Google LLC",
-    "supplierID": "",
-    "link2Pic": "https://m.media-amazon.com/images/I/61iVGS1pGIL._AC_SL1500_.jpg",
-    "basePrice": 349,
-    "discountPrice": 299,
-    "collection": "Wearables",
-    "title": "Pixel Watch 2",
-    "options": [
-      {
-        "name": "Size",
-        "values": [
-          { "value": "L", "priceAdj": 0 },
-          { "value": "XL", "priceAdj": 50 }
-        ]
-      },
-      {
-        "name": "Color",
-        "values": [
-          { "value": "Matte Black" },
-          { "value": "Polished Silver" },
-          { "value": "Champagne Gold" }
-        ]
-      }
-    ]
+  "brand": "Google LLC",
+  "supplierID": 3,
+  "link2Pic": "https://m.media-amazon.com/images/I/81JV1TrIGlL._AC_SL1500_.jpg",
+  "basePrice": 574,
+  "discountPrice": 459,
+  "collection": "Tablets",
+  "title": "Pixel Tablet with Speaker Dock",
+  "options": [
+    {
+      "name": "Size",
+      "values": [
+        {
+          "value": 128,
+          "priceAdj": 0
+        },
+        {
+          "value": 256,
+          "priceAdj": 100
+        }
+      ]
+    },
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Porcelain"
+        },
+        {
+          "value": "Hazel"
+        },
+        {
+          "value": "Rose"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d4e57fe39796c1e35092e"
   },
-  {
-    "id": 4,
-    "brand": "Google LLC",
-    "supplierID": "",
-    "link2Pic": "https://m.media-amazon.com/images/I/610C3ekZPTL._AC_SL1500_.jpg",
-    "basePrice": 199,
-    "discountPrice": 179,
-    "collection": "Home Devices",
-    "title": "Nest Hub Max",
-    "options": [
-      {
-        "name": "Color",
-        "values": [{ "value": "Chalk" }, { "value": "Charcoal" }]
-      }
-    ]
+  "brand": "Google LLC",
+  "supplierID": 3,
+  "link2Pic": "https://m.media-amazon.com/images/I/61iVGS1pGIL._AC_SL1500_.jpg",
+  "basePrice": 349,
+  "discountPrice": 299,
+  "collection": "Wearables",
+  "title": "Pixel Watch 2",
+  "options": [
+    {
+      "name": "Size",
+      "values": [
+        {
+          "value": "L",
+          "priceAdj": 0
+        },
+        {
+          "value": "XL",
+          "priceAdj": 50
+        }
+      ]
+    },
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Matte Black"
+        },
+        {
+          "value": "Polished Silver"
+        },
+        {
+          "value": "Champagne Gold"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d4e57fe39796c1e35092f"
   },
-  {
-    "id": 5,
-    "brand": "Google LLC",
-    "supplierID": "",
-
-    "link2Pic": "https://m.media-amazon.com/images/I/71YtvwJl+2L._AC_SL1500_.jpg",
-    "basePrice": 129,
-    "discountPrice": 109,
-    "collection": "Audio",
-    "title": "Nest Audio",
-    "options": [
-      {
-        "name": "Color",
-        "values": [
-          { "value": "Sand" },
-          { "value": "Sky" },
-          { "value": "Charcoal" },
-          { "value": "Chalk" }
-        ]
-      }
-    ]
+  "brand": "Google LLC",
+  "supplierID": 3,
+  "link2Pic": "https://m.media-amazon.com/images/I/610C3ekZPTL._AC_SL1500_.jpg",
+  "basePrice": 199,
+  "discountPrice": 179,
+  "collection": "Home Devices",
+  "title": "Nest Hub Max",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Chalk"
+        },
+        {
+          "value": "Charcoal"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d4e57fe39796c1e350930"
   },
-  {
-    "id": 6,
-    "brand": "Microsoft Corporation",
-    "supplierID": "",
-    "link2Pic": "https://m.media-amazon.com/images/I/51h5pB5k3LL._AC_SL1280_.jpg",
-    "basePrice": 1399,
-    "discountPrice": 627,
-    "collection": "Laptops",
-    "title": "Surface Laptop 5",
-    "options": [
-      {
-        "name": "Size",
-        "values": [
-          { "value": 256, "priceAdj": 0 },
-          { "value": 512, "priceAdj": 200 }
-        ]
-      },
-      {
-        "name": "Color",
-        "values": [
-          { "value": "Platinum" },
-          { "value": "Matte Black" },
-          { "value": "Sandstone" }
-        ]
-      }
-    ]
+  "brand": "Google LLC",
+  "supplierID": 3,
+  "link2Pic": "https://m.media-amazon.com/images/I/71YtvwJl+2L._AC_SL1500_.jpg",
+  "basePrice": 129,
+  "discountPrice": 109,
+  "collection": "Audio",
+  "title": "Nest Audio",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Sand"
+        },
+        {
+          "value": "Sky"
+        },
+        {
+          "value": "Charcoal"
+        },
+        {
+          "value": "Chalk"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d4e57fe39796c1e350931"
   },
-  {
-    "id": 7,
-    "brand": "Microsoft Corporation",
-    "supplierID": "",
-    "link2Pic": "https://m.media-amazon.com/images/I/51BN5o0rkwL._AC_SL1000_.jpg",
-    "basePrice": 1599,
-    "discountPrice": 1499,
-    "collection": "Tablets",
-    "title": "Surface Pro 9",
-    "options": [
-      {
-        "name": "Size",
-        "values": [
-          { "value": 128, "priceAdj": 0 },
-          { "value": 256, "priceAdj": 100 },
-          { "value": 512, "priceAdj": 200 },
-          { "value": 1024, "priceAdj": 400 }
-        ]
-      },
-      {
-        "name": "Color",
-        "values": [
-          { "value": "Platinum" },
-          { "value": "Sapphire" },
-          { "value": "Forest" },
-          { "value": "Graphite" }
-        ]
-      }
-    ]
+  "brand": "Microsoft Corporation",
+  "supplierID": 5,
+  "link2Pic": "https://m.media-amazon.com/images/I/51h5pB5k3LL._AC_SL1280_.jpg",
+  "basePrice": 1399,
+  "discountPrice": 627,
+  "collection": "Laptops",
+  "title": "Surface Laptop 5",
+  "options": [
+    {
+      "name": "Size",
+      "values": [
+        {
+          "value": 256,
+          "priceAdj": 0
+        },
+        {
+          "value": 512,
+          "priceAdj": 200
+        }
+      ]
+    },
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Platinum"
+        },
+        {
+          "value": "Matte Black"
+        },
+        {
+          "value": "Sandstone"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d4e57fe39796c1e350932"
   },
-  {
-    "id": 8,
-    "brand": "Microsoft Corporation",
-    "supplierID": "",
-    "link2Pic": "https://m.media-amazon.com/images/I/61e71pD8y6L._AC_SL1500_.jpg",
-    "basePrice": 129,
-    "discountPrice": 117,
-    "collection": "Accessories",
-    "title": "Surface Slim Pen 2",
-    "options": [
-      {
-        "name": "Color",
-        "values": [{ "value": "Black" }, { "value": "Silver" }]
-      }
-    ]
+  "brand": "Microsoft Corporation",
+  "supplierID": 5,
+  "link2Pic": "https://m.media-amazon.com/images/I/51BN5o0rkwL._AC_SL1000_.jpg",
+  "basePrice": 1599,
+  "discountPrice": 1499,
+  "collection": "Tablets",
+  "title": "Surface Pro 9",
+  "options": [
+    {
+      "name": "Size",
+      "values": [
+        {
+          "value": 128,
+          "priceAdj": 0
+        },
+        {
+          "value": 256,
+          "priceAdj": 100
+        },
+        {
+          "value": 512,
+          "priceAdj": 200
+        },
+        {
+          "value": 1024,
+          "priceAdj": 400
+        }
+      ]
+    },
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Platinum"
+        },
+        {
+          "value": "Sapphire"
+        },
+        {
+          "value": "Forest"
+        },
+        {
+          "value": "Graphite"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d4e57fe39796c1e350933"
   },
-  {
-    "id": 9,
-    "brand": "Google LLC",
-    "supplierID": "",
-    "link2Pic": "https://m.media-amazon.com/images/I/71NwcH4sdYL._AC_SL1500_.jpg",
-    "basePrice": 59,
-    "discountPrice": 49,
-    "collection": "Audio",
-    "title": "Chromecast with Google TV",
-    "options": [
-      {
-        "name": "Color",
-        "values": [
-          { "value": "Snow" },
-          { "value": "Sunrise" },
-          { "value": "Sky" }
-        ]
-      }
-    ]
+  "brand": "Microsoft Corporation",
+  "supplierID": 5,
+  "link2Pic": "https://m.media-amazon.com/images/I/61e71pD8y6L._AC_SL1500_.jpg",
+  "basePrice": 129,
+  "discountPrice": 117,
+  "collection": "Accessories",
+  "title": "Surface Slim Pen 2",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Black"
+        },
+        {
+          "value": "Silver"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d4e57fe39796c1e350934"
   },
-  {
-    "id": 10,
-    "brand": "Microsoft Corporation",
-    "supplierID": "",
-    "link2Pic": "https://m.media-amazon.com/images/I/41tdV+LJ4uL._AC_SL1000_.jpg",
-    "basePrice": 49,
-    "discountPrice": 39,
-    "collection": "Accessories",
-    "title": "Modern Mobile Mouse",
-    "options": [
-      {
-        "name": "Color",
-        "values": [
-          { "value": "Black" },
-          { "value": "White" },
-          { "value": "Blue" },
-          { "value": "Peach" }
-        ]
-      }
-    ]
+  "brand": "Google LLC",
+  "supplierID": 3,
+  "link2Pic": "https://m.media-amazon.com/images/I/71NwcH4sdYL._AC_SL1500_.jpg",
+  "basePrice": 59,
+  "discountPrice": 49,
+  "collection": "Audio",
+  "title": "Chromecast with Google TV",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Snow"
+        },
+        {
+          "value": "Sunrise"
+        },
+        {
+          "value": "Sky"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d4e57fe39796c1e350935"
   },
-  {
-    "id": 11,
-    "brand": "Chanel",
-    "supplierID": "CH1234",
-    "link2Pic": "https://www.chanel.com/images//t_one///q_auto:good,f_auto,fl_lossy,dpr_1.1/w_1920/coco-crush-ring-white-white-gold-packshot-portee-j10570-9553422680094.jpg%201920w",
-    "basePrice": 5800.00,
-    "discountPrice": 5500.00,
-    "collection": "Handbag",
-    "title": "Chanel Classic Flap Bag",
-    "options": [
-      {
-        "name": "Color",
-        "values": [
-          { "value": "Black" },
-          { "value": "Beige" },
-          { "value": "Red" },
-          { "value": "White"}
-        ]
-      },
-      {
-        "name": "Size",
-        "values":[
-          {"value":"Small", "priceAdj":0},
-          {"value":"Medium", "priceAdj": 500},
-          {"value":"Large", "priceAdj":1000}
-        ]
-      }
-    ]
+  "brand": "Microsoft Corporation",
+  "supplierID": 5,
+  "link2Pic": "https://m.media-amazon.com/images/I/41tdV+LJ4uL._AC_SL1000_.jpg",
+  "basePrice": 49,
+  "discountPrice": 39,
+  "collection": "Accessories",
+  "title": "Modern Mobile Mouse",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Black"
+        },
+        {
+          "value": "White"
+        },
+        {
+          "value": "Blue"
+        },
+        {
+          "value": "Peach"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e350937"
   },
-  {
-    "id": 12,
-    "brand": "Chanel",
-    "supplierID": "CH1235",
-    "link2Pic": "https://www.chanel.com/images/t_one/w_1200/q_80/c_scale,f_auto/v1689662663/p_1689662663/J11818_1.jpg",
-    "basePrice": 650.00,
-    "discountPrice": 600.00,
-    "collection": "Jewelry",
-    "title": "Chanel Coco Crush Ring",
-    "options": [
-      {
-        "name": "Material",
-        "values":[
-          {"value":"Yellow Gold"},
-          {"value":"White Gold"},
-          {"value":"Beige Gold"}
-        ]
-      },
-      {
-        "name":"Size",
-        "values":[
-          {"value":"50"},
-          {"value":"52"},
-          {"value":"54"},
-          {"value":"56"}
-        ]
-      }
-    ]
+  "brand": "Chanel",
+  "supplierID": "CH1234",
+  "link2Pic": "https://www.chanel.com/images///f_auto,q_auto:good,dpr_1.1/w_3200/-9543206928414.jpg%203200w",
+  "basePrice": 5800,
+  "discountPrice": 5500,
+  "collection": "Handbag",
+  "title": "Classic Flap Bag",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Black"
+        },
+        {
+          "value": "Beige"
+        },
+        {
+          "value": "Red"
+        },
+        {
+          "value": "White"
+        }
+      ]
+    },
+    {
+      "name": "Size",
+      "values": [
+        {
+          "value": "Small",
+          "priceAdj": 0
+        },
+        {
+          "value": "Medium",
+          "priceAdj": 500
+        },
+        {
+          "value": "Large",
+          "priceAdj": 1000
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e350938"
   },
-  {
-    "id": 13,
-    "brand": "Hermès",
-    "supplierID": "HM2345",
-    "link2Pic": "https://assets.hermes.com/is/image/hermesproduct/hermes-h08%E8%85%95%E9%8C%B642mm--049433WW00-front-1-300-0-800-800_g.jpg",
-    "basePrice": 7800.00,
-    "discountPrice": 7500.00,
-    "collection": "Watch",
-    "title": "Hermès H08 Watch",
-    "options":[
-      {
-        "name":"Strap Color",
-        "values":[
-          {"value":"Black"},
-          {"value":"Brown"},
-          {"value":"Navy"}
-        ]
-      },
-      {
-        "name":"Dial",
-        "values":[
-          {"value":"Black"},
-          {"value":"Silver"},
-          {"value":"Blue"}
-        ]
-      }
-    ]
+  "brand": "Chanel",
+  "supplierID": "CH1235",
+  "link2Pic": "https://www.chanel.com/images//t_one///q_auto:good,f_auto,fl_lossy,dpr_1.1/w_1920/coco-crush-ring-white-white-gold-packshot-portee-j10570-9553422680094.jpg%201920w",
+  "basePrice": 650,
+  "discountPrice": 600,
+  "collection": "Jewelry",
+  "title": "Coco Crush Ring",
+  "options": [
+    {
+      "name": "Material",
+      "values": [
+        {
+          "value": "Yellow Gold"
+        },
+        {
+          "value": "White Gold"
+        },
+        {
+          "value": "Beige Gold"
+        }
+      ]
+    },
+    {
+      "name": "Size",
+      "values": [
+        {
+          "value": "50"
+        },
+        {
+          "value": "52"
+        },
+        {
+          "value": "54"
+        },
+        {
+          "value": "56"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e350939"
   },
-  {
-    "id": 14,
-    "brand": "Hermès",
-    "supplierID": "HM2346",
-    "link2Pic": "https://assets.hermes.com/is/image/hermesproduct/la-danse-des-amazones-scarf-90--003535S%2001-flat-1-300-0-800-800_g.jpg",
-    "basePrice": 490.00,
-    "discountPrice": 450.00,
-    "collection": "Scarf",
-    "title": "Hermès La Danse Carré 90 Scarf",
-    "options":[
-      {
-        "name":"Color",
-        "values":[
-          {"value":"Multi"},
-          {"value":"Blue"},
-          {"value":"Red"}
-        ]
-      }
-    ]
+  "brand": "Hermès",
+  "supplierID": "HM2345",
+  "link2Pic": "https://assets.hermes.com/is/image/hermesproduct/hermes-h08%E8%85%95%E9%8C%B642mm--049433WW00-front-1-300-0-800-800_g.jpg",
+  "basePrice": 7800,
+  "discountPrice": 7500,
+  "collection": "Watch",
+  "title": "H08 Watch",
+  "options": [
+    {
+      "name": "Strap Color",
+      "values": [
+        {
+          "value": "Black"
+        },
+        {
+          "value": "Brown"
+        },
+        {
+          "value": "Navy"
+        }
+      ]
+    },
+    {
+      "name": "Dial",
+      "values": [
+        {
+          "value": "Black"
+        },
+        {
+          "value": "Silver"
+        },
+        {
+          "value": "Blue"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e35093a"
   },
-  {
-    "id": 15,
-    "brand":"Bottega Veneta",
-    "supplierID":"BV3456",
-    "link2Pic": "https://bottega-veneta.dam.kering.com/m/643361581605bb59/Large-651876VCPP52122_A.jpg?v=1",
-    "basePrice": 3500.00,
-    "discountPrice": 3200.00,
-    "collection":"Handbag",
-    "title":"Bottega Veneta Jodie Bag",
-    "options":[
-      {
-        "name":"Color",
-        "values":[
-          {"value":"Black"},
-          {"value":"White"},
-          {"value":"Green"},
-          {"value":"Brown"}
-        ]
-      },
-      {
-        "name":"Size",
-        "values":[
-          {"value":"Mini", "priceAdj":0},
-          {"value":"Small", "priceAdj":200},
-          {"value":"Medium", "priceAdj":400}
-        ]
-      }
-    ]
+  "brand": "Hermès",
+  "supplierID": "HM2346",
+  "link2Pic": "https://assets.hermes.com/is/image/hermesproduct/la-danse-des-amazones-scarf-90--003535S%2001-flat-1-300-0-800-800_g.jpg",
+  "basePrice": 490,
+  "discountPrice": 450,
+  "collection": "Scarf",
+  "title": "La Danse Carré 90 Scarf",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Multi"
+        },
+        {
+          "value": "Blue"
+        },
+        {
+          "value": "Red"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e35093b"
   },
-  {
-    "id": 16,
-    "brand":"Bottega Veneta",
-    "supplierID":"BV3457",
-    "link2Pic": "https://bottega-veneta.dam.kering.com/m/7951b866d80e3f7b/Large-742698V4KW29890_B.jpg?v=2",
-    "basePrice": 750.00,
-    "discountPrice": 700.00,
-    "collection":"Wallet",
-    "title":"Bottega Veneta Intrecciato Wallet",
-    "options":[
-      {
-        "name":"Color",
-        "values":[
-          {"value":"Black"},
-          {"value":"Brown"},
-          {"value":"Navy"},
-          {"value":"Green"}
-        ]
-      }
-    ]
+  "brand": "Bottega Veneta",
+  "supplierID": "BV3456",
+  "link2Pic": "https://bottega-veneta.dam.kering.com/m/643361581605bb59/Large-651876VCPP52122_A.jpg?v=1",
+  "basePrice": 3500,
+  "discountPrice": 3200,
+  "collection": "Handbag",
+  "title": "Jodie Bag",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Black"
+        },
+        {
+          "value": "White"
+        },
+        {
+          "value": "Green"
+        },
+        {
+          "value": "Brown"
+        }
+      ]
+    },
+    {
+      "name": "Size",
+      "values": [
+        {
+          "value": "Mini",
+          "priceAdj": 0
+        },
+        {
+          "value": "Small",
+          "priceAdj": 200
+        },
+        {
+          "value": "Medium",
+          "priceAdj": 400
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e35093c"
   },
-  {
-    "id": 17,
-    "brand": "Chanel",
-    "supplierID": "CH1236",
-    "link2Pic": "https://chanel.com/images//t_one/t_fashion9//b_rgb:F7F7F7,e_brightness:-3/q_auto:good,f_autoplus,fl_lossy,dpr_1.1/w_840/oval-sunglasses-black-pink-acetate-acetate-packshot-default-a71341x08101s4117-9516320915486.jpg",
-    "basePrice": 450.00,
-    "discountPrice": 400.00,
-    "collection": "Eyewear",
-    "title": "Chanel Sunglasses",
-    "options":[
-      {
-        "name": "Frame Color",
-        "values":[
-          {"value":"Black"},
-          {"value":"Brown"},
-          {"value":"Gold"}
-        ]
-      },
-      {
-        "name":"Lens Color",
-        "values":[
-          {"value":"Black"},
-          {"value":"Brown"},
-          {"value":"Grey"}
-        ]
-      }
-    ]
+  "brand": "Bottega Veneta",
+  "supplierID": "BV3457",
+  "link2Pic": "https://bottega-veneta.dam.kering.com/m/7951b866d80e3f7b/Large-742698V4KW29890_B.jpg?v=2",
+  "basePrice": 750,
+  "discountPrice": 700,
+  "collection": "Wallet",
+  "title": "Bottega Veneta Intrecciato Wallet",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Black"
+        },
+        {
+          "value": "Brown"
+        },
+        {
+          "value": "Navy"
+        },
+        {
+          "value": "Green"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e35093d"
   },
-  {
-    "id": 18,
-    "brand": "Hermès",
-    "supplierID": "HM2347",
-    "link2Pic": "https://madisonavenuecouture.com/cdn/shop/files/H-SCAO-240919-3-01_b3770126-b53f-4fd8-98a2-5468d51dc457_1024x1024.jpg?v=1727732849",
-    "basePrice": 250.00,
-    "discountPrice": 220.00,
-    "collection": "Accessory",
-    "title": "Hermès Twilly Silk Scarf",
-    "options":[
-      {
-        "name":"Color",
-        "values":[
-          {"value":"Multi"},
-          {"value":"Pink"},
-          {"value":"Blue"}
-        ]
-      }
-    ]
+  "brand": "Chanel",
+  "supplierID": "CH1236",
+  "link2Pic": "https://chanel.com/images//t_one/t_fashion9//b_rgb:F7F7F7,e_brightness:-3/q_auto:good,f_autoplus,fl_lossy,dpr_1.1/w_840/oval-sunglasses-black-pink-acetate-acetate-packshot-default-a71341x08101s4117-9516320915486.jpg",
+  "basePrice": 450,
+  "discountPrice": 400,
+  "collection": "Eyewear",
+  "title": "Sunglasses",
+  "options": [
+    {
+      "name": "Frame Color",
+      "values": [
+        {
+          "value": "Black"
+        },
+        {
+          "value": "Brown"
+        },
+        {
+          "value": "Gold"
+        }
+      ]
+    },
+    {
+      "name": "Lens Color",
+      "values": [
+        {
+          "value": "Black"
+        },
+        {
+          "value": "Brown"
+        },
+        {
+          "value": "Grey"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e35093e"
   },
-  {
-    "id": 19,
-    "brand": "Bottega Veneta",
-    "supplierID": "BV3458",
-    "link2Pic": "https://img.ssensemedia.com/images/f_auto,c_limit,h_2800,w_1725/212798F121009_1/bottega-veneta-croc-wedge-heels.jpg",
-    "basePrice": 900.00,
-    "discountPrice": 850.00,
-    "collection": "Shoes",
-    "title": "Bottega Veneta Lagoon Clogs",
-    "options":[
-      {
-        "name": "Color",
-        "values":[
-          {"value":"Black"},
-          {"value":"Green"},
-          {"value":"Brown"}
-        ]
-      },
-      {
-        "name": "Size",
-        "values":[
-          {"value":"35"},
-          {"value":"36"},
-          {"value":"37"},
-          {"value":"38"},
-          {"value":"39"},
-          {"value":"40"},
-          {"value":"41"}
-        ]
-      }
-    ]
+  "brand": "Hermès",
+  "supplierID": "HM2347",
+  "link2Pic": "https://madisonavenuecouture.com/cdn/shop/files/H-SCAO-240919-3-01_b3770126-b53f-4fd8-98a2-5468d51dc457_1024x1024.jpg?v=1727732849",
+  "basePrice": 250,
+  "discountPrice": 220,
+  "collection": "Accessory",
+  "title": "Twilly Silk Scarf",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Multi"
+        },
+        {
+          "value": "Pink"
+        },
+        {
+          "value": "Blue"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e35093f"
   },
-  {
-    "id": 20,
-    "brand": "Chanel",
-    "supplierID": "CH1237",
-    "link2Pic":"https://www.chanel.com/images//t_one///q_auto:good,f_autoplus,fl_lossy,dpr_1.1/w_840/j12-couture-watch-38mm-black-gold-black-ceramic-steel-packshot-default-h9762-9553439260702.jpg",
-    "basePrice": 4200.00,
-    "discountPrice": 4000.00,
-    "collection": "Jewelry",
-    "title": "Chanel J12 Watch",
-    "options":[
-      {
-        "name": "Color",
-        "values":[
-          {"value": "Black"},
-          {"value":"White"},
-          {"value":"Beige"}
-        ]
-      },
-      {
-        "name":"Size",
-        "values":[
-          {"value":"33mm", "priceAdj":0},
-          {"value":"38mm", "priceAdj": 500}
-        ]
-      }
-    ]
+  "brand": "Bottega Veneta",
+  "supplierID": "BV3458",
+  "link2Pic": "https://img.ssensemedia.com/images/f_auto,c_limit,h_2800,w_1725/212798F121009_1/bottega-veneta-croc-wedge-heels.jpg",
+  "basePrice": 900,
+  "discountPrice": 850,
+  "collection": "Shoes",
+  "title": "Lagoon Clogs",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Black"
+        },
+        {
+          "value": "Green"
+        },
+        {
+          "value": "Brown"
+        }
+      ]
+    },
+    {
+      "name": "Size",
+      "values": [
+        {
+          "value": "35"
+        },
+        {
+          "value": "36"
+        },
+        {
+          "value": "37"
+        },
+        {
+          "value": "38"
+        },
+        {
+          "value": "39"
+        },
+        {
+          "value": "40"
+        },
+        {
+          "value": "41"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e350940"
   },
-  {
-    "id": 21,
-    "brand": "Hermès",
-    "supplierID": "HM2348",
-    "link2Pic": "https://assets.hermes.com/is/image/hermesedito/P_11_KELLY_PRODUIT_1?fit=wrap%2C0&wid=768",
-    "basePrice": 12000.00,
-    "discountPrice": 11500.00,
-    "collection": "Handbag",
-    "title": "Hermès Kelly 28 Bag",
-    "options":[
-      {
-        "name":"Color",
-        "values":[
-          {"value":"Black"},
-          {"value":"Orange"},
-          {"value":"Etoupe"},
-          {"value":"Rose"}
-        ]
-      },
-      {
-        "name":"Hardware",
-        "values":[
-          {"value":"Gold"},
-          {"value":"Silver"}
-        ]
-      }
-    ]
+  "brand": "Chanel",
+  "supplierID": "CH1237",
+  "link2Pic": "https://www.chanel.com/images//t_one///q_auto:good,f_autoplus,fl_lossy,dpr_1.1/w_840/j12-couture-watch-38mm-black-gold-black-ceramic-steel-packshot-default-h9762-9553439260702.jpg",
+  "basePrice": 4200,
+  "discountPrice": 4000,
+  "collection": "Jewelry",
+  "title": "J12 Watch",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Black"
+        },
+        {
+          "value": "White"
+        },
+        {
+          "value": "Beige"
+        }
+      ]
+    },
+    {
+      "name": "Size",
+      "values": [
+        {
+          "value": "33mm",
+          "priceAdj": 0
+        },
+        {
+          "value": "38mm",
+          "priceAdj": 500
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e350941"
   },
-  {
-    "id": 22,
-    "brand": "Bottega Veneta",
-    "supplierID": "BV3459",
-    "link2Pic": "https://bottega-veneta.dam.kering.com/m/b9548e1089d9ee3/Large-796783V4LQ14028_B.jpg?v=1",
-    "basePrice": 650.00,
-    "discountPrice": 600.00,
-    "collection": "Belt",
-    "title": "Bottega Veneta Leather Belt",
-    "options":[
-      {
-        "name":"Color",
-        "values":[
-          {"value":"Black"},
-          {"value":"Brown"},
-          {"value":"Navy"}
-        ]
-      },
-      {
-        "name": "Size",
-        "values":[
-          {"value":"80"},
-          {"value":"85"},
-          {"value":"90"},
-          {"value":"95"},
-          {"value":"100"}
-        ]
-      }
-    ]
+  "brand": "Hermès",
+  "supplierID": "HM2348",
+  "link2Pic": "https://assets.hermes.com/is/image/hermesedito/P_11_KELLY_PRODUIT_1?fit=wrap%2C0&wid=768",
+  "basePrice": 12000,
+  "discountPrice": 11500,
+  "collection": "Handbag",
+  "title": "28 Bag",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Black"
+        },
+        {
+          "value": "Orange"
+        },
+        {
+          "value": "Etoupe"
+        },
+        {
+          "value": "Rose"
+        }
+      ]
+    },
+    {
+      "name": "Hardware",
+      "values": [
+        {
+          "value": "Gold"
+        },
+        {
+          "value": "Silver"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e350942"
   },
-  {
-    "id": 23,
-    "brand": "Chanel",
-    "supplierID": "CH1238",
-    "link2Pic": "https://thebeautylookbook.com/wp-content/uploads/2022/08/Chanel-Fall-2022-Rouge-Allure-Nudes.jpg",
-    "basePrice": 800.00,
-    "discountPrice": 750.00,
-    "collection": "Cosmetics",
-    "title": "Chanel Rouge Allure Lipstick",
-    "options": [
-      {
-        "name": "Shade",
-        "values": [
-          { "value": "194 Sensibilite" },
-          { "value": "195 Mis A Nu" },
-          { "value": "196 A Demi-Mot" },
-          { "value": "198 Nuance" },
-          { "value": "199 Inattendu" },
-          { "value": "206 Illusion" },
-          { "value": "209 Alter Ego" },
-          { "value": "211 Subtile" },
-          { "value": "212 Caractere" }
-        ]
-      }
-    ]
+  "brand": "Bottega Veneta",
+  "supplierID": "BV3459",
+  "link2Pic": "https://bottega-veneta.dam.kering.com/m/b9548e1089d9ee3/Large-796783V4LQ14028_B.jpg?v=1",
+  "basePrice": 650,
+  "discountPrice": 600,
+  "collection": "Belt",
+  "title": "Leather Belt",
+  "options": [
+    {
+      "name": "Color",
+      "values": [
+        {
+          "value": "Black"
+        },
+        {
+          "value": "Brown"
+        },
+        {
+          "value": "Navy"
+        }
+      ]
+    },
+    {
+      "name": "Size",
+      "values": [
+        {
+          "value": "80"
+        },
+        {
+          "value": "85"
+        },
+        {
+          "value": "90"
+        },
+        {
+          "value": "95"
+        },
+        {
+          "value": "100"
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e350944"
   },
-  {
-    "id": 24,
-    "brand":"Hermès",
-    "supplierID":"HM2349",
-    "link2Pic":"https://assets.hermes.com/is/image/hermesproduct/%E9%BB%91%E6%AA%B8%E6%AA%AC%E5%8F%A4%E9%BE%8D%E6%B0%B4eau-de-citron-noir%E5%8F%A4%E9%BE%8D%E6%B0%B4--40408-worn-2-0-0-800-800_g.jpg",
-    "basePrice": 200.00,
-    "discountPrice": 180.00,
-    "collection":"Fragrance",
-    "title":"Hermès Eau de Citron Noir",
-    "options":[
-      {
-        "name":"Size",
-        "values":[
-          {"value":"50ml","priceAdj":0},
-          {"value":"100ml","priceAdj":50}
-        ]
-      }
-    ]
+  "brand": "Hermès",
+  "supplierID": "HM2349",
+  "link2Pic": "https://assets.hermes.com/is/image/hermesproduct/%E9%BB%91%E6%AA%B8%E6%AA%AC%E5%8F%A4%E9%BE%8D%E6%B0%B4eau-de-citron-noir%E5%8F%A4%E9%BE%8D%E6%B0%B4--40408-worn-2-0-0-800-800_g.jpg",
+  "basePrice": 200,
+  "discountPrice": 180,
+  "collection": "Fragrance",
+  "title": "Eau de Citron Noir",
+  "options": [
+    {
+      "name": "Size",
+      "values": [
+        {
+          "value": "50ml",
+          "priceAdj": 0
+        },
+        {
+          "value": "100ml",
+          "priceAdj": 50
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d54f3fe39796c1e350945"
   },
-  {
-    "id": 25,
-    "brand":"Bottega Veneta",
-    "supplierID":"BV3460",
-    "link2Pic":"https://www.mrporter.com/variants/images/1647597298336916/fr/w560_q60.jpg",
-    "basePrice": 450.00,
-    "discountPrice": 400.00,
-    "collection":"Jewelry",
-    "title":"Bottega Veneta Silver Necklace",
-    "options":[
-      {
-        "name":"Length",
-        "values":[
-          {"value":"40cm","priceAdj":0},
-          {"value":"45cm","priceAdj":20},
-          {"value":"50cm","priceAdj":40}
-        ]
-      }
-    ]
+  "brand": "Bottega Veneta",
+  "supplierID": "BV3460",
+  "link2Pic": "https://www.mrporter.com/variants/images/1647597298336916/fr/w560_q60.jpg",
+  "basePrice": 450,
+  "discountPrice": 400,
+  "collection": "Jewelry",
+  "title": "Silver Necklace",
+  "options": [
+    {
+      "name": "Length",
+      "values": [
+        {
+          "value": "40cm",
+          "priceAdj": 0
+        },
+        {
+          "value": "45cm",
+          "priceAdj": 20
+        },
+        {
+          "value": "50cm",
+          "priceAdj": 40
+        }
+      ]
+    }
+  ]
+},
+{
+  "_id": {
+    "$oid": "675d5880fe39796c1e350948"
   },
-  {
-    "id": 26,
-    "brand": "Chanel",
-    "supplierID":"CH1239",
-    "link2Pic":"https://www.chanel.com/images/t_one/w_1200/q_80/c_scale,f_auto/v1692183354/p_1692183354/AS4272B12003NN128_1.jpg",
-    "basePrice": 7200.00,
-    "discountPrice": 6800.00,
-    "collection": "Handbag",
-    "title": "Chanel 22 Bag",
-    "options":[
-      {
-        "name":"Color",
-        "values":[
-          {"value":"Black"},
-          {"value":"White"},
-          {"value":"Pink"}
-        ]
-      },
-      {
-        "name":"Size",
-        "values":[
-          {"value":"Small","priceAdj":0},
-          {"value":"Medium","priceAdj":500},
-          {"value":"Large","priceAdj":1000}
-        ]
-      }
-    ]
-  }
-]
-
+  "brand": "Chanel",
+  "supplierID": "CH1238",
+  "link2Pic": "https://thebeautylookbook.com/wp-content/uploads/2022/08/Chanel-Fall-2022-Rouge-Allure-Nudes.jpg",
+  "basePrice": 800,
+  "discountPrice": 750,
+  "collection": "Cosmetics",
+  "title": "Rouge Allure Lipstick",
+  "options": [
+    {
+      "name": "Shade",
+      "values": [
+        {
+          "value": "194 Sensibilite"
+        },
+        {
+          "value": "195 Mis A Nu"
+        },
+        {
+          "value": "196 A Demi-Mot"
+        },
+        {
+          "value": "198 Nuance"
+        },
+        {
+          "value": "199 Inattendu"
+        },
+        {
+          "value": "206 Illusion"
+        },
+        {
+          "value": "209 Alter Ego"
+        },
+        {
+          "value": "211 Subtile"
+        },
+        {
+          "value": "212 Caractere"
+        }
+      ]
+    }
+  ]
+}]
