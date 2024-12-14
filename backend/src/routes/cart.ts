@@ -11,11 +11,11 @@ import CartItems from "@/postgres-models/cart-items";
 
 function establishingCart(cartItems: CartItems[]): {
     items: {
-        productId: any;
+        productId: string;
         color: string;
         size: string;
-        price: any;
-        amount: any;
+        price: number;
+        amount: number;
         subtotal: number;
     }[];
     baseAmount: number;
@@ -32,11 +32,11 @@ function establishingCart(cartItems: CartItems[]): {
             (
                 item: CartItems,
             ): {
-                productId: any;
+                productId: string;
                 color: string;
                 size: string;
-                price: any;
-                amount: any;
+                price: number;
+                amount: number;
                 subtotal: number;
             } => {
                 const subtotal: number = item.price * item.amount;
@@ -117,34 +117,46 @@ router.put(
                     const [instance, created] =
                         await PGModels.CartItems.findOrCreate({
                             where: {
-                                productId: productId,
+                                productId: productId.toString(),
                                 userId: req.currentUser.userId,
                                 color: color,
-                                size: size,
+                                size: size.toString(),
                             },
                             defaults: {
-                                productId: productId,
+                                productId: productId.toString(),
                                 amount: amount,
-                                price: price,
+                                price: price.toString(),
                                 color: color,
-                                size: size,
+                                size: size.toString(),
                                 userId: req.currentUser.userId,
                             },
                         });
                     if (!created) {
-                        const newAmount = instance.amount + amount;
+                        const newAmount: any = instance.amount + amount;
                         await instance.update({
                             amount: newAmount,
                             price: price,
                         });
                     }
-                    return await instance;
+                    return instance;
                 },
             );
 
             const updatedItems: CartItems[] = await Promise.all(promises);
 
-            const cart = establishingCart(updatedItems);
+            const cart: {
+                items: {
+                    productId: any;
+                    color: string;
+                    size: string;
+                    price: any;
+                    amount: any;
+                    subtotal: number;
+                }[];
+                baseAmount: number;
+                discount: number;
+                totalAmount: number;
+            } = establishingCart(updatedItems);
 
             res.json({
                 payload: cart,

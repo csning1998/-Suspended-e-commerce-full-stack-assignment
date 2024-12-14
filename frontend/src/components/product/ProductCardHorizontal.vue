@@ -13,6 +13,8 @@ const userId = undefined; // if (!isLoggedIn) then make it undefined
 const { quantities, addToCart, addToFavorites } =
    productCardButtonActions(userId);
 
+console.log("quantities", quantities);
+
 const { selectedOptions, calculateTotalPrice, areAllOptionsSelected } =
    useProductOptions();
 

@@ -4,8 +4,8 @@ import User from "./user";
 
 class CartItems extends Model {
     public id!: number;
-    public productId!: number;
-    public userId!: number;
+    public productId!: string;
+    public userId!: string;
     public amount!: number;
     public price!: number;
     public color!: string;

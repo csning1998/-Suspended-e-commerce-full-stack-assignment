@@ -5,7 +5,7 @@ interface AddToCartParams {
     productId: number;
     amount: number;
     price: number;
-    color: string;
+    color: string | number;
     size: string | number;
 }
 

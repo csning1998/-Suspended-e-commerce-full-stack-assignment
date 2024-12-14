@@ -9,7 +9,7 @@ const emit = defineEmits<{
    (e: "update:modelValue", value: number): void;
 }>();
 
-const counter = ref(Number.isFinite(props.modelValue) ? props.modelValue : 1);
+const counter = ref(Number.isFinite(props.modelValue) ? props.modelValue : 0);
 
 function counterMinus() {
    if (counter.value > 1) {
