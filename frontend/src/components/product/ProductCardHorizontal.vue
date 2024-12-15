@@ -19,8 +19,7 @@ const { selectedOptions, calculateTotalPrice, areAllOptionsSelected } =
    useProductOptions();
 
 const addToCartHandler = async (item: Products): Promise<void> => {
-
-   console.log('item', item)
+   console.log("item", item);
 
    const productId = item.id;
    console.log("productId", productId);

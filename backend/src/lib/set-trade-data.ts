@@ -7,7 +7,7 @@
 //     TradeInfoQuery,
 //     CreditCardPeriodAction,
 //   } from 'node-ecpay-aio';
-  
+
 //   // Step 1: 建立特店
 //   const merchant = new Merchant('Test', {
 //     // 生產環境請記得將 'Test' 改成 'Production'
@@ -16,7 +16,7 @@
 //     HashIV: 'EkRm7iFT261dpevs',
 //     ReturnURL: 'https://api.e-commerce-miia.com/',
 //   });
-  
+
 //   // [使用情境一] Step 2: 特店建立 payment => Step 3: 前端重導至綠界結帳
 
 // const payment = merchant.createPayment(CreditOneTimePayment, {});
@@ -32,8 +32,6 @@
 //   InvoiceItemPrice: '12|18',
 //   DelayDay: 0,
 // });
-
-
 
 // // res.send(htmlRedirectPostForm)
 

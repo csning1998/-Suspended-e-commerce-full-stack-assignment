@@ -38,8 +38,8 @@ export const verity: any = async (
         // const { userId, userName } = req.body;
         let token = req.headers.token as string | undefined;
 
-        if(!token) {
-            token = <string>req.query.token 
+        if (!token) {
+            token = <string>req.query.token;
         }
 
         console.log("token", token);

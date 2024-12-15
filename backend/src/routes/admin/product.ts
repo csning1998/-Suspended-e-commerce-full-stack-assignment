@@ -137,11 +137,10 @@ router.delete(
             res.json({
                 message: "The product has been deleted.",
             });
-
         } catch (error) {
             console.log(error);
         }
     },
-);  
+);
 
 export default router;

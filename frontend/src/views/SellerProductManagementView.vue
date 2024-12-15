@@ -71,12 +71,11 @@ const colorHeaders = [
    { title: "Actions", key: "actions", sortable: false },
 ];
 
-
 let isCreatingProduct: boolean = false;
 
-function openCreateProductDialog(){
+function openCreateProductDialog() {
    isCreatingProduct = true;
-   // tempEditProduct.value = {    
+   // tempEditProduct.value = {
    //    _id: "";
    //     id: 0;
    //    brand: "";
@@ -93,13 +92,10 @@ function openCreateProductDialog(){
    //          stock?: number | undefined;
    //      };
    //  };
-   openDialog()
+   openDialog();
 }
 
-
 //  {name: "Size", values: [{value: 128, priceAdj: 0, _id: "675d7c8e8394016b0719419e"}
-
-
 
 function openDialog() {
    tempEditProduct.value = JSON.parse(JSON.stringify(currentEditProduct.value));
@@ -160,7 +156,6 @@ function overwritingData() {
 }
 
 async function amendProduct() {
-   
    overwritingData();
 
    await request.put("/admin/products/" + currentEditProduct.value._id, {
@@ -178,17 +173,15 @@ async function amendProduct() {
    }
 }
 
-async function removeProduct(_id: string){
-
-   console.log("currentEditProduct", currentEditProduct)
-   if (confirm("Delete?") ==  true){
-      await request.delete("/admin/products/" + _id)
+async function removeProduct(_id: string) {
+   console.log("currentEditProduct", currentEditProduct);
+   if (confirm("Delete?") == true) {
+      await request.delete("/admin/products/" + _id);
       products.value = await request.get("/admin/products");
    } else {
-      console.log("Be aware of your action.")
+      console.log("Be aware of your action.");
    }
 }
-
 </script>
 
 <template>
@@ -374,12 +367,9 @@ async function removeProduct(_id: string){
       </form>
    </div>
    <div class="product-container">
-      
-      
-      
-      <button class="button" @click="openCreateProductDialog()">Create a new product</button>
-
-
+      <button class="button" @click="openCreateProductDialog()">
+         Create a new product
+      </button>
 
       <div v-for="item in products" :key="item.id" class="card">
          <div class="left">
@@ -450,9 +440,7 @@ async function removeProduct(_id: string){
                   id="delete-button"
                   class="action-button"
                   v-if="currentUser.userPermission === 'admin'"
-                  @click="
-                     removeProduct(item._id);
-                  "
+                  @click="removeProduct(item._id)"
                >
                   <fa :icon="['fas', 'trash']" />Delete Product
                </button>

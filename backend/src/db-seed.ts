@@ -81,7 +81,7 @@ export default async function seed(): Promise<void> {
             );
             if (!existingProduct) {
                 // Assign the index to each merchandise.
-                product.id = i
+                product.id = i;
                 await ProductModel.create(product);
                 i++;
                 console.log(`Created product with ID ${product._id}`);
