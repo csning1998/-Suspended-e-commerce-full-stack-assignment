@@ -24,6 +24,7 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
         const products = await ProductModel.find();
 
         res.json({
+            //@ts-ignore
             payload: products.map( _ => {
                 return _.toJSON({ virtuals: true })
             })
