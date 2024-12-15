@@ -161,6 +161,7 @@ function overwritingData() {
 
 async function amendProduct() {
    
+   overwritingData();
 
    await request.put("/admin/products/" + currentEditProduct.value._id, {
       ...currentEditProduct.value,
