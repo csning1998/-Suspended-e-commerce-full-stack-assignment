@@ -25,9 +25,9 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
 
         res.json({
             //@ts-ignore
-            payload: products.map( _ => {
-                return _.toJSON({ virtuals: true })
-            })
+            payload: products.map((_) => {
+                return _.toJSON({ virtuals: true });
+            }),
         });
 
         // HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_BULK.code, {

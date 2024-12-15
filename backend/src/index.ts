@@ -130,9 +130,9 @@ app.use("/products", productQuery);
 app.use("/carts", JWT.verity);
 app.use("/carts", cartRoutes);
 
-app.use("/payment",JWT.verity, paymentRoutes);
+app.use("/payment", JWT.verity, paymentRoutes);
 
-app.use("/orders", JWT.verity, orderRoutes)
+app.use("/orders", JWT.verity, orderRoutes);
 
 // Root route for basic health check
 app.get("/", (req: Request, res: Response): void => {

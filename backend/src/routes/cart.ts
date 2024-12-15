@@ -108,7 +108,8 @@ router.put(
 
             const promises: Promise<CartItems>[] = req.body.cartItems.map(
                 async (item: any): Promise<CartItems> => {
-                    const { productId, amount, price, color, size, title } = item;
+                    const { productId, amount, price, color, size, title } =
+                        item;
 
                     if (!productId || !amount || !price || !color || !size) {
                         return Promise.reject(

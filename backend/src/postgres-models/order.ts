@@ -7,7 +7,7 @@ class Order extends Model {
     public totalAmount!: number;
     public buyerName!: string;
     public buyerContact!: string;
-    public recipient!:string;
+    public recipient!: string;
     public buyerContactPhone!: string;
     public shippingAddress!: string;
     public shippingContact?: string;

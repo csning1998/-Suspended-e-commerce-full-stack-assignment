@@ -17,11 +17,10 @@ onMounted(async () => {
       token = c[1];
    });
 
-
    // If get token from cookie failed
    if (!token) {
-      const params = new URLSearchParams(location.search)
-      token = params.get('token')
+      const params = new URLSearchParams(location.search);
+      token = params.get("token");
    }
 
    if (token) {
@@ -48,8 +47,8 @@ onMounted(async () => {
          alert(error);
          localStorage.removeItem("token");
       }
-   }else {
-      alert('token not found')
+   } else {
+      alert("token not found");
    }
 });
 </script>
