@@ -17,7 +17,12 @@ onMounted(async () => {
       token = c[1];
    });
 
-   // console.log('token', token)
+
+   // If get token from cookie failed
+   if (!token) {
+      const params = new URLSearchParams(location.search)
+      token = params.get('token')
+   }
 
    if (token) {
       localStorage.setItem("token", token);
@@ -43,6 +48,8 @@ onMounted(async () => {
          alert(error);
          localStorage.removeItem("token");
       }
+   }else {
+      alert('token not found')
    }
 });
 </script>

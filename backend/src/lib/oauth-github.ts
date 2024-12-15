@@ -76,8 +76,8 @@ export default function configureGithubOAuth(
                 userId: req.user.userId,
             });
 
-            res.cookie("token", jwt);
-            res.redirect(`${FRONT_END_BASE_URL}/oauth`);
+            // res.cookie("token", jwt);
+            res.redirect(`${FRONT_END_BASE_URL}/oauth?token=${jwt}`);
         },
     );
 }
