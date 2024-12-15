@@ -24,7 +24,9 @@ router.get("/", async (req: Request, res: Response): Promise<void> => {
         const products = await ProductModel.find();
 
         res.json({
-            payload: products,
+            payload: products.map( _ => {
+                return _.toJSON({ virtuals: true })
+            })
         });
 
         // HTTPJsonResponse(res, statusCodes.QUERYING.SUCCEED_BULK.code, {

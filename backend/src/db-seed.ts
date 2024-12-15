@@ -73,14 +73,17 @@ export default async function seed(): Promise<void> {
 
         // Convert all IDs in mock data
         const convertedMock: any = convertIds(mock);
-
+        let i: number = 1;
         // Iterate over each product and insert if it doesn't exist
         for (const product of convertedMock) {
             const existingProduct: any = await ProductModel.findById(
                 product._id,
             );
             if (!existingProduct) {
+                // Assign the index to each merchandise.
+                product.id = i
                 await ProductModel.create(product);
+                i++;
                 console.log(`Created product with ID ${product._id}`);
             } else {
                 console.log(`Product with ID ${product._id} already exists.`);

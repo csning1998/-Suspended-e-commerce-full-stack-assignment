@@ -71,6 +71,36 @@ const colorHeaders = [
    { title: "Actions", key: "actions", sortable: false },
 ];
 
+
+let isCreatingProduct: boolean = false;
+
+function openCreateProductDialog(){
+   isCreatingProduct = true;
+   // tempEditProduct.value = {    
+   //    _id: "";
+   //     id: 0;
+   //    brand: "";
+   //    link2Pic: "";
+   //    basePrice: 0;
+   //    discountPrice:0;
+   //    collection: "";
+   //    title: "";
+   //    options: {
+   //       name: string;
+   //       values: {
+   //          value: string | number;
+   //          priceAdj?: number | undefined;
+   //          stock?: number | undefined;
+   //      };
+   //  };
+   openDialog()
+}
+
+
+//  {name: "Size", values: [{value: 128, priceAdj: 0, _id: "675d7c8e8394016b0719419e"}
+
+
+
 function openDialog() {
    tempEditProduct.value = JSON.parse(JSON.stringify(currentEditProduct.value));
    // @ts-ignore
@@ -113,6 +143,7 @@ function removeColorOption(index: number) {
 }
 
 let products: any = ref([]);
+
 onMounted(async () => {
    products.value = await request.get("/admin/products");
 });
@@ -129,8 +160,7 @@ function overwritingData() {
 }
 
 async function amendProduct() {
-   if (!tempEditProduct.value) return;
-   overwritingData();
+   
 
    await request.put("/admin/products/" + currentEditProduct.value._id, {
       ...currentEditProduct.value,
@@ -146,6 +176,18 @@ async function amendProduct() {
       products.value[index] = { ...currentEditProduct.value };
    }
 }
+
+async function removeProduct(_id: string){
+
+   console.log("currentEditProduct", currentEditProduct)
+   if (confirm("Delete?") ==  true){
+      await request.delete("/admin/products/" + _id)
+      products.value = await request.get("/admin/products");
+   } else {
+      console.log("Be aware of your action.")
+   }
+}
+
 </script>
 
 <template>
@@ -206,6 +248,17 @@ async function amendProduct() {
                      variant="outlined"
                      v-model.number="tempEditProduct.discountPrice"
                      label="Discount Price (USD)"
+                  ></v-text-field>
+               </v-col>
+
+               <!-- Product URL -->
+               <v-col cols="12">
+                  <v-text-field
+                     clearable
+                     variant="outlined"
+                     v-model.number="tempEditProduct.link2Pic"
+                     label="Product Picture URL"
+                     required
                   ></v-text-field>
                </v-col>
 
@@ -320,6 +373,13 @@ async function amendProduct() {
       </form>
    </div>
    <div class="product-container">
+      
+      
+      
+      <button class="button" @click="openCreateProductDialog()">Create a new product</button>
+
+
+
       <div v-for="item in products" :key="item.id" class="card">
          <div class="left">
             <img :src="item.link2Pic" alt="Product Image" />
@@ -390,8 +450,7 @@ async function amendProduct() {
                   class="action-button"
                   v-if="currentUser.userPermission === 'admin'"
                   @click="
-                     currentEditProduct = item;
-                     openDialog();
+                     removeProduct(item._id);
                   "
                >
                   <fa :icon="['fas', 'trash']" />Delete Product

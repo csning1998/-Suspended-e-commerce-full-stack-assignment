@@ -51,7 +51,7 @@ interface UserPayments {
 }
 
 interface Products {
-    _id?: string;
+    _id: string;
     id: number;
     brand: string;
     link2Pic: string;

@@ -2,16 +2,16 @@ import { ref } from "vue";
 import type { Ref } from "vue";
 
 export function useProductOptions(): {
-    selectedOptions: Ref<Record<number, Record<string, string | number>>>;
+    // selectedOptions: Ref<Record<number, Record<string, string | number>>>;
+
+    selectedOptions: any;
     calculateTotalPrice: (product: Products) => {
         bestPrice: number;
         discountPrice: number;
     };
     areAllOptionsSelected: (product: Products) => boolean;
 } {
-    const selectedOptions = ref<
-        Record<number, Record<string, string | number>>
-    >({});
+    const selectedOptions = ref({});
 
     // Calculate the price in the product obj
     const calculateTotalPrice = (
