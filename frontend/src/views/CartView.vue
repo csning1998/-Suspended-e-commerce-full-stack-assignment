@@ -6,58 +6,189 @@ interface Cart {
    items: CartItem[];
    totalAmount: number;
 }
+const baseURL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000";
 
-
+const CHECKOUT_URL = baseURL + '/orders'
 
 interface CartItem {
-// interface CartItem<T = Record<string, number>| string[] > {
+   // interface CartItem<T = Record<string, number>| string[] > {
+   // priceDetail: Record<string, number>;
+   // metadata: T;
+   productId: string;
    amount: number,
    title: string,
-   priceDetail: Record<string, number>;
-   // metadata: T;
+   price: number;
    subtotal: number;
 }
-
-// const item: CartItem = {
-//    amount: 10,
-//    name: "hello",
-//    priceDetail: {
-//       discount: 10,
-//       originalPrice: 100,
-//    }
-// }
-
 
 let cart = ref<Cart>({
    items: [],
    totalAmount: 0
 });
 
-console.log("item", cart.value.items)
 
+let checkoutResult = ref('')
 onMounted(async () => {
    try {
       cart.value = await request.get("/carts");
    } catch (error) {}
 });
 
+
+async function checkout(): Promise<void> {
+   console.log("checkout started")
+   try {
+    hasCheckout.value = true
+      const createdOrder = await request.post("/orders", {
+         order: {
+            ...order.value,
+            // @ts-ignore
+            items: cart.value.items.map(_ => {
+               // console.log('item', _)
+               return {
+                  productId: _.productId,
+                  title: _.title,
+                  price: _.price,
+                  amount: _.amount,
+                  // size: '',
+               }
+            })
+         }
+      });
+
+      console.log('createdOrder' ,createdOrder)
+
+      // @ts-ignore
+      if(createdOrder.id){
+        const token = localStorage.getItem('token')
+        // @ts-ignore
+        window.location.href = `${baseURL}/payment/${createdOrder.id}?token=${token}`
+      }
+      // console.log('result.data', result.data)
+
+// https://stackoverflow.com/questions/27079598/error-failed-to-execute-appendchild-on-node-parameter-1-is-not-of-type-no
+      // @ts-ignore
+      // document.getElementById('ecpay')?.appendChild(result.data)
+
+
+      checkoutResult.value = result.data
+
+      // setTimeout(() => {
+      // // @ts-ignore
+      //   document.getElementById("_form_aio_checkout").submit();
+      // }, 200)
+   } catch (error) {
+      console.error(error)
+   }
+}
+
+let order = ref({
+   buyerName: 'Uncle Roger',
+   buyerContactNumber: '+886 (978)-563-809',
+   recipient:'Uncle Roger Nephew',
+   shippingAddress: 'my home',
+   shippingContactPhone: '+1 (909) 144-2236',
+   // status: '',
+})
+let hasCheckout = ref(false)
 </script>
 
 <template>
-   <div>
-    <!-- {{ cart }} -->
-    <div v-for="item in cart.items">
+  <div>
+    <!-- <p class="card-text" v-html="author.description" /> -->
+    <!-- <v-dialog v-model="dialog" width="auto">
+    <v-card
+      max-width="400"
+      prepend-icon="mdi-update"
+      text="Your application will relaunch automatically after the update is complete."
+      title="Update in progress"
+    >
+      <template v-slot:actions>
+        <v-btn class="ms-auto" text="Ok" @click="dialog = false"></v-btn>
+      </template>
+    </v-card>
+  </v-dialog> -->
+
+    <div v-if="!hasCheckout">
+      <v-card class="mx-auto" max-width="1200" title="Order Checkout">
+        <v-container>
+          <!-- <div v-for="item in cart.items">
       <h3>{{ item.title }}</h3>
       <QuantitySelector v-model="item.amount" />
-      <span class="subtotal">
-         subtotal: {{ item.subtotal }}
-      </span>
+      <span class="subtotal"> subtotal: {{ item.subtotal }} </span>
+    </div> -->
+
+          <v-table>
+            <thead>
+              <tr>
+                <th class="text-left">Name</th>
+                <th class="text-left">amount</th>
+                <th class="text-left">price</th>
+                <th class="text-left">subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="item in  cart.items" :key="item.title">
+                <td>{{ item.title }}</td>
+                <td>{{ item.amount }}</td>
+                <td>{{ item.price }}</td>
+                <td>{{ item.subtotal }}</td>
+              </tr>
+            </tbody>
+          </v-table>
+
+          <h2>Total Amount : {{ cart.totalAmount }}</h2>
+          <button @click="checkout">Checkout</button>
+
+          <v-text-field
+            v-model="order.buyerName"
+            label="Buyer name"
+          ></v-text-field>
+
+          <v-text-field
+            v-model="order.buyerContactNumber"
+            label="Buyer contact number"
+          ></v-text-field>
+
+          <v-text-field
+            v-model="order.shippingAddress"
+            label="Shipping address"
+          ></v-text-field>
+
+          <v-text-field
+            v-model="order.recipient"
+            label="Recipient"
+          ></v-text-field>
+
+          <v-text-field
+            v-model="order.shippingContactPhone"
+            label="Shipping Contact Phone"
+          ></v-text-field>
+
+          <!-- <v-checkbox
+        v-model="terms"
+        color="secondary"
+        label="I agree to site terms and conditions"
+      ></v-checkbox> -->
+        </v-container>
+
+        <v-divider></v-divider>
+
+        <v-card-actions>
+          <v-spacer></v-spacer>
+
+          <v-btn color="success" @click="checkout">
+            Checkout!
+
+            <v-icon icon="mdi-chevron-right" end></v-icon>
+          </v-btn>
+
+          <!-- <button type="submit">Checkout!</button> -->
+        </v-card-actions>
+      </v-card>
     </div>
-
-    <h2>Total Amount : {{ cart.totalAmount }}</h2>
-
-
-   </div>
+    <div v-else>Redirecting to LINEPAY.....</div>
+  </div>
 </template>
 
 <style scoped></style>

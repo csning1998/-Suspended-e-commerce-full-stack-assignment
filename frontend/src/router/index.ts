@@ -13,6 +13,7 @@ import UserProfileView from "@/views/UserProfileView.vue";
 import PrivacyPolicy from "@/views/PrivacyPolicy.vue";
 import TermsOfService from "@/views/TermsofService.vue";
 import ProductListView from "@/views/ProductListView.vue";
+import OrderView from "@/views/OrderView.vue";
 import ProductDetailView from "@/views/ProductDetailView.vue";
 import OauthLoginView from "@/components/auth/OAuthLogin.vue";
 import TestComponents from "@/components/TestComponents.vue";
@@ -92,6 +93,15 @@ const router: Router = createRouter({
             path: "/seller-product-management",
             name: "SellerProductManagementView",
             component: SellerProductManagementView,
+            meta: {
+                require_login: true,
+                allowRoles: ["admin", "supplier"],
+            },
+        },
+        {
+            path: "/order",
+            name: "orderView",
+            component: OrderView,
             meta: {
                 require_login: true,
                 allowRoles: ["admin", "supplier"],

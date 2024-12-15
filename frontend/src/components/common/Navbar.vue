@@ -13,7 +13,7 @@ const navLinks = ref<NavLink[]>([
    { text: "Products", href: "./Products" },
    { text: "Favourites", href: "#" },
    { text: "Shopping Cart", href: "./cart" },
-   { text: "Notifications", href: "#" },
+   { text: "View Orders", href: "/order" },
 ]);
 
 const token = localStorage.getItem("token");

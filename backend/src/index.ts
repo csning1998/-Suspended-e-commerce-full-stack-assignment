@@ -5,8 +5,11 @@ import cors from "cors"; // Enable Cross-Origin Resource Sharing
 import bodyParser from "body-parser"; // Parse incoming request bodies
 import userRoutes from "./routes/users";
 import cartRoutes from "./routes/cart";
+import orderRoutes from "./routes/order";
+import paymentRoutes from "./routes/payment";
 import productQuery from "./routes/product";
 import adminProduct from "./routes/admin/product";
+import adminOrder from "./routes/admin/order";
 import { connect } from "mongoose";
 import session from "express-session"; //https://www.npmjs.com/package/@types/express-session
 import passport from "passport"; //https://www.npmjs.com/package/@types/passport
@@ -127,6 +130,10 @@ app.use("/products", productQuery);
 app.use("/carts", JWT.verity);
 app.use("/carts", cartRoutes);
 
+app.use("/payment",JWT.verity, paymentRoutes);
+
+app.use("/orders", JWT.verity, orderRoutes)
+
 // Root route for basic health check
 app.get("/", (req: Request, res: Response): void => {
     res.send("Hello World!");
@@ -149,6 +156,7 @@ app.use("/admin", function (req: any, res: Response, next: NextFunction): void {
     next();
 });
 app.use("/admin", adminProduct);
+app.use("/admin", adminOrder);
 
 /* Import route handlers here */
 
@@ -192,6 +200,7 @@ require("./lib/errorHandler")(app);
     console.log("Checking Postgres database schema");
     try {
         await sequelize.createSchema("user_management", { logging: false });
+        await sequelize.createSchema("order_management", { logging: false });
         // await sequelize.createSchema('add_some_schema', { logging: false });
     } catch (err) {
         // Ignore schema creation errors (e.g., schema already exists)

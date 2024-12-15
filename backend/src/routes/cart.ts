@@ -33,6 +33,7 @@ function establishingCart(cartItems: CartItems[]): {
                 item: CartItems,
             ): {
                 productId: string;
+                title: string;
                 color: string;
                 size: string;
                 price: number;
@@ -43,6 +44,7 @@ function establishingCart(cartItems: CartItems[]): {
                 baseAmount += subtotal;
                 return {
                     productId: item.productId,
+                    title: item.title,
                     color: item.color,
                     size: item.size,
                     price: item.price,
@@ -106,7 +108,7 @@ router.put(
 
             const promises: Promise<CartItems>[] = req.body.cartItems.map(
                 async (item: any): Promise<CartItems> => {
-                    const { productId, amount, price, color, size } = item;
+                    const { productId, amount, price, color, size, title } = item;
 
                     if (!productId || !amount || !price || !color || !size) {
                         return Promise.reject(
@@ -124,6 +126,7 @@ router.put(
                             },
                             defaults: {
                                 productId: productId.toString(),
+                                title: title,
                                 amount: amount,
                                 price: price.toString(),
                                 color: color,

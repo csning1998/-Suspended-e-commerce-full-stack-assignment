@@ -2,6 +2,7 @@ import { type Ref, ref, type UnwrapRef } from "vue";
 import request from "@/stores/request";
 
 interface AddToCartParams {
+    title: string;
     productId: number;
     amount: number;
     price: number;
@@ -19,7 +20,7 @@ export function productCardButtonActions(userId?: string): {
     >({});
 
     const addToCart = async (params: AddToCartParams): Promise<void> => {
-        const { productId, amount, price, color, size } = params;
+        const { productId, amount, price, color, size, title } = params;
 
         console.log("params", params);
 
@@ -38,6 +39,7 @@ export function productCardButtonActions(userId?: string): {
                 cartItems: [
                     {
                         productId: productId,
+                        title: title,
                         amount: amount,
                         price: price,
                         color: color,

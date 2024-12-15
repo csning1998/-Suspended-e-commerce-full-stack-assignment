@@ -36,7 +36,11 @@ export const verity: any = async (
 ): Promise<any> => {
     try {
         // const { userId, userName } = req.body;
-        const token = req.headers.token as string | undefined;
+        let token = req.headers.token as string | undefined;
+
+        if(!token) {
+            token = <string>req.query.token 
+        }
 
         console.log("token", token);
 
