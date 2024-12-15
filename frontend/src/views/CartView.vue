@@ -26,7 +26,6 @@ let cart = ref<Cart>({
    totalAmount: 0,
 });
 
-let checkoutResult = ref("");
 onMounted(async () => {
    try {
       cart.value = await request.get("/carts");
@@ -64,9 +63,6 @@ async function checkout(): Promise<void> {
          // @ts-ignore
          window.location.href = `${baseURL}/payment/${createdOrder.id}?token=${token}`;
       }
-
-      // @ts-ignore
-      checkoutResult.value = result.data;
    } catch (error) {
       console.error(error);
    }

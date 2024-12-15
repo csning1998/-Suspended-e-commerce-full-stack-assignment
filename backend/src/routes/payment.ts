@@ -32,12 +32,14 @@ router.get(
                 MerchantTradeDate: moment().format("YYYY/MM/DD HH:mm:ss"),
                 TotalAmount: 500,
                 TradeDesc:
-                    "Imagine you've made a purchase, but unfortunately, I have yet to identify an effective method to display the corresponding purchase information here. This reflects an ongoing challenge in implementing a reliable solution within the constraints of the semester assignment.",
+                    "Imagine you have made a purchase",
                 ItemName: "Something",
             });
             const htmlRedirectPostForm: string = await payment.checkout();
             res.send(htmlRedirectPostForm);
-        } catch (error) {}
+        } catch (error) {
+            next(error);
+        }
     },
 );
 
